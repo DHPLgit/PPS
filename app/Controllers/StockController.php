@@ -45,28 +45,27 @@ class StockController extends BaseController
 
     public function StockUploads()
     {
+        $request = $this->request->getGet();
+        $request["query"] = isset($request["query"]) ? $request["query"] : "";
 
-        $request=$this->request->getGet();
-        $request["query"]=isset($request["query"])? $request["query"]:"";
         if ($this->request->getMethod() == 'get') {
             $result = $this->GetStockData($request);
             $empstocklist = $result[0];
             $stdData = $result[1];
-            return view('stockdetails', ["empstocklist" => $empstocklist, "stdData" => $stdData,"query"=>$request["query"]]);
+            return view('stockdetails', ["empstocklist" => $empstocklist, "stdData" => $stdData, "query" => $request["query"]]);
         } else {
-
             $rules = [
                 'formData' => 'uploaded[formData]|max_size[formData,2048]|ext_in[formData,csv]'
             ];
-            $errors =
-                [
-                    'formData' =>
-                    [
-                        'max_size' => 'Uploaded file size is more than 2mb',
-                        'ext_in' => "Uploaded file is not a csv file"
-                    ]
-                ];
+            $errors = [
+                'formData' => [
+                    'max_size' => 'Uploaded file size is more than 2MB.',
+                    'ext_in' => 'Uploaded file is not a CSV file.'
+                ]
+            ];
+
             $input = $this->validate($rules, $errors);
+
             if (!$input) {
                 $data = $this->validator->getErrors();
                 echo json_encode(['success' => false, 'validation' => $data, 'csrf' => csrf_hash()]);
@@ -78,7 +77,6 @@ class StockController extends BaseController
                             $file->move('../public/csvfile', $newName);
                             $file = fopen("../public/csvfile/" . $newName, "r");
                             $i = 0;
-                            // $numberOfFields = 6;
                             $csvArr = array();
 
                             while (($filedata = fgetcsv($file, 1000, ",")) !== FALSE) {
@@ -86,7 +84,7 @@ class StockController extends BaseController
                                 if ($i > 0) {
                                     $csvArr[$i]['Date'] = date("Y-m-d", strtotime($filedata[1]));
                                     $csvArr[$i]['Color'] = $filedata[2];
-                                    $csvArr[$i]['Work order'] = substr($filedata[0],0,11);
+                                    $csvArr[$i]['Work order'] = substr($filedata[0], 0, 11);
                                     $csvArr[$i]['Texure'] = $filedata[3];
                                     $csvArr[$i]['Size'] = $filedata[4];
                                     $csvArr[$i]['IN'] = $filedata[5];
@@ -94,7 +92,6 @@ class StockController extends BaseController
                                 }
                                 $i++;
                             }
-
 
                             fclose($file);
                             $count = 0;
@@ -105,16 +102,21 @@ class StockController extends BaseController
                                     $count++;
                                 }
                             }
+
+                            // Set success message using session service
+                            session()->setFlashdata('success', 'File uploaded successfully. ' . $count . ' records were inserted.');
                         }
-                        //echo json_encode(['success' => true, 'csrf' => csrf_hash(), "count" => $count]);
                     }
                 } catch (Exception $ex) {
+                    // Handle exception and set error message
+                    session()->setFlashdata('error', 'An error occurred during the upload process.');
                 }
+
                 $result = $this->GetStockData($request);
                 $empstocklist = $result[0];
                 $stdData = $result[1];
 
-                return view('stockdetails', ["empstocklist" => $empstocklist, "stdData" => $stdData, "query"=>$request["query"]]);
+                return view('stockdetails', ["empstocklist" => $empstocklist, "stdData" => $stdData, "query" => $request["query"]]);
             }
         }
     }
@@ -179,7 +181,6 @@ class StockController extends BaseController
 
     public function DeleteStockDetail()
     {
-
         if ($this->request->getMethod() == 'post') {
             try {
 

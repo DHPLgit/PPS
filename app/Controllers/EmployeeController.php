@@ -17,7 +17,6 @@ require_once APPPATH . 'Libraries/EnumsAndConstants/Constants.php';
 class EmployeeController extends BaseController
 {
 
-
     public function EmployeeUploads()
     {
         if ($this->request->getMethod() == 'get') {
@@ -27,55 +26,59 @@ class EmployeeController extends BaseController
             $rules = [
                 'formData' => 'uploaded[formData]|max_size[formData,2048]|ext_in[formData,csv]'
             ];
-            $errors =
-                [
-                    'formData' =>
-                    [
-                        'max_size' => 'Uploaded file size is more than 2mb',
-                        'ext_in' => "Uploaded file is not a csv file"
-                    ]
-                ];
+            $errors = [
+                'formData' => [
+                    'max_size' => 'Uploaded file size is more than 2MB.',
+                    'ext_in' => 'Uploaded file is not a CSV file.'
+                ]
+            ];
+
             $input = $this->validate($rules, $errors);
+
             if (!$input) {
                 $data = $this->validator->getErrors();
                 echo json_encode(['success' => false, 'validation' => $data, 'csrf' => csrf_hash()]);
             } else {
-                if ($file = $this->request->getFile('formData')) {
-                    if ($file->isValid() && !$file->hasMoved()) {
-                        $newName = $file->getRandomName();
-                        $file->move('../public/csvfile', $newName);
-                        $file = fopen("../public/csvfile/" . $newName, "r");
-                        $i = 0;
-                        $numberOfFields = 7;
-                        $csvArr = array();
-                        while (($filedata = fgetcsv($file, 1000, ",")) !== FALSE) {
+                try {
+                    if ($file = $this->request->getFile('formData')) {
+                        if ($file->isValid() && !$file->hasMoved()) {
+                            $newName = $file->getRandomName();
+                            $file->move('../public/csvfile', $newName);
+                            $file = fopen("../public/csvfile/" . $newName, "r");
+                            $i = 0;
+                            $numberOfFields = 7;
+                            $csvArr = array();
 
-                            $num = count($filedata);
-                            if ($i > 0 && $num == $numberOfFields) {
-                                $csvArr[$i]['Emp code'] = $filedata[0];
-                                $csvArr[$i]['Name'] = $filedata[1];
-                                $csvArr[$i]['DOB'] = date("Y-m-d", strtotime($filedata[2]));
-                                $csvArr[$i]['DOJ'] = date("Y-m-d", strtotime($filedata[3]));
-                                $csvArr[$i]['Designation'] = $filedata[4];
-                                $csvArr[$i]['Phone_no'] = $filedata[5];
-                                $csvArr[$i]['Address'] = $filedata[6];
+                            while (($filedata = fgetcsv($file, 1000, ",")) !== FALSE) {
+                                $num = count($filedata);
+                                if ($i > 0 && $num == $numberOfFields) {
+                                    $csvArr[$i]['Emp code'] = $filedata[0];
+                                    $csvArr[$i]['Name'] = $filedata[1];
+                                    $csvArr[$i]['DOB'] = date("Y-m-d", strtotime($filedata[2]));
+                                    $csvArr[$i]['DOJ'] = date("Y-m-d", strtotime($filedata[3]));
+                                    $csvArr[$i]['Designation'] = $filedata[4];
+                                    $csvArr[$i]['Phone_no'] = $filedata[5];
+                                    $csvArr[$i]['Address'] = $filedata[6];
+                                }
+                                $i++;
                             }
-                            $i++;
-                        }
 
-                        fclose($file);
-                        $count = 0;
-                        foreach ($csvArr as $exportData) {
-                            $flag = $this->DataExists($exportData['Emp code']);
-                            if ($flag) {
-
-                                $this->InsertEmployee($exportData);
-                                $count++;
+                            fclose($file);
+                            $count = 0;
+                            foreach ($csvArr as $exportData) {
+                                $flag = $this->DataExists($exportData['Emp code']);
+                                if ($flag) {
+                                    $this->InsertEmployee($exportData);
+                                    $count++;
+                                }
                             }
+                            // Set success message and redirect
+                            session()->setFlashdata('success', 'File uploaded successfully. ' . $count . ' records were inserted.');
                         }
                     }
-                    //echo json_encode(['success' => true, 'csrf' => csrf_hash(), "count" => $count]);
-                   
+                } catch (\Exception $ex) {
+                    // Handle exception and set error message
+                    session()->setFlashdata('error', 'An error occurred during the upload process.');
                 }
                 $emplist = $this->GetEmployeeData();
                 return view('employeedetails', ["emplist" => $emplist]);
@@ -109,8 +112,8 @@ class EmployeeController extends BaseController
 
         // Fetch the unique employee data based on the empCode
         $model = ModelFactory::createModel(ModelNames::Employee);
-        $employeeData = $model->where("id", $empCode)->first(); 
-        return view('employee_details', ["employee" =>  $employeeData]);
+        $employeeData = $model->where("id", $empCode)->first();
+        return view('employee_details', ["employee" => $employeeData]);
     }
     private function InsertEmployee(array $postdata)
     {
@@ -208,23 +211,20 @@ class EmployeeController extends BaseController
 
     public function DeleteEmployeeDetail()
     {
-
         if ($this->request->getMethod() == 'post') {
             try {
 
                 $request = $this->request->getPost();
 
                 $model = ModelFactory::createModel(ModelNames::Employee);
-                //$data = [Employee::Status => "0"];
-               // $delete_status = $model->UpdateEmployee($request['id'], $data);
+
                 $delete_status = $model->DeleteEmployee($request['id']);
 
                 if ($delete_status) {
                     $status = "Employee deleted successfully!";
-                } else $status = "Something went wrong!";
+                } else
+                    $status = "Something went wrong!";
                 session()->setFlashdata('response', $status);
-
-                //$response = Response::SetResponse(201, null, new Error());
 
                 return json_encode(['success' => $delete_status, 'csrf' => csrf_hash(), 'url' => base_url('/employee/upload')]);
                 // return redirect()->to(base_url("task/taskList"));

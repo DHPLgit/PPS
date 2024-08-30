@@ -5,58 +5,40 @@
 <?php echo script_tag('js/functions/Script.js'); ?>
 
 
-<!-- <section>
-        <div class="container">
-                <h1 style="justify-content: space-evenly; color:black">Employee Details</h1>
-                <div class="">
-                        <form action="<?= base_url('employeedetails') ?>" method="post">
-                                <label for="first_name">First Name:</label></br>
-                                <input type="text" id="first_name" name="first_name"
-                                        value="<?= isset($_POST['first_name']) ? $_POST['first_name'] : '' ?>">
-                                <br>
-
-                                <label for="last_name">Last Name:</label></br>
-                                <input type="text" id="last_name" name="last_name"
-                                        value="<?= isset($_POST['last_name']) ? $_POST['last_name'] : '' ?>">
-                                <br>
-
-                                <label for="userid">User ID:</label></br>
-                                <input type="text" id="userid" name="userid"
-                                        value="<?= isset($_POST['userid']) ? $_POST['userid'] : '' ?>">
-                                <br>
-
-                                <label for="phone_no">Phone Number:</label></br>
-                                <input type="text" id="phone_no" name="phone_no"
-                                        value="<?= isset($_POST['phone_no']) ? $_POST['phone_no'] : '' ?>">
-                                <br>
-
-                                <label for="date_of_joining">Date of Joining:</label></br>
-                                <input type="date" id="date_of_joining" name="date_of_joining"
-                                        value="<?= isset($_POST['date_of_joining']) ? $_POST['date_of_joining'] : '' ?>">
-                                <br>
-
-                                <label for="appreciation">Appreciation:</label></br>
-                                <textarea id="appreciation"
-                                        name="appreciation"><?= isset($_POST['appreciation']) ? $_POST['appreciation'] : '' ?></textarea>
-                                <br>
-
-                                <label for="supervisor">Supervisor:</label></br>
-                                <input type="text" id="supervisor" name="supervisor"
-                                        value="<?= isset($_POST['supervisor']) ? $_POST['supervisor'] : '' ?>">
-                                <br>
-
-                                <button type="submit">Submit</button>
-                        </form>
-
-                </div>
-        </div>
-</section> -->
-
-
-
 <section class="upload-files">
         <div class="container">
-                <!--  -->
+	<!-- Flash message -->
+        <?php if (session()->getFlashdata('success')): ?>
+                <div class="alert alert-success" id="flash-success">
+                        <?= session()->getFlashdata('success') ?>
+                </div>
+        <?php endif; ?>
+
+        <?php if (session()->getFlashdata('error')): ?>
+                <div class="alert alert-danger" id="flash-error">
+                        <?= session()->getFlashdata('error') ?>
+                </div>
+        <?php endif; ?>
+	<!-- Flash message gone in 5 sec -->
+        <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                        var timeoutDuration = 5000; 
+                        function hideFlashMessage(id) {
+                                var element = document.getElementById(id);
+                                if (element) {
+                                        setTimeout(function () {
+                                                element.style.opacity = '0';
+                                                setTimeout(function () {
+                                                        element.style.display = 'none';
+                                                }, 600);
+                                        }, timeoutDuration);
+                                }
+                        }
+                        hideFlashMessage('flash-success');
+                        hideFlashMessage('flash-error');
+                });
+        </script>
+
                 <div class="card">
                         <h3>Upload Files</h3>
                         <div class="drop_box">
@@ -157,27 +139,28 @@
         <div class="container">
 
 
-<div class="modal fade" id="AlertModal">
-  <div class="modal-dialog">
+                <div class="modal fade" id="AlertModal">
+                        <div class="modal-dialog">
 
-    <!-- Modal content-->
-    <div class="modal-content">
-      
-      <div class="modal-body" style="padding:40px 50px 20px;">
-        <p id="notification"> </p>
+                                <!-- Modal content-->
+                                <div class="modal-content">
 
-        <br />
-        <div class="d-grid">
-          <a id="redirect" class="btn btn-primary edit-sur" href=""> Okay</a>
+                                        <div class="modal-body" style="padding:40px 50px 20px;">
+                                                <p id="notification"> </p>
+
+                                                <br />
+                                                <div class="d-grid">
+                                                        <a id="redirect" class="btn btn-primary edit-sur" href="">
+                                                                Okay</a>
+                                                </div>
+                                        </div>
+
+
+                                </div>
+                        </div>
+                </div>
+
         </div>
-      </div>
-
-
-    </div>
-  </div>
-</div>
-
-</div>
 
 </section>
 <script>

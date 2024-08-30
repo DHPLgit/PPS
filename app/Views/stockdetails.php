@@ -5,11 +5,43 @@
 <?php echo script_tag('js/functions/Script.js'); ?>
 <section class="upload-files">
 	<div class="container">
-		<?php if (session()->getFlashdata('response') !== NULL) : ?>
+		<?php if (session()->getFlashdata('response') !== NULL): ?>
 			<p style="color:green; font-size:18px;">
 				<?php echo session()->getFlashdata('response'); ?>
 			</p>
 		<?php endif; ?>
+		<!-- Flash message -->
+		<?php if (session()->getFlashdata('success')): ?>
+			<div class="alert alert-success" id="flash-success">
+				<?= session()->getFlashdata('success') ?>
+			</div>
+		<?php endif; ?>
+
+		<?php if (session()->getFlashdata('error')): ?>
+			<div class="alert alert-danger" id="flash-error">
+				<?= session()->getFlashdata('error') ?>
+			</div>
+		<?php endif; ?>
+		<!-- Flash message gone in 5 sec -->
+		<script>
+			document.addEventListener("DOMContentLoaded", function () {
+				var timeoutDuration = 5000;
+				function hideFlashMessage(id) {
+					var element = document.getElementById(id);
+					if (element) {
+						setTimeout(function () {
+							element.style.opacity = '0';
+							setTimeout(function () {
+								element.style.display = 'none';
+							}, 600);
+						}, timeoutDuration);
+					}
+				}
+				hideFlashMessage('flash-success');
+				hideFlashMessage('flash-error');
+			});
+		</script>
+
 		<div class="card">
 			<h3>Stock Upload Files</h3>
 			<div class="drop_box">
@@ -19,17 +51,20 @@
 				</header>
 				<p>Files Supported: CSV</p>
 				<!-- Updated to include CSV -->
-				<form method="post" class="csvuploadfile" action="<?= base_url('stock/upload') ?>" enctype="multipart/form-data">
+				<form method="post" class="csvuploadfile" action="<?= base_url('stock/upload') ?>"
+					enctype="multipart/form-data">
 					<input type="file" accept=".doc,.docx,.pdf,.csv" id="uploadfile" name="formData">
 					<!-- Removed 'hidden' attribute -->
 					<button type="submit" class="btn">Submit</button>
 				</form>
-				<button data-bs-target="#formatModal" data-bs-toggle="modal" class="stock-chk-btn pull-left mb-3" id="output" type="button">
+				<button data-bs-target="#formatModal" data-bs-toggle="modal" class="stock-chk-btn pull-left mb-3"
+					id="output" type="button">
 					<span class="description">click here to check the format.
 					</span>
 				</button>
 
-				<a href="<?php echo base_url(); ?>uploads/stock_template.csv" class="pull-left mb-3" id="output" download><span class="description">(click here to download CSV
+				<a href="<?php echo base_url(); ?>uploads/stock_template.csv" class="pull-left mb-3" id="output"
+					download><span class="description">(click here to download CSV
 						template)</span></a>
 			</div>
 		</div>
@@ -67,7 +102,7 @@
 											<div>
 												<?php echo $Colour; ?>
 											</div>
-										<?php	} ?>
+										<?php } ?>
 									</td>
 									<td style="height:05px; vertical-align:top;">
 
@@ -75,14 +110,14 @@
 											<div>
 												<?php echo $texture; ?>
 											</div>
-										<?php	} ?>
+										<?php } ?>
 									</td>
 									<td style="height:05px; vertical-align:top;">
 										<?php foreach ($stdData->Length as $length) { ?>
 											<div>
 												<?php echo $length; ?>
 											</div>
-										<?php	} ?>
+										<?php } ?>
 
 									</td>
 									<td style="height:05px; vertical-align:top;">
@@ -90,7 +125,7 @@
 											<div>
 												<?php echo $type; ?>
 											</div>
-										<?php	} ?>
+										<?php } ?>
 
 									</td>
 									<td style="height:05px; vertical-align:top;">
@@ -122,11 +157,11 @@
 					<b>Color</b>
 				</td>
 				<!-- <td>
-                                        <b>Texture</b>
-                                </td>
-                                <td>
-                                        <b>Unit</b>
-                                </td> -->
+										<b>Texture</b>
+								</td>
+								<td>
+										<b>Unit</b>
+								</td> -->
 				<td>
 					<b>Action</b>
 				</td>
@@ -148,11 +183,11 @@
 							<?php echo stripslashes($stock['colour']); ?>
 						</td>
 						<!-- <td>
-                                                        <?php echo stripslashes($stock['texture']); ?>
-                                                </td>
-                                                <td>
-                                                        <?php echo stripslashes($stock['unit']); ?>
-                                                </td> -->
+														<?php echo stripslashes($stock['texture']); ?>
+												</td>
+												<td>
+														<?php echo stripslashes($stock['unit']); ?>
+												</td> -->
 
 						<td class="actions">
 
@@ -177,7 +212,7 @@
 </section>
 
 <script>
-	$('.deleteStockDetail').on('click', function() {
+	$('.deleteStockDetail').on('click', function () {
 		//getting data of selected row using id.
 
 		console.log("ENtry");
@@ -185,7 +220,7 @@
 		console.log($id);
 		$tr = $(this).closest('tr');
 		console.log($tr);
-		var data = $tr.children().map(function() {
+		var data = $tr.children().map(function () {
 			return $(this).text();
 		}).get();
 		console.log(data[0].trim());
@@ -195,7 +230,7 @@
 		stockDetailDelete(url, taskDetId);
 	});
 
-	$("#reset").on("click", function() {
+	$("#reset").on("click", function () {
 
 		var currentUrl = window.location.href;
 		window.location.href = currentUrl.split('?')[0];

@@ -552,7 +552,7 @@
                               <tr>
                                 <td align="center">
                                   <a href="<?php echo $reset; ?>" class="f-fallback button button--green"
-                                    target="_blank">Reset Lin</a>
+                                    target="_blank">Reset Link</a>
                                 </td>
                               </tr>
                             </table>

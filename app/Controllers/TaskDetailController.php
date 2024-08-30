@@ -324,49 +324,38 @@ class TaskDetailController extends BaseController
         }
         return json_encode($response);
     }
-
     public function AddOrUpdateDepartment()
     {
+        $response = null; 
+    
         try {
             $rules = [
                 'department' => 'required|validateDepartmentName[department]',
-
             ];
-
+    
             $errors = [
-
                 'department' => [
                     'required' => 'Department name is required.',
-                    'validateDepartmentName' => 'name already exists.'
-
+                    'validateDepartmentName' => 'Department name already exists.',
                 ],
-
             ];
-
+    
             if (!$this->validate($rules, $errors)) {
                 log_message('debug', 'Validation errors: ' . print_r($this->validator->getErrors(), true));
                 $output = $this->validator->getErrors();
-                $errorMsg = implode(";", $output);
-                //$response = Response::SetResponse(400, null, new Error($errorMsg));
-
-
                 return json_encode(['success' => false, 'csrf' => csrf_hash(), 'error' => $output]);
             } else {
                 $request = $this->request->getPost();
-
-
                 $data = [Department::DepartmentName => $request["department"]];
                 $model = ModelFactory::createModel(ModelNames::Department);
-
+    
                 if (isset($request["deptId"])) {
                     $result = $this->modelHelper->UpdateData($model, $request["deptId"], $data);
+                    session()->setFlashdata('response', 'Department updated successfully.');
                 } else {
                     $result = $model->InsertDepartment($data);
+                    session()->setFlashdata('response', 'Department added successfully.');
                 }
-
-
-
-                // $response = Response::SetResponse(201, null, new Error());
                 return json_encode(['success' => true, 'csrf' => csrf_hash(), 'output' => $result, 'url' => base_url("department/list")]);
             }
         } catch (DataBaseException $ex) {
@@ -378,6 +367,8 @@ class TaskDetailController extends BaseController
         }
         return json_encode($response);
     }
+    
+
 
     public function DepartmentMap()
     {
