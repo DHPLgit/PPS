@@ -217,29 +217,28 @@ class UserController extends BaseController
         try {
             if (!in_array($_SERVER['REMOTE_ADDR'], $whitelist)) {
 
-                $mail->isSMTP();
-                $mail->Host         =  'email-smtp.us-west-2.amazonaws.com';  //smtp.google.com
+                $mail->Host         = 'email-smtp.us-west-2.amazonaws.com';
                 $mail->SMTPAuth     = true;
                 $mail->Username     = 'AKIASKRV7H5JDOJCUGGT';
                 $mail->Password     = 'BAYiFnjSzn1W4zX8+UC+xINscVJXCNY6XbQqTeY5p3V9';
-                $mail->SMTPSecure   = 'tls';
-                $mail->Port         = 587;
-                $mail->Subject      = $subject;
-                $mail->Body         = $template;
-
-                $mail->setFrom('support@cxanalytix.in', 'no-reply PPS');
-
-                $mail->addAddress($postdata["mail_id"]);
-                $mail->isHTML(true);
-                $response = $mail->send();
+                
             } else {
-                // Always set content-type when sending HTML email
-                $headers = "MIME-Version: 1.0" . "\r\n";
-                $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-                // More headers
-                $headers .= 'From: <support@cxanalytix.in>' . "\r\n";
-                $response = mail($postdata["Mail_id"], $subject, $template, $headers);
+                $mail->Host         = 'smtp.gmail.com';
+                $mail->SMTPAuth     =  true;
+                $mail->Username     = 'hctoolssmtp@gmail.com';
+                $mail->Password     = 'iyelinyqlqdsmhro';
             }
+            $mail->isSMTP();
+            $mail->SMTPAuth     = true;
+            $mail->SMTPSecure   = 'tls';
+            $mail->Port         = 587;
+            $mail->Subject      = $subject;
+            $mail->Body         = $template;
+            $mail->setFrom('support@cxanalytix.in', 'PPS');
+            $mail->addAddress($postdata["mail_id"]);
+            $mail->isHTML(true);
+            $response = $mail->send();
+           
             if (!$response) {
                 return "Something went wrong. Please try again." . $mail->ErrorInfo;
             } else {
@@ -336,29 +335,29 @@ class UserController extends BaseController
         $subject = "PPS Account || Forget Password";
         try {
             if (!in_array($_SERVER['REMOTE_ADDR'], $whitelist)) {
-                $mail->isSMTP();
-                $mail->Host         =  'email-smtp.us-west-2.amazonaws.com';  //smtp.google.com
+
+                $mail->Host         = 'email-smtp.us-west-2.amazonaws.com';
                 $mail->SMTPAuth     = true;
                 $mail->Username     = 'AKIASKRV7H5JDOJCUGGT';
                 $mail->Password     = 'BAYiFnjSzn1W4zX8+UC+xINscVJXCNY6XbQqTeY5p3V9';
-                $mail->SMTPSecure   = 'tls';
-                $mail->Port         = 587;
-                $mail->Subject      = $subject;
-                $mail->Body         = $template;
-
-                $mail->setFrom('support@cxanalytix.in', 'no-reply PPS');
-
-                $mail->addAddress($userData["mail_id"]);
-                $mail->isHTML(true);
-                $response = $mail->send();
+                
             } else {
-                // Always set content-type when sending HTML email
-                $headers = "MIME-Version: 1.0" . "\r\n";
-                $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-                // More headers
-                $headers .= 'From: <support@cxanalytix.in>' . "\r\n";
-                $response = mail($userData["email"], $subject, $template, $headers);
+                $mail->Host         = 'smtp.gmail.com';
+                $mail->SMTPAuth     =  true;
+                $mail->Username     = 'hctoolssmtp@gmail.com';
+                $mail->Password     = 'iyelinyqlqdsmhro';
             }
+            $mail->isSMTP();
+            $mail->SMTPAuth     = true;
+            $mail->SMTPSecure   = 'tls';
+            $mail->Port         = 587;
+            $mail->Subject      = $subject;
+            $mail->Body         = $template;
+            $mail->setFrom('support@cxanalytix.in', 'PPS');
+            $mail->addAddress($userData["mail_id"]);
+            $mail->isHTML(true);
+            $response = $mail->send();
+            
             if (!$response) {
                 return "Something went wrong. Please try again." . $mail->ErrorInfo;
             } else {
@@ -377,29 +376,29 @@ class UserController extends BaseController
         $subject = "PPS Account || OTP";
         try {
             if (!in_array($_SERVER['REMOTE_ADDR'], $whitelist)) {
-                $mail->isSMTP();
-                $mail->Host         =  'email-smtp.us-west-2.amazonaws.com';  //smtp.google.com
+
+                $mail->Host         = 'email-smtp.us-west-2.amazonaws.com';
                 $mail->SMTPAuth     = true;
                 $mail->Username     = 'AKIASKRV7H5JDOJCUGGT';
                 $mail->Password     = 'BAYiFnjSzn1W4zX8+UC+xINscVJXCNY6XbQqTeY5p3V9';
-                $mail->SMTPSecure   = 'tls';
-                $mail->Port         = 587;
-                $mail->Subject      = $subject;
-                $mail->Body         = $template;
-
-                $mail->setFrom('support@cxanalytix.in', 'PPS');
-
-                $mail->addAddress($userData["mail_id"]);
-                $mail->isHTML(true);
-                $response = $mail->send();
+                
             } else {
-                // Always set content-type when sending HTML email
-                $headers = "MIME-Version: 1.0" . "\r\n";
-                $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-                // More headers
-                $headers .= 'From: <support@cxanalytix.in>' . "\r\n";
-                $response = mail($userData["email"], $subject, $template, $headers);
+                $mail->Host         = 'smtp.gmail.com';
+                $mail->SMTPAuth     =  true;
+                $mail->Username     = 'hctoolssmtp@gmail.com';
+                $mail->Password     = 'iyelinyqlqdsmhro';
             }
+            $mail->isSMTP();
+            $mail->SMTPAuth     = true;
+            $mail->SMTPSecure   = 'tls';
+            $mail->Port         = 587;
+            $mail->Subject      = $subject;
+            $mail->Body         = $template;
+            $mail->setFrom('support@cxanalytix.in', 'PPS');
+            $mail->addAddress($userData["mail_id"]);
+            $mail->isHTML(true);
+            $response = $mail->send();
+            
             if (!$response) {
                 return "Something went wrong. Please try again." . $mail->ErrorInfo;
             } else {
