@@ -1,0 +1,307 @@
+2023-12-11 07:56:20	CLIENT -> SERVER: EHLO localhost
+2023-12-11 07:56:21	CLIENT -> SERVER: STARTTLS
+2023-12-11 07:56:22	CLIENT -> SERVER: EHLO localhost
+2023-12-11 07:56:22	CLIENT -> SERVER: AUTH LOGIN
+2023-12-11 07:56:23	CLIENT -> SERVER: [credentials hidden]2023-12-11 07:56:23	CLIENT -> SERVER: [credentials hidden]2023-12-11 07:56:23	CLIENT -> SERVER: MAIL FROM:<dhilipkumar@differenthair.com>
+2023-12-11 07:56:23	CLIENT -> SERVER: RCPT TO:<dhilipkumar@differenthair.com>
+2023-12-11 07:56:24	CLIENT -> SERVER: DATA
+2023-12-11 07:56:24	CLIENT -> SERVER: Date: Mon, 11 Dec 2023 07:56:20 +0000
+2023-12-11 07:56:24	CLIENT -> SERVER: To: dhilipkumar@differenthair.com
+2023-12-11 07:56:24	CLIENT -> SERVER: From: "dhilipkumar@differenthair.com" <dhilipkumar@differenthair.com>
+2023-12-11 07:56:24	CLIENT -> SERVER: Subject: What did you think about NPS
+2023-12-11 07:56:24	CLIENT -> SERVER: Message-ID: <2YWMMF3Jo2PJbK8pgXdo6bWnA08qwItyk8lkCmcEZA@localhost>
+2023-12-11 07:56:24	CLIENT -> SERVER: X-Mailer: PHPMailer 6.8.0 (https://github.com/PHPMailer/PHPMailer)
+2023-12-11 07:56:24	CLIENT -> SERVER: MIME-Version: 1.0
+2023-12-11 07:56:24	CLIENT -> SERVER: Content-Type: text/html; charset=ISO-8859-1
+2023-12-11 07:56:24	CLIENT -> SERVER: MIME-Version: 1.0
+2023-12-11 07:56:24	CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+2023-12-11 07:56:24	CLIENT -> SERVER: 
+2023-12-11 07:56:24	CLIENT -> SERVER: <!-- DEBUG-VIEW START 1 APPPATH\Views\template\email-template-survey.php -->
+2023-12-11 07:56:24	CLIENT -> SERVER: <!DOCTYPE html>
+2023-12-11 07:56:24	CLIENT -> SERVER: <html lang="en">
+2023-12-11 07:56:24	CLIENT -> SERVER: 
+2023-12-11 07:56:24	CLIENT -> SERVER: <head>
+2023-12-11 07:56:24	CLIENT -> SERVER:     <meta charset="UTF-8">
+2023-12-11 07:56:24	CLIENT -> SERVER:     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+2023-12-11 07:56:24	CLIENT -> SERVER:     <title>NPS Email</title>
+2023-12-11 07:56:24	CLIENT -> SERVER: </head>
+2023-12-11 07:56:24	CLIENT -> SERVER: 
+2023-12-11 07:56:24	CLIENT -> SERVER: <body>
+2023-12-11 07:56:24	CLIENT -> SERVER:         <section>
+2023-12-11 07:56:24	CLIENT -> SERVER:     
+2023-12-11 07:56:24	CLIENT -> SERVER:         <!-- <h2 style="color: #000;
+2023-12-11 07:56:24	CLIENT -> SERVER:             text-align: center; font-family: 'Trebuchet MS', sans-serif;
+2023-12-11 07:56:24	CLIENT -> SERVER:             font-size: 24px;
+2023-12-11 07:56:24	CLIENT -> SERVER:             font-style: normal;
+2023-12-11 07:56:24	CLIENT -> SERVER:             font-weight: 500;margin: 20px auto 0px;">Hi dhilipt kumar</h2> -->
+2023-12-11 07:56:24	CLIENT -> SERVER:         <a href="http://localhost:8000/getSurveyAnwser/23/118/45/23" style="text-decoration:none;max-width: 794px;">
+2023-12-11 07:56:24	CLIENT -> SERVER:             <div style="max-width: 794px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                             margin: 20px auto 90px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                             background-color: #fff;
+2023-12-11 07:56:24	CLIENT -> SERVER:                             padding: 60px 50px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                             border: 1px solid #000;
+2023-12-11 07:56:24	CLIENT -> SERVER:                             border-radius: 20px;">
+2023-12-11 07:56:24	CLIENT -> SERVER: 
+2023-12-11 07:56:24	CLIENT -> SERVER: 
+2023-12-11 07:56:24	CLIENT -> SERVER:                 <div style="    text-align: center;
+2023-12-11 07:56:24	CLIENT -> SERVER:                                 display: flex;
+2023-12-11 07:56:24	CLIENT -> SERVER:                                 margin: 0px 41%;
+2023-12-11 07:56:24	CLIENT -> SERVER:                                 justify-content: center;">
+2023-12-11 07:56:24	CLIENT -> SERVER:                     <img src="http://localhost:8000/images/HAIR__COMPOUND_LOGO.png" style="    width: 100%;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     max-width: 125px;">
+2023-12-11 07:56:24	CLIENT -> SERVER:                     <!-- <h2 style="color: #000;
+2023-12-11 07:56:24	CLIENT -> SERVER:                         text-align: center; font-family: 'Trebuchet MS', sans-serif;
+2023-12-11 07:56:24	CLIENT -> SERVER:                         font-size: 24px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                         font-style: normal;
+2023-12-11 07:56:24	CLIENT -> SERVER:                         font-weight: 500;">HC</h2> -->
+2023-12-11 07:56:24	CLIENT -> SERVER:                 </div>
+2023-12-11 07:56:24	CLIENT -> SERVER: 
+2023-12-11 07:56:24	CLIENT -> SERVER: 
+2023-12-11 07:56:24	CLIENT -> SERVER:                 <div style="text-align: center;margin: auto;">
+2023-12-11 07:56:24	CLIENT -> SERVER:                     <h2 style="color: #000;
+2023-12-11 07:56:24	CLIENT -> SERVER:                 text-align: center; font-family: 'Trebuchet MS', sans-serif;
+2023-12-11 07:56:24	CLIENT -> SERVER:                 font-size: 44px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                 font-style: normal;
+2023-12-11 07:56:24	CLIENT -> SERVER:                 font-weight: 500;">Your feedback matters to us; tell us about your experience.</h2>
+2023-12-11 07:56:24	CLIENT -> SERVER:                 </div>
+2023-12-11 07:56:24	CLIENT -> SERVER:                 <div style="max-width: 650px;text-align: center;margin: auto;">
+2023-12-11 07:56:24	CLIENT -> SERVER:                     <h3 style="
+2023-12-11 07:56:24	CLIENT -> SERVER:                 color: #000;
+2023-12-11 07:56:24	CLIENT -> SERVER:                 text-align: center;
+2023-12-11 07:56:24	CLIENT -> SERVER:                 font-family: 'Trebuchet MS', sans-serif;
+2023-12-11 07:56:24	CLIENT -> SERVER:                 
+2023-12-11 07:56:24	CLIENT -> SERVER:                 font-style: normal;
+2023-12-11 07:56:24	CLIENT -> SERVER:                 font-weight: 500;
+2023-12-11 07:56:24	CLIENT -> SERVER:                 line-height: 30px;">
+2023-12-11 07:56:24	CLIENT -> SERVER:                         <p>We value your feedback and encourage you to share your thoughts with us.</p>
+2023-12-11 07:56:24	CLIENT -> SERVER: <p>Your feedback is crucial to our improvement and helps us better cater to your needs.</p>
+2023-12-11 07:56:24	CLIENT -> SERVER: <p>Let us know what you think; your insights are important to our ongoing commitment to excellence.</p></h3>
+2023-12-11 07:56:24	CLIENT -> SERVER:                 </div>
+2023-12-11 07:56:24	CLIENT -> SERVER:                 <div style="margin: auto;text-align: center;">
+2023-12-11 07:56:24	CLIENT -> SERVER:                     <h3 style="color: #000;
+2023-12-11 07:56:24	CLIENT -> SERVER:                                 font-family: 'Lora', serif;
+2023-12-11 07:56:24	CLIENT -> SERVER:                                 font-size: 24px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                                 font-style: normal;
+2023-12-11 07:56:24	CLIENT -> SERVER:                                 text-align: left;
+2023-12-11 07:56:24	CLIENT -> SERVER:                                 font-weight: 600;">How likely is it that you would recommend company to a friend or colleague?
+2023-12-11 07:56:24	CLIENT -> SERVER:                     </h3>
+2023-12-11 07:56:24	CLIENT -> SERVER:                 </div>
+2023-12-11 07:56:24	CLIENT -> SERVER:                 <div style="text-align: center;margin:40px 0px">
+2023-12-11 07:56:24	CLIENT -> SERVER:                     <p style="text-decoration: none;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     text-align: center;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     display: inline-block;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     margin: 10px 5px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     padding: 7px 0px 15px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     border-radius: 72px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     width: 43px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     height: 20px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     border: 2px solid #909090;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     background: #d9d9d9;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     color: #000;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-family: 'Arima',sans-serif;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-size: 20px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-style: normal;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-weight: 600;"> 0
+2023-12-11 07:56:24	CLIENT -> SERVER:                     </p>
+2023-12-11 07:56:24	CLIENT -> SERVER:                     <p style="text-decoration: none;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     text-align: center;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     display: inline-block;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     margin: 10px 5px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     padding: 7px 0px 15px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     border-radius: 72px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     width: 43px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     height: 20px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     border: 2px solid #909090;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     background: #d9d9d9;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     color: #000;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-family: 'Arima',sans-serif;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-size: 20px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-style: normal;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-weight: 600;"> 1
+2023-12-11 07:56:24	CLIENT -> SERVER:                     </p>
+2023-12-11 07:56:24	CLIENT -> SERVER:                     <p style="text-decoration: none;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     text-align: center;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     display: inline-block;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     margin: 10px 5px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     padding: 7px 0px 15px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     border-radius: 72px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     width: 43px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     height: 20px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     border: 2px solid #909090;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     background: #d9d9d9;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     color: #000;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-family: 'Arima',sans-serif;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-size: 20px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-style: normal;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-weight: 600;"> 2
+2023-12-11 07:56:24	CLIENT -> SERVER:                     </p>
+2023-12-11 07:56:24	CLIENT -> SERVER:                     <p style="text-decoration: none;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     text-align: center;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     display: inline-block;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     margin: 10px 5px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     padding: 7px 0px 15px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     border-radius: 72px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     width: 43px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     height: 20px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     border: 2px solid #909090;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     background: #d9d9d9;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     color: #000;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-family: 'Arima',sans-serif;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-size: 20px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-style: normal;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-weight: 600;"> 3
+2023-12-11 07:56:24	CLIENT -> SERVER:                     </p>
+2023-12-11 07:56:24	CLIENT -> SERVER:                     <p style="text-decoration: none;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     text-align: center;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     display: inline-block;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     margin: 10px 5px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     padding: 7px 0px 15px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     border-radius: 72px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     width: 43px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     height: 20px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     border: 2px solid #909090;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     background: #d9d9d9;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     color: #000;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-family: 'Arima',sans-serif;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-size: 20px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-style: normal;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-weight: 600;"> 4
+2023-12-11 07:56:24	CLIENT -> SERVER:                     </p>
+2023-12-11 07:56:24	CLIENT -> SERVER:                     <p style="text-decoration: none;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     text-align: center;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     display: inline-block;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     margin: 10px 5px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     padding: 7px 0px 15px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     border-radius: 72px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     width: 43px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     height: 20px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     border: 2px solid #909090;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     background: #d9d9d9;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     color: #000;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-family: 'Arima',sans-serif;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-size: 20px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-style: normal;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-weight: 600;"> 5
+2023-12-11 07:56:24	CLIENT -> SERVER:                     </p>
+2023-12-11 07:56:24	CLIENT -> SERVER:                     <p style="text-decoration: none;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     text-align: center;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     display: inline-block;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     margin: 10px 5px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     padding: 7px 0px 15px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     border-radius: 72px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     width: 43px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     height: 20px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     border: 2px solid #909090;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     background: #d9d9d9;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     color: #000;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-family: 'Arima',sans-serif;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-size: 20px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-style: normal;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-weight: 600;"> 6
+2023-12-11 07:56:24	CLIENT -> SERVER:                     </p>
+2023-12-11 07:56:24	CLIENT -> SERVER:                     <p style="text-decoration: none;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     text-align: center;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     display: inline-block;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     margin: 10px 5px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     padding: 7px 0px 15px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     border-radius: 72px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     width: 43px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     height: 20px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     border: 2px solid #909090;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     background: #d9d9d9;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     color: #000;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-family: 'Arima',sans-serif;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-size: 20px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-style: normal;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-weight: 600;"> 7
+2023-12-11 07:56:24	CLIENT -> SERVER:                     </p>
+2023-12-11 07:56:24	CLIENT -> SERVER:                     <p style="text-decoration: none;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     text-align: center;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     display: inline-block;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     margin: 10px 5px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     padding: 7px 0px 15px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     border-radius: 72px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     width: 43px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     height: 20px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     border: 2px solid #909090;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     background: #d9d9d9;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     color: #000;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-family: 'Arima',sans-serif;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-size: 20px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-style: normal;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-weight: 600;"> 8
+2023-12-11 07:56:24	CLIENT -> SERVER:                     </p>
+2023-12-11 07:56:24	CLIENT -> SERVER:                     <p style="text-decoration: none;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     text-align: center;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     display: inline-block;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     margin: 10px 5px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     padding: 7px 0px 15px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     border-radius: 72px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     width: 43px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     height: 20px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     border: 2px solid #909090;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     background: #d9d9d9;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     color: #000;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-family: 'Arima',sans-serif;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-size: 20px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-style: normal;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-weight: 600;"> 9
+2023-12-11 07:56:24	CLIENT -> SERVER:                     </p>
+2023-12-11 07:56:24	CLIENT -> SERVER:                     <p style="text-decoration: none;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     text-align: center;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     display: inline-block;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     margin: 10px 5px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     padding: 7px 0px 15px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     border-radius: 72px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     width: 43px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     height: 20px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     border: 2px solid #909090;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     background: #d9d9d9;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     color: #000;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-family: 'Arima',sans-serif;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-size: 20px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-style: normal;
+2023-12-11 07:56:24	CLIENT -> SERVER:                     font-weight: 600;"> 10
+2023-12-11 07:56:24	CLIENT -> SERVER:                     </p>
+2023-12-11 07:56:24	CLIENT -> SERVER:                 </div>
+2023-12-11 07:56:24	CLIENT -> SERVER:                 <div>
+2023-12-11 07:56:24	CLIENT -> SERVER:                     <p style="color: rgba(0, 0, 0, 0.52);
+2023-12-11 07:56:24	CLIENT -> SERVER:                                 display: inline;
+2023-12-11 07:56:24	CLIENT -> SERVER:                             font-family: Lora;
+2023-12-11 07:56:24	CLIENT -> SERVER:                             font-size: 15px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                             font-style: normal;margin: 0px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                             font-weight: 600;">Not Likely</p>
+2023-12-11 07:56:24	CLIENT -> SERVER:                     <p style="color: rgba(0, 0, 0, 0.52);
+2023-12-11 07:56:24	CLIENT -> SERVER:                                 margin: 0px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                             font-family: 'Lora', serif;
+2023-12-11 07:56:24	CLIENT -> SERVER:                             font-size: 15px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                             font-style: normal;
+2023-12-11 07:56:24	CLIENT -> SERVER:                             font-weight: 600;margin: 0; display: inline;float: right;">Very Likely</p>
+2023-12-11 07:56:24	CLIENT -> SERVER:                 </div>
+2023-12-11 07:56:24	CLIENT -> SERVER:                 <div style="text-align: center;margin: 50px auto;width: 30%;">
+2023-12-11 07:56:24	CLIENT -> SERVER:                     <p style="border-radius: 30px;padding: 10px 20px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                                         background: #000;color: #FFF;
+2023-12-11 07:56:24	CLIENT -> SERVER:                                         font-family: 'Lora', serif;
+2023-12-11 07:56:24	CLIENT -> SERVER:                                         text-decoration: none;
+2023-12-11 07:56:24	CLIENT -> SERVER:                                         font-size: 20px;
+2023-12-11 07:56:24	CLIENT -> SERVER:                                         font-style: normal;
+2023-12-11 07:56:24	CLIENT -> SERVER:                                         font-weight: 600;">Take a survey</p>
+2023-12-11 07:56:24	CLIENT -> SERVER:                 </div>
+2023-12-11 07:56:24	CLIENT -> SERVER:             </div>
+2023-12-11 07:56:24	CLIENT -> SERVER:         </a>
+2023-12-11 07:56:24	CLIENT -> SERVER:     </section>
+2023-12-11 07:56:24	CLIENT -> SERVER: </body>
+2023-12-11 07:56:24	CLIENT -> SERVER: 
+2023-12-11 07:56:24	CLIENT -> SERVER: </html>
+2023-12-11 07:56:24	CLIENT -> SERVER: <!-- DEBUG-VIEW ENDED 1 APPPATH\Views\template\email-template-survey.php -->
+2023-12-11 07:56:24	CLIENT -> SERVER: 
+2023-12-11 07:56:24	CLIENT -> SERVER: .
+2023-12-11 07:56:25	CLIENT -> SERVER: QUIT
+2023-12-11 07:57:23	CLIENT -> SERVER: EHLO localhost
+2023-12-11 07:57:23	CLIENT -> SERVER: STARTTLS
+2023-12-11 07:57:24	CLIENT -> SERVER: EHLO localhost
+2023-12-11 07:57:24	CLIENT -> SERVER: AUTH LOGIN
+2023-12-11 07:57:25	CLIENT -> SERVER: [credentials hidden]2023-12-11 07:57:25	CLIENT -> SERVER: [credentials hidden]2023-12-11 07:57:25	SMTP ERROR: Password command failed: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials qa6-20020a17090b4fc600b0028613dcb810sm6339753pjb.23 - gsmtp
+2023-12-11 07:57:25	SMTP Error: Could not authenticate.2023-12-11 07:57:25	CLIENT -> SERVER: QUIT
+2023-12-11 07:57:25	SMTP Error: Could not authenticate.

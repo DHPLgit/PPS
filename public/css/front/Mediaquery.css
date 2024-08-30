@@ -1,0 +1,78 @@
+@media only screen and (max-width: 768px) {
+    .login-body {
+        background: url(../images/banner/login.png)no-repeat top -7px center;
+    }
+
+    .login {
+        background: url(../images/banner/login.png)no-repeat top -7px center;
+    }
+
+    .table {
+        overflow-x: auto;
+        max-width: 100%;
+    }
+
+    .order-list-table {
+        overflow-x: auto;
+    }
+
+    .crt-sur {
+        float: none;
+    }
+
+    .csvuploadfile {
+        display: grid;
+    }
+
+    /* Optional: Apply some additional styling for the table */
+    /* table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    table, th, td {
+        border: 1px solid black;
+    } */
+
+    .employee-table tbody tr td {
+        width: 300px;
+        padding: 10px;
+        border-right: 1px solid #000;
+        font-size: 12px;
+    }
+
+    .form-Centered {
+        width: 100%;
+    }
+
+    .Login-desc {
+        width: 100%;
+    }
+
+    /* .img-centered {
+        padding: 30px 0px 0px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    } */
+}
+
+@media only screen and (max-width: 1020px) {
+
+    .home {
+        margin-top: 120px;
+    }
+
+    .order-list-table {
+        overflow-x: auto;
+    }
+
+    .crt-sur {
+        float: none;
+    }
+
+    .table-order-id {
+        display: block;
+        justify-content: space-between;
+    }
+}

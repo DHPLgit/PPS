@@ -1,0 +1,35 @@
+[25-Aug-2023 02:35:46 America/Phoenix] PHP Fatal error:  Uncaught Error: Call to undefined function each() in /home/s1myqgsvv5vn/public_html/mail_test.php:2957
+Stack trace:
+#0 /home/s1myqgsvv5vn/public_html/mail_test.php(768): SMTP->Data()
+#1 /home/s1myqgsvv5vn/public_html/mail_test.php(588): PHPMailer->SmtpSend()
+#2 /home/s1myqgsvv5vn/public_html/mail_test.php(3481): PHPMailer->Send()
+#3 {main}
+  thrown in /home/s1myqgsvv5vn/public_html/mail_test.php on line 2957
+[25-Aug-2023 02:35:54 America/Phoenix] PHP Fatal error:  Uncaught Error: Call to undefined function each() in /home/s1myqgsvv5vn/public_html/mail_test.php:2957
+Stack trace:
+#0 /home/s1myqgsvv5vn/public_html/mail_test.php(768): SMTP->Data()
+#1 /home/s1myqgsvv5vn/public_html/mail_test.php(588): PHPMailer->SmtpSend()
+#2 /home/s1myqgsvv5vn/public_html/mail_test.php(3481): PHPMailer->Send()
+#3 {main}
+  thrown in /home/s1myqgsvv5vn/public_html/mail_test.php on line 2957
+[25-Aug-2023 02:36:51 America/Phoenix] PHP Fatal error:  Uncaught Error: Call to undefined function each() in /home/s1myqgsvv5vn/public_html/mail_test.php:2957
+Stack trace:
+#0 /home/s1myqgsvv5vn/public_html/mail_test.php(768): SMTP->Data()
+#1 /home/s1myqgsvv5vn/public_html/mail_test.php(588): PHPMailer->SmtpSend()
+#2 /home/s1myqgsvv5vn/public_html/mail_test.php(3481): PHPMailer->Send()
+#3 {main}
+  thrown in /home/s1myqgsvv5vn/public_html/mail_test.php on line 2957
+[25-Aug-2023 02:37:13 America/Phoenix] PHP Fatal error:  Uncaught Error: Call to undefined function each() in /home/s1myqgsvv5vn/public_html/mail_test.php:2957
+Stack trace:
+#0 /home/s1myqgsvv5vn/public_html/mail_test.php(768): SMTP->Data()
+#1 /home/s1myqgsvv5vn/public_html/mail_test.php(588): PHPMailer->SmtpSend()
+#2 /home/s1myqgsvv5vn/public_html/mail_test.php(3481): PHPMailer->Send()
+#3 {main}
+  thrown in /home/s1myqgsvv5vn/public_html/mail_test.php on line 2957
+[25-Aug-2023 02:39:20 America/Phoenix] PHP Fatal error:  Uncaught Error: Call to undefined function each() in /home/s1myqgsvv5vn/public_html/mail_test.php:2957
+Stack trace:
+#0 /home/s1myqgsvv5vn/public_html/mail_test.php(768): SMTP->Data()
+#1 /home/s1myqgsvv5vn/public_html/mail_test.php(588): PHPMailer->SmtpSend()
+#2 /home/s1myqgsvv5vn/public_html/mail_test.php(3481): PHPMailer->Send()
+#3 {main}
+  thrown in /home/s1myqgsvv5vn/public_html/mail_test.php on line 2957

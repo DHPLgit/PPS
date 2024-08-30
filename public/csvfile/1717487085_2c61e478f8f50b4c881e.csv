@@ -1,0 +1,22 @@
+Work order,Date,Color,Texure,Size,Quantity in,Product Type
+Sample 1,04-Jun-24,1N,Regular,"12""",2500,Bulk
+Sample 2,04-Jun-24,1N,Regular,"18""",322,Bulk
+Sample 3,04-Jun-24,1N,Regular,"20""",5211,Bulk
+Sample 4,04-Jun-24,2N,Regular,"12""",2405,Bulk
+Sample 5,04-Jun-24,2N,Regular,"18""",1185,Bulk
+Sample 6,04-Jun-24,2N,Regular,"20""",2203,Bulk
+Sample 7,04-Jun-24,4N,Regular,"12""",1755,Bulk
+Sample 8,04-Jun-24,4N,Regular,"18""",1030,Bulk
+Sample 9,04-Jun-24,4N,Regular,"20""",5,Bulk
+Sample 10,04-Jun-24,5N,Regular,"12""",2650,Bulk
+Sample 11,04-Jun-24,5N,Regular,"18""",19,Bulk
+Sample 12,04-Jun-24,5N,Regular,"20""",1,Bulk
+Sample 13,04-Jun-24,6N,Regular,"12""",1196,Bulk
+Sample 14,04-Jun-24,6N,Regular,"18""",576,Bulk
+Sample 15,04-Jun-24,6N,Regular,"20""",28,Bulk
+Sample 16,04-Jun-24,7N,Regular,"12""",596,Bulk
+Sample 17,04-Jun-24,7N,Regular,"18""",149,Bulk
+Sample 18,04-Jun-24,7N,Regular,"20""",1496,Bulk
+Sample 19,04-Jun-24,8N,Regular,"12""",1440,Bulk
+Sample 20,04-Jun-24,8N,Regular,"18""",126,Bulk
+Sample 21,04-Jun-24,8N,Regular,"20""",2221,Bulk

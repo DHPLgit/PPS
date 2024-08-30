@@ -1,0 +1,3 @@
+result =Select * from dept_map inner join dept on dept.id = dept_map.dept_id inner join employee on dept_map.supervor_id= employee_id 
+result[employye_ids]
+select * from employees where employee id IN();
