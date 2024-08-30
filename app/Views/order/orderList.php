@@ -10,7 +10,7 @@
 		}
 	</style>
 	<div class="container">
-		<?php if (session()->getFlashdata('response') !== NULL) : ?>
+		<?php if (session()->getFlashdata('response') !== NULL): ?>
 			<p style="color:green; font-size:18px;">
 				<?php echo session()->getFlashdata('response'); ?>
 			</p>
@@ -22,7 +22,8 @@
 				<button type="submit" id="search"> Search</button>
 			</div>
 			<!-- </form> -->
-			<div class="text-center"><a class="crt-sur" href="<?php echo site_url('/order/createOrder'); ?>">Create Order</a>
+			<div class="text-center"><a class="crt-sur" href="<?php echo site_url('/order/createOrder'); ?>">Create
+					Order</a>
 			</div>
 		</div>
 		<div class="order-list-table">
@@ -54,7 +55,7 @@
 							$count++;
 							if ($order['order_id'] != $currentOrderId) {
 								$currentOrderId = $order['order_id'];
-						?>
+								?>
 
 								<tr id="orderRow">
 									<td scope="row">
@@ -69,7 +70,8 @@
 									<td>
 										<?php echo stripslashes($order['order_id']); ?><br />
 										<div id="item-button">
-											<button type="button" class="addItem" onclick="addItem('<?= $order['order_id'] ?>')">AddItem +</button>
+											<button type="button" class="addItem"
+												onclick="addItem('<?= $order['order_id'] ?>')">AddItem +</button>
 										</div>
 									</td>
 									<!-- <td>
@@ -80,7 +82,13 @@
 										<?php echo stripslashes($order['customer_id']); ?>
 									</td>
 									<td>
-										<?php echo stripslashes($order['order_date']); ?>
+										<?php
+										if ($order['order_date'] === '0000-00-00 00:00:00' || $order['order_date'] === null) {
+											echo '0000-00-00';
+										} else {
+											echo date('Y-m-d', strtotime($order['order_date']));
+										}
+										?>
 									</td>
 									<!-- <td>
 										<?php echo $order['type'] . " " . $order['colour'] . " " . $order['length'] . " " . $order['texture'] . " " . $order['ext_size']; ?>
@@ -101,27 +109,27 @@
 									<td class="action">
 
 										<button type="button" onclick="editOrder(this)" <?php if ($order['status'] != "Not started") {
-																							echo 'style="pointer-events:none"';
-																						} ?> class="btn editOrder"> <img src="<?php echo base_url(); ?>images/icons/Create.png" class="img-centered img-fluid"></a>
+											echo 'style="pointer-events:none"';
+										} ?> class="btn editOrder"> <img src="<?php echo base_url(); ?>images/icons/Create.png" class="img-centered img-fluid"></a>
 											<button type="button" onclick="deleteOrder(this)" <?php if ($order['status'] != "Not started") {
-																									echo 'style="pointer-events:none"';
-																								} ?>class="btn  deleteOrder"><img src="<?php echo base_url(); ?>images/icons/remove.png" class="img-centered img-fluid"></a>
+												echo 'style="pointer-events:none"';
+											} ?>class="btn  deleteOrder"><img src="<?php echo base_url(); ?>images/icons/remove.png" class="img-centered img-fluid"></a>
 									</td> -->
 									<!-- <td>
-            </td> -->
+			</td> -->
 								</tr>
 
-						<?php }
+							<?php }
 						} ?>
 					</tbody>
 
 				</table>
 			<?php } else { ?>
-		</div>
-		<div class="text-center">
-			<p class="fs-3"> <span class="text-danger">Oops!</span>No records found.</p>
-		</div>
-	<?php } ?>
+			</div>
+			<div class="text-center">
+				<p class="fs-3"> <span class="text-danger">Oops!</span>No records found.</p>
+			</div>
+		<?php } ?>
 	</div>
 	<div class="container">
 		<div class="modal fade" id="orderDeleteModal">
@@ -131,9 +139,9 @@
 					<div class="modal-header" style="padding:15px 50px;">
 						<h4> Delete order</h4>
 						<button type="button" class="close top-close" data-bs-dismiss="modal">&times;</button>
-
 					</div>
-					<form action="<?= base_url('order/deleteOrder') ?>" class="form" id="DeleteSegmentForm" name="DeleteSegment" method="post">
+					<form action="<?= base_url('order/deleteOrder') ?>" class="form" id="DeleteSegmentForm"
+						name="DeleteSegment" method="post">
 						<div class="modal-body ctr-segment-body" style="padding:20px;">
 							<p> Are you sure you want to delete the order?</p>
 							<div class="form-group">
@@ -141,14 +149,14 @@
 							</div>
 							<br />
 							<div class="d-grid">
-								<button type="submit" class="btn btn-danger confirm pull-right"><span class="fa fa-trash"></span>
+								<button type="submit" class="btn btn-danger confirm pull-right"><span
+										class="fa fa-trash"></span>
 									Confirm</button>
-								<button type="button" class="btn btn-outline-secondary Cancel pull-left close" data-bs-dismiss="modal"><span class="fa fa-remove"></span> Cancel</button>
+								<button type="button" class="btn btn-outline-secondary Cancel pull-left close"
+									data-bs-dismiss="modal"><span class="fa fa-remove"></span> Cancel</button>
 							</div>
 						</div>
 					</form>
-
-
 				</div>
 			</div>
 		</div>
@@ -176,7 +184,6 @@
 								<th scope="col">Status</th>
 								<th scope="col">Due date</th>
 								<th scope="col">Action</th>
-
 							</tr>
 						</thead>
 						<tbody id="modal_table_body">
@@ -189,13 +196,13 @@
 	</div>
 </section>
 <script>
-	$(document).ready(function() {
-		window.onpopstate = function(event) {
+	$(document).ready(function () {
+		window.onpopstate = function (event) {
 			// Reset or empty the input element
 			$('#query').val('');
 		};
 	});
-	$("#search").on("click", function() {
+	$("#search").on("click", function () {
 
 
 		var query = $("#query").val();
@@ -207,7 +214,7 @@
 				query: query
 			},
 			dataType: "json",
-			success: function(response) {
+			success: function (response) {
 
 				if (response.success) {
 					var table_body = document.getElementById('table_body');
@@ -216,22 +223,18 @@
 				}
 
 			},
-			error: function(response) {
+			error: function (response) {
 
 			}
 		})
 	})
 
 	function populateTable(data, table_body, isModal) {
-
 		if (data.length > 0) {
 			table_body.innerHTML = "";
-			var header = true;
 			var index = 0;
-			data.forEach(function(item) {
-
+			data.forEach(function (item) {
 				index++;
-				console.log(item);
 				var row = table_body.insertRow();
 				var count = 0;
 
@@ -242,39 +245,46 @@
 						continue;
 					}
 
-					count++
+					count++;
 
 					console.log(`${key}: ${item[key]}`);
 					var cell = row.insertCell(count);
 
 					if (key == "order_list_id") {
-
 						cell.style.display = 'none';
 					}
+
 					if (key == "order_id") {
+						const safeKey = item[key].replace(/"/g, '&quot;');  // Properly define safeKey
+
 						if (!isModal) {
-							cell.innerHTML = '<span class="expand-button" onclick="getItemList(' + item[key] + ')"><i class="bi bi-caret-right-fill"></i></span>'
-
+							cell.innerHTML = '<span class="expand-button" onclick="getItemList(\'' + safeKey + '\')"><i class="bi bi-caret-right-fill"></i></span>';
 							count++;
-							var cell = row.insertCell(count);
+							cell = row.insertCell(count);
 						}
-						cell.innerHTML = item[key] + '<div id="item-button"><button type="button" class="addItem" onclick="addItem(' + item[key] + ')">AddItem +</button></div>'; // Update with new data
 
+						cell.innerHTML = safeKey + '<div id="item-button"><button type="button" class="addItem" onclick="addItem(\'' + safeKey + '\')">AddItem +</button></div>';
+						console.log(cell.innerHTML, "ddd");
 
 					} else {
 						cell.innerHTML = item[key];
 					}
 
 				}
+
+				// if (isModal) {
+				//     var cell = row.insertCell(count + 1);
+				//     var style = item["status"] != "Not started" ? 'style="pointer-events:none"' : '';
+				//     cell.innerHTML = '<button type="button" onclick="editOrder(this)" class="btn editOrder" ' + style + '> <img src="<?php echo base_url(); ?>images/icons/Create.png" class="img-centered img-fluid"></button>' +
+				//                      '<button type="button" onclick="deleteOrder(this)" class="btn deleteOrder" ' + style + '><img src="<?php echo base_url(); ?>images/icons/remove.png" class="img-centered img-fluid"></button>';
+				// }
 				if (isModal) {
 					var cell = row.insertCell(count + 1);
 					if (item["status"] != "Not started") {
 						var style = 'style="pointer-events:none"';
-
 					}
-					else style="";
-					cell.innerHTML = '<button type="button" onclick="editOrder(this)" class="btn editOrder" '+style+'> <img src="<?php echo base_url(); ?>images/icons/Create.png" class="img-centered img-fluid"></a><button type="button" onclick="deleteOrder(this)" class="btn  deleteOrder" '+style+'><img src="<?php echo base_url(); ?>images/icons/remove.png" class="img-centered img-fluid"></a>';
-
+					else style = "";
+					cell.innerHTML = '<button type="button" onclick="editOrder(this)" class="btn editOrder" ' + style + '> <img src="<?php echo base_url(); ?>images/icons/Create.png" class="img-centered img-fluid"></a><button type="button" onclick="deleteOrder(this)" class="btn  deleteOrder" ' + style + '><img src="<?php echo base_url(); ?>images/icons/remove.png" class="img-centered img-fluid"></a>';
 				}
 			});
 		} else {
@@ -286,7 +296,7 @@
 		//getting data of selected row using id.
 		console.log("ENtry");
 		$tr = $(element).closest('tr');
-		var data = $tr.children().map(function() {
+		var data = $tr.children().map(function () {
 			return $(this).text();
 		}).get();
 		console.log(data[1].trim());
@@ -300,7 +310,7 @@
 		//getting data of selected row using id.
 
 		$tr = $(element).closest('tr');
-		var data = $tr.children().map(function() {
+		var data = $tr.children().map(function () {
 			return $(this).text();
 		}).get();
 		console.log(data[1].trim());
@@ -323,7 +333,7 @@
 				orderId: orderId
 			},
 			dataType: "json",
-			success: function(response) {
+			success: function (response) {
 				if (response.success) {
 					var table_body = document.getElementById('modal_table_body');
 
@@ -332,7 +342,7 @@
 
 				}
 			},
-			error: function(response) {
+			error: function (response) {
 				console.log("failure", response)
 			}
 		})

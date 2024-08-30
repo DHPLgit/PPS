@@ -46,9 +46,6 @@ class OrderController extends BaseController
 
                 $orderId=$order[Order::OrderId];
             }
-
-
-            
             $response = Response::SetResponse(200, $orderList, new Error());
             return view('order/orderList', ["orderList" => $orderList]);
         } catch (DataBaseException $ex) {
