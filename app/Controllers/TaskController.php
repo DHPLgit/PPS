@@ -396,7 +396,9 @@ class TaskController extends BaseController
                     break;
                 }
             }
-            array_push($result, $taskDetail);
+            if ($taskDetail['overAllCount'] != 0) {
+                array_push($result, $taskDetail);
+            }
         }
         return view('task/taskList', ["taskDetailList" => $result, "orderItemId" => $order_item_id]);
     }
@@ -987,7 +989,7 @@ class TaskController extends BaseController
     {
         $modelHelper = new ModelHelper();
         $deptEmpModel = ModelFactory::createModel(ModelNames::DeptEmpMap);
-        $condition = [DeptEmpMap::DeptId => $deptId];
+        $condition = [DeptEmpMap::DeptId => $deptId,DeptEmpMap::Status=>"1"];
         $deptEmpData = $modelHelper->GetSingleData($deptEmpModel, $condition);
 
         return $deptEmpData;
