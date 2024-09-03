@@ -182,8 +182,7 @@ class TaskController extends BaseController
                     TaskInput::InQuantity => $stockArr[$value[Stock::StockListId]],
                     TaskInput::InTexture  => $parent[Stock::Texture],
                     TaskInput::InType     => $parent[Stock::Type],
-
-                    //'In_ext_size' => $parent['Ext_size'],
+                    TaskInput::InExtSize => $parent[Stock::ExtSize],
                     TaskInput::CreatedBy  => session()->get('id'),
                     TaskInput::UpdatedBy  => session()->get('id')
                 ];
