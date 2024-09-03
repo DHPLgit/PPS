@@ -89,7 +89,9 @@ class StockController extends BaseController
                                     $csvArr[$i]['Size'] = $filedata[4];
                                     $csvArr[$i]['IN'] = $filedata[5];
                                     $csvArr[$i]['Type'] = $filedata[6];
-                                }
+                                    $csvArr[$i]['Ext size']=$filedata[7];
+                                };
+
                                 $i++;
                             }
 
@@ -167,7 +169,9 @@ class StockController extends BaseController
                 "texture" => $postdata['Texure'],
                 "quantity" => floatval($postdata['IN']),
                 "date" => $postdata['Date'],
-                "type" => $postdata['Type']
+                "type" => $postdata['Type'],
+                "ext_size" => $postdata['Ext size']
+
             ];
             $stockId = $model->insert($data);
         } catch (Exception $ex) {

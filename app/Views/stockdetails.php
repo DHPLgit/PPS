@@ -53,7 +53,7 @@
 				<!-- Updated to include CSV -->
 				<form method="post" class="csvuploadfile" action="<?= base_url('stock/upload') ?>"
 					enctype="multipart/form-data">
-					<input type="file" accept=".doc,.docx,.pdf,.csv" id="uploadfile" name="formData">
+					<input type="file" accept=".csv" id="uploadfile" name="formData">
 					<!-- Removed 'hidden' attribute -->
 					<button type="submit" class="btn">Submit</button>
 				</form>
@@ -92,6 +92,7 @@
 									<td>Texture</td>
 									<td>Size</td>
 									<td>Type</td>
+									<td>Extension size</td>
 									<td>Quantity</td>
 								</tr>
 							</thead>
@@ -124,6 +125,14 @@
 										<?php foreach ($stdData->Types as $type) { ?>
 											<div>
 												<?php echo $type; ?>
+											</div>
+										<?php } ?>
+
+									</td>
+									<td style="height:05px; vertical-align:top;">
+										<?php foreach ($stdData->Ext_sizes as $ext_size) { ?>
+											<div>
+												<?php echo $ext_size; ?>
 											</div>
 										<?php } ?>
 

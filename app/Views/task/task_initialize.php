@@ -9,7 +9,7 @@
         <label for="countryInput" class="form-label">Order ID:</label></br>
         <input type="hidden" id="orderListId">
         <input type="hidden" id="ordItemId">
-        <input type="text" id="orderidsearch" class="form-control" placeholder="Search Order ID" class="taskini-input">
+        <input type="text" id="orderidsearch" autocomplete="off" class="form-control" placeholder="Search Order ID" class="taskini-input">
         <button id="clear" type="button" onclick="clearInput()" class="d-none">x</button>
         <p style="color:red" class="error" id="order_list_id_error" type="hidden"></p>
         <div>
