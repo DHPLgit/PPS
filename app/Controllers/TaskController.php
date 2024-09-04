@@ -50,7 +50,7 @@ class TaskController extends BaseController
             try {
                 $a = $this->request->getPost();
                 $rules = [
-                    'order_list_id'   => 'required',
+                    'order_list_id' => 'required',
                     //'Order_date'       => 'required',
                     //'Type'             => 'required',
                     'task_detail_id' => 'required',
@@ -59,11 +59,11 @@ class TaskController extends BaseController
                     // 'output_texture'  => 'required',
                     // 'output_colour'   => 'required',
                     // 'input_list.*'    => 'required',
-                    'stock'        => 'required',
+                    'stock' => 'required',
                     // 'quantity'        => 'required'
                 ];
                 $errors = [
-                    'stock'        => ['required' => "Please give input to start the task."]
+                    'stock' => ['required' => "Please give input to start the task."]
                 ];
 
                 if (!$this->validate($rules, $errors)) {
@@ -91,27 +91,27 @@ class TaskController extends BaseController
                     $deptEmpData = $this->GetDeptEmpMapData($taskDetailData[TaskDetail::DepartmentId]);
 
                     $data = [
-                        //'Task_id'          => $taskId,
+                            //'Task_id'          => $taskId,
                         Task::ParentTaskId => $parentTaskId,
-                        Task::OrderListId  => $inputs['order_list_id'],
-                        Task::OrderId  => $inputs['order_id'],
-                        Task::ItemId  => $inputs['item_id'],
-                        //'Employee_id'     => $inputs,
-                        Task::SupervisorId   => $deptEmpData[DeptEmpMap::SupervisorId],
-                        //'Start_time'      => $inputs,
-                        //'End_time'        => $inputs,
-                        //'Time_taken'      => $inputs,
-                        Task::TaskDetailId    => $inputs['task_detail_id'],
-                        // Task::Sizing       => $inputs['sizing'],
-                        // Task::OutLength    => $inputs['output_length'],
-                        // Task::OutTexture   => $inputs['output_texture'],
-                        // Task::OutColour    => $inputs['output_colour'],
-                        //'Out_qty'          => $inputs['outputlength'],
-                        Task::Status       => WorkStatus::NS,
-                        //'Next_task_id'=>,
+                        Task::OrderListId => $inputs['order_list_id'],
+                        Task::OrderId => $inputs['order_id'],
+                        Task::ItemId => $inputs['item_id'],
+                            //'Employee_id'     => $inputs,
+                        Task::SupervisorId => $deptEmpData[DeptEmpMap::SupervisorId],
+                            //'Start_time'      => $inputs,
+                            //'End_time'        => $inputs,
+                            //'Time_taken'      => $inputs,
+                        Task::TaskDetailId => $inputs['task_detail_id'],
+                            // Task::Sizing       => $inputs['sizing'],
+                            // Task::OutLength    => $inputs['output_length'],
+                            // Task::OutTexture   => $inputs['output_texture'],
+                            // Task::OutColour    => $inputs['output_colour'],
+                            //'Out_qty'          => $inputs['outputlength'],
+                        Task::Status => WorkStatus::NS,
+                            //'Next_task_id'=>,
 
-                        Task::CreatedBy    => session()->get('id'),
-                        Task::UpdatedBy    => session()->get('id')
+                        Task::CreatedBy => session()->get('id'),
+                        Task::UpdatedBy => session()->get('id')
                     ];
                     $taskId = $model->InsertTask($data);
 
@@ -175,16 +175,16 @@ class TaskController extends BaseController
 
                 //create input data
                 $data = [
-                    TaskInput::TaskId     => $taskId,
+                    TaskInput::TaskId => $taskId,
                     TaskInput::InputCount => $count + 1,
-                    TaskInput::InLength   => $parent[Stock::Length],
-                    TaskInput::InColour   => $parent[Stock::Colour],
+                    TaskInput::InLength => $parent[Stock::Length],
+                    TaskInput::InColour => $parent[Stock::Colour],
                     TaskInput::InQuantity => $stockArr[$value[Stock::StockListId]],
-                    TaskInput::InTexture  => $parent[Stock::Texture],
-                    TaskInput::InType     => $parent[Stock::Type],
+                    TaskInput::InTexture => $parent[Stock::Texture],
+                    TaskInput::InType => $parent[Stock::Type],
                     TaskInput::InExtSize => $parent[Stock::ExtSize],
-                    TaskInput::CreatedBy  => session()->get('id'),
-                    TaskInput::UpdatedBy  => session()->get('id')
+                    TaskInput::CreatedBy => session()->get('id'),
+                    TaskInput::UpdatedBy => session()->get('id')
                 ];
                 array_push($arrayData, $data);
             }
@@ -312,7 +312,7 @@ class TaskController extends BaseController
         for ($i = 0; $i < count($taskList); $i++) {
             $taskList[$i]["supervisor_name"] = "";
             if ($taskList[$i][Task::SupervisorId] > 0) {
-                $supervisor =  $this->FindElement($supervisorList, Employee::Id, $taskList[$i][Task::SupervisorId]);
+                $supervisor = $this->FindElement($supervisorList, Employee::Id, $taskList[$i][Task::SupervisorId]);
                 $taskList[$i]["supervisor_name"] = $supervisor[Employee::Name];
             }
             $taskList[$i]["employee_name"] = "";
@@ -321,13 +321,14 @@ class TaskController extends BaseController
                 $condition = [Employee::Id => $taskList[$i][Task::EmployeeId]];
                 $employee = $model->GetEmployee($condition);
 
-		//     $taskList[$i]["employee_name"] = $employee[0][Employee::Name];
-		if (is_array($employee) && isset($employee[0]) && is_array($employee[0]) && isset($employee[0][Employee::Name])) {
-        $taskList[$i]["employee_name"] = $employee[0][Employee::Name];
-    } else {
-        // Handle the case where $employee does not have the expected structure
-        $taskList[$i]["employee_name"] = 'Unknown';
-    }
+                //     $taskList[$i]["employee_name"] = $employee[0][Employee::Name];
+                if (is_array($employee) && isset($employee[0]) && is_array($employee[0]) && isset($employee[0][Employee::Name])) {
+                    $taskList[$i]["employee_name"] = $employee[0][Employee::Name];
+                    // print_r($taskList);
+                } else {
+                    // Handle the case where $employee does not have the expected structure
+                    $taskList[$i]["employee_name"] = 'Unknown';
+                }
             }
 
             $condition = [Task::ParentTaskId => $taskList[$i][Task::TaskId]];
@@ -407,20 +408,14 @@ class TaskController extends BaseController
     public function GetTasksInOrder()
     {
         $tskDetmodel = ModelFactory::createModel(ModelNames::TaskDetail);
-
         $taskDetailList = $tskDetmodel->GetParentTaskDetailList();
-
-
         $result = [];
         $count = 0;
         foreach ($taskDetailList as $key => $value) {
-
             $count++;
             $result[$count] = $value;
-
             $condition = [TaskDetail::ParentTask => $value[TaskDetail::TaskDetailId]];
             $res = $this->modelHelper->GetAllDataUsingWhere($tskDetmodel, $condition);
-
             if ($res) {
                 if (count($res) > 1) {
                     foreach ($res as $key => $value) {
@@ -447,7 +442,9 @@ class TaskController extends BaseController
                 $request = "";
 
                 $taskOrderDetails = $this->GetTaskAndOrderDetails($taskId);
+                // print_r($taskOrderDetails);
                 $task = $taskOrderDetails["task"];
+                // print_r($task);
                 $drpdwnData = null;
                 if ($task[Task::Status] == WorkStatus::IP) {
                     $drpdwnData = GetJson();
@@ -461,31 +458,23 @@ class TaskController extends BaseController
                     'employee' => 'required',
                 ];
 
-
                 $errors = [
-
                     'employee' => [
                         'required' => 'Please select any one employee.',
                     ],
-
-
-
                 ];
                 if (!$this->validate($rules, $errors)) {
                     //  log_message('debug', 'Validation errors: ' . print_r($this->validator->getErrors(), true));
                     $output = $this->validator->getErrors();
                     $errorMsg = implode(";", $output);
                     //$response = Response::SetResponse(400, null, new Error($errorMsg));
-
-
                     return json_encode(['success' => false, 'csrf' => csrf_hash(), 'error' => $output]);
                 } else {
                     $request = $this->request->getPost();
-
                     //update task table
                     $data = [Task::EmployeeId => $request["employee"], Task::Status => WorkStatus::IP, Task::StartTime => date("Y-m-d H:i:s")];
                     $taskModel = ModelFactory::createModel(ModelNames::Task);
-                    $result =  $modelHelper->UpdateData($taskModel, $taskId, $data);
+                    $result = $modelHelper->UpdateData($taskModel, $taskId, $data);
 
                     $condition = [Task::TaskId => $taskId];
                     $task = $modelHelper->GetSingleData($taskModel, $condition);
@@ -497,13 +486,7 @@ class TaskController extends BaseController
                     //update status in order table
                     $data = [Order::Status => WorkStatus::IP . " - " . $taskDetail[TaskDetail::TaskName]];
                     $orderModel = ModelFactory::createModel(ModelNames::Order);
-                    $result =  $modelHelper->UpdateData($orderModel, $task[Task::OrderListId], $data);
-
-
-
-                    // $response = Response::SetResponse(201, null, new Error());
-                    // return json_encode(['success' => true, 'csrf' => csrf_hash(), "url" => base_url("task/taskDetailList")]);
-
+                    $result = $modelHelper->UpdateData($orderModel, $task[Task::OrderListId], $data);
                     return redirect()->to(base_url("task/orderList/" . $request["taskDetailId"]));
                 }
             }
@@ -516,6 +499,7 @@ class TaskController extends BaseController
         }
         return json_encode($response);
     }
+
     public function SplitTaskAndMapEmployees($taskId)
     {
         try {
@@ -523,7 +507,7 @@ class TaskController extends BaseController
             if ($this->request->getMethod() == "post") {
 
                 $request = $this->request->getPost();
-                $postData =  json_decode($request["req"]);
+                $postData = json_decode($request["req"]);
                 $rules = [
                     'req' => 'required',
                     //  'employee' => 'required',
@@ -554,7 +538,7 @@ class TaskController extends BaseController
                     }
                     // $result =  $modelHelper->UpdateData($taskModel, $taskId, $data);
 
-                    $parentTask =   $modelHelper->GetSingleData($taskModel, $condition);
+                    $parentTask = $modelHelper->GetSingleData($taskModel, $condition);
                     $parentTaskId = $parentTask[Task::TaskId];
                     $parentTask[Task::TaskId] = null;
                     $count = 0;
@@ -628,7 +612,7 @@ class TaskController extends BaseController
         $request = $this->request->getPost();
 
         $rules = [
-            'qa_task'     => 'required',
+            'qa_task' => 'required',
             'parent_task' => 'required'
         ];
 
@@ -658,27 +642,27 @@ class TaskController extends BaseController
             $condition = [Task::TaskId => $request["parent_task"]];
             $parentTask = $this->modelHelper->GetSingleData($taskModel, $condition);
             $data = [
-                //'Task_id'          => $taskId,
+                    //'Task_id'          => $taskId,
                 Task::ParentTaskId => $request["qa_task"],
-                Task::OrderListId  => $parentTask[Task::OrderListId],
-                Task::OrderId      => $parentTask[Task::OrderId],
-                Task::ItemId       => $parentTask[Task::ItemId],
-                //'Employee_id'     => $inputs,
+                Task::OrderListId => $parentTask[Task::OrderListId],
+                Task::OrderId => $parentTask[Task::OrderId],
+                Task::ItemId => $parentTask[Task::ItemId],
+                    //'Employee_id'     => $inputs,
                 Task::SupervisorId => $parentTask[Task::SupervisorId],
-                //'Start_time'      => $inputs,
-                //'End_time'        => $inputs,
-                //'Time_taken'      => $inputs,
+                    //'Start_time'      => $inputs,
+                    //'End_time'        => $inputs,
+                    //'Time_taken'      => $inputs,
                 Task::TaskDetailId => $parentTask[Task::TaskDetailId],
-                // Task::Sizing       => $inputs['sizing'],
-                // Task::OutLength    => $inputs['output_length'],
-                // Task::OutTexture   => $inputs['output_texture'],
-                // Task::OutColour    => $inputs['output_colour'],
-                //'Out_qty'          => $inputs['outputlength'],
-                Task::Status       => WorkStatus::NS,
-                //'Next_task_id'=>,
+                    // Task::Sizing       => $inputs['sizing'],
+                    // Task::OutLength    => $inputs['output_length'],
+                    // Task::OutTexture   => $inputs['output_texture'],
+                    // Task::OutColour    => $inputs['output_colour'],
+                    //'Out_qty'          => $inputs['outputlength'],
+                Task::Status => WorkStatus::NS,
+                    //'Next_task_id'=>,
 
-                Task::CreatedBy    => session()->get('id'),
-                Task::UpdatedBy    => session()->get('id')
+                Task::CreatedBy => session()->get('id'),
+                Task::UpdatedBy => session()->get('id')
             ];
 
             $insertedId = $this->modelHelper->InsertData($taskModel, $data);
@@ -691,7 +675,7 @@ class TaskController extends BaseController
             // $data[Task::TaskId] = $taskId;
             // $qaTask = $this->InsertQaTask($data, $inputs['task_detail_id']);
 
-            return json_encode(['success' => true, 'csrf' => csrf_hash(), 'url'=> base_url("task/orderList/".$qaTask[Task::TaskDetailId] )]);
+            return json_encode(['success' => true, 'csrf' => csrf_hash(), 'url' => base_url("task/orderList/" . $qaTask[Task::TaskDetailId])]);
         }
     }
     public function QualityCheck($taskId)
@@ -713,10 +697,10 @@ class TaskController extends BaseController
 
             $rules = [
                 'parent_task' => 'required',
-               // 'is_complete' => 'required|CheckCompleteStatus[is_complete]',
+                // 'is_complete' => 'required|CheckCompleteStatus[is_complete]',
                 //'next_task_detail_id' => 'required',
                 'qa_task' => 'required',
-                'current_task_detail_id'=>'required'
+                'current_task_detail_id' => 'required'
             ];
 
             if (!$this->validate($rules)) {
@@ -814,15 +798,15 @@ class TaskController extends BaseController
 
         //get the department details
         $deptEmpModel = ModelFactory::createModel(ModelNames::DeptEmpMap);
-	//    $condition = [Department::DepartmentId => $taskDetail[TaskDetail::DepartmentId]];
-	$condition = [DeptEmpMap::DeptId => $taskDetail[TaskDetail::DepartmentId],DeptEmpMap::Status=>"1"];
+        //    $condition = [Department::DepartmentId => $taskDetail[TaskDetail::DepartmentId]];
+        $condition = [DeptEmpMap::DeptId => $taskDetail[TaskDetail::DepartmentId], DeptEmpMap::Status => "1"];
         $deptEmp = $deptEmpModel->GetDeptEmpMap($condition);
 
         //get the employee details under the department
         $empModel = ModelFactory::createModel(ModelNames::Employee);
         $key = Employee::Id;
         $idList = explode(",", $deptEmp[0][DeptEmpMap::EmployeeIds]);
-        $empList =  $empModel->GetEmployeeByIds($key, $idList);
+        $empList = $empModel->GetEmployeeByIds($key, $idList);
 
         $taskOrderDetails = [
             "task" => $task,
@@ -860,7 +844,7 @@ class TaskController extends BaseController
             $condition = [Task::TaskId => $taskId];
 
 
-            $parentTask =   $modelHelper->GetSingleData($taskModel, $condition);
+            $parentTask = $modelHelper->GetSingleData($taskModel, $condition);
             $count = 0;
             $time = date("Y-m-d H:i:s");
 
@@ -908,7 +892,7 @@ class TaskController extends BaseController
                     $data[Stock::Type] = $value["type"];
                     $data[Stock::ExtSize] = $value["extSize"];
 
-                    $data[Stock::StockId] = $parentTask[Task::OrderId]."-".$parentTask[Task::ItemId];
+                    $data[Stock::StockId] = $parentTask[Task::OrderId] . "-" . $parentTask[Task::ItemId];
                     $data[Stock::Date] = date("Y-m-d");
                     $modelHelper->InsertData($stockModel, $data);
                 }
@@ -939,27 +923,27 @@ class TaskController extends BaseController
         $deptEmpData = $this->GetDeptEmpMapData($taskDetailData[TaskDetail::DepartmentId]);
 
         $data = [
-            //'Task_id'          => $taskId,
+                //'Task_id'          => $taskId,
             Task::ParentTaskId => $previousTaskId,
-            Task::OrderListId  => $task[Task::OrderListId],
-            Task::OrderId  => $task[Task::OrderId],
-            Task::ItemId  => $task[Task::ItemId],
-            //'Employee_id'     => $inputs,
-            Task::SupervisorId   => $deptEmpData[DeptEmpMap::SupervisorId],
-            //'Start_time'      => $inputs,
-            //'End_time'        => $inputs,
-            //'Time_taken'      => $inputs,
-            Task::TaskDetailId    => $nextTask,
-            // Task::Sizing       => $inputs['sizing'],
-            // Task::OutLength    => $inputs['output_length'],
-            // Task::OutTexture   => $inputs['output_texture'],
-            // Task::OutColour    => $inputs['output_colour'],
-            //'Out_qty'          => $inputs['outputlength'],
-            Task::Status       => WorkStatus::NS,
-            //'Next_task_id'=>,
+            Task::OrderListId => $task[Task::OrderListId],
+            Task::OrderId => $task[Task::OrderId],
+            Task::ItemId => $task[Task::ItemId],
+                //'Employee_id'     => $inputs,
+            Task::SupervisorId => $deptEmpData[DeptEmpMap::SupervisorId],
+                //'Start_time'      => $inputs,
+                //'End_time'        => $inputs,
+                //'Time_taken'      => $inputs,
+            Task::TaskDetailId => $nextTask,
+                // Task::Sizing       => $inputs['sizing'],
+                // Task::OutLength    => $inputs['output_length'],
+                // Task::OutTexture   => $inputs['output_texture'],
+                // Task::OutColour    => $inputs['output_colour'],
+                //'Out_qty'          => $inputs['outputlength'],
+            Task::Status => WorkStatus::NS,
+                //'Next_task_id'=>,
 
-            Task::CreatedBy    => session()->get('id'),
-            Task::UpdatedBy    => session()->get('id')
+            Task::CreatedBy => session()->get('id'),
+            Task::UpdatedBy => session()->get('id')
         ];
         $taskModel = ModelFactory::createModel(ModelNames::Task);
         $result = $modelHelper->InsertData($taskModel, $data);
@@ -972,14 +956,14 @@ class TaskController extends BaseController
         $modelHelper = new ModelHelper();
         $data = [
             TaskInput::TaskId => $task[Task::TaskId],
-            TaskInput::InColour     => $task[Task::OutColour],
-            TaskInput::InLength     => $task[Task::OutLength],
-            TaskInput::InExtSize    => $task[Task::OutExtSize],
-            TaskInput::InTexture    => $task[Task::OutTexture],
-            TaskInput::InQuantity   => $task[Task::OutQty],
-            TaskInput::InType       => $task[Task::OutType],
-            TaskInput::CreatedBy    => session()->get('id'),
-            TaskInput::UpdatedBy    => session()->get('id')
+            TaskInput::InColour => $task[Task::OutColour],
+            TaskInput::InLength => $task[Task::OutLength],
+            TaskInput::InExtSize => $task[Task::OutExtSize],
+            TaskInput::InTexture => $task[Task::OutTexture],
+            TaskInput::InQuantity => $task[Task::OutQty],
+            TaskInput::InType => $task[Task::OutType],
+            TaskInput::CreatedBy => session()->get('id'),
+            TaskInput::UpdatedBy => session()->get('id')
         ];
         $inputModel = ModelFactory::createModel(ModelNames::Input);
         $result = $modelHelper->InsertData($inputModel, $data);
@@ -988,7 +972,7 @@ class TaskController extends BaseController
     {
         $modelHelper = new ModelHelper();
         $deptEmpModel = ModelFactory::createModel(ModelNames::DeptEmpMap);
-        $condition = [DeptEmpMap::DeptId => $deptId,DeptEmpMap::Status=>"1"];
+        $condition = [DeptEmpMap::DeptId => $deptId, DeptEmpMap::Status => "1"];
         $deptEmpData = $modelHelper->GetSingleData($deptEmpModel, $condition);
 
         return $deptEmpData;
@@ -1011,8 +995,8 @@ class TaskController extends BaseController
         $taskArr = [];
         $taskDetailArr = [];
         $modelHelper = $this->modelHelper;
-        $taskModel =  ModelFactory::createModel(ModelNames::Task);
-        $taskDetailModel =  ModelFactory::createModel(ModelNames::TaskDetail);
+        $taskModel = ModelFactory::createModel(ModelNames::Task);
+        $taskDetailModel = ModelFactory::createModel(ModelNames::TaskDetail);
         while ($taskId > 0) {
             $condition = [Task::TaskId => $taskId];
             $taskData = $modelHelper->GetSingleData($taskModel, $condition);
@@ -1020,7 +1004,7 @@ class TaskController extends BaseController
             $empModel = ModelFactory::createModel(ModelNames::Employee);
             $empIdArr = [$taskData[Task::EmployeeId], $taskData[Task::SupervisorId]];
 
-            $empData =  $modelHelper->GetAllDataUsingWhereIn($empModel, Employee::Id, $empIdArr);
+            $empData = $modelHelper->GetAllDataUsingWhereIn($empModel, Employee::Id, $empIdArr);
 
             $worker = $this->FindElement($empData, Employee::Id, $taskData[Task::EmployeeId]);
             $supervisor = $this->FindElement($empData, Employee::Id, $taskData[Task::SupervisorId]);
@@ -1056,23 +1040,23 @@ class TaskController extends BaseController
 
         $taskDetModel = ModelFactory::createModel(ModelNames::TaskDetail);
         $condition = [TaskDetail::ParentTask => $parentTaskDetail];
-        $qaTaskDetail =  $this->modelHelper->GetSingleData($taskDetModel, $condition);
+        $qaTaskDetail = $this->modelHelper->GetSingleData($taskDetModel, $condition);
 
         $taskModel = ModelFactory::createModel(ModelNames::Task);
 
         $data = [
-            Task::IsQa          => "1",
-            Task::ParentTaskId  => $parentTask[Task::TaskId],
-            Task::OrderListId   => $parentTask[Task::OrderListId],
-            Task::OrderId       => $parentTask[Task::OrderId],
-            Task::ItemId        => $parentTask[Task::ItemId],
-            Task::SupervisorId  => $parentTask[Task::SupervisorId],
-            Task::TaskDetailId  => $qaTaskDetail[TaskDetail::TaskDetailId],
-            Task::Status        => WorkStatus::NS,
-            Task::CreatedBy     => session()->get('id'),
-            Task::UpdatedBy     => session()->get('id')
+            Task::IsQa => "1",
+            Task::ParentTaskId => $parentTask[Task::TaskId],
+            Task::OrderListId => $parentTask[Task::OrderListId],
+            Task::OrderId => $parentTask[Task::OrderId],
+            Task::ItemId => $parentTask[Task::ItemId],
+            Task::SupervisorId => $parentTask[Task::SupervisorId],
+            Task::TaskDetailId => $qaTaskDetail[TaskDetail::TaskDetailId],
+            Task::Status => WorkStatus::NS,
+            Task::CreatedBy => session()->get('id'),
+            Task::UpdatedBy => session()->get('id')
         ];
-        $qaTaskId =  $this->modelHelper->InsertData($taskModel, $data);
+        $qaTaskId = $this->modelHelper->InsertData($taskModel, $data);
 
 
         return $qaTaskId;
@@ -1098,7 +1082,8 @@ class TaskController extends BaseController
 
                 if ($task_status && $input_status) {
                     $status = "Task deleted successfully!";
-                } else $status = "Something went wrong!";
+                } else
+                    $status = "Something went wrong!";
                 session()->setFlashdata('response', $status);
 
                 //$response = Response::SetResponse(201, null, new Error());

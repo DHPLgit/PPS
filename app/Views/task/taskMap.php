@@ -1,5 +1,8 @@
+<?php
+namespace App\Models;
+    use App\Libraries\EnumsAndConstants\Task;
+?>
 <?= $this->extend("layouts/app") ?>
-
 <?= $this->section("body") ?>
 <?php echo script_tag('js/jquery.min.js'); ?>
 <?php echo script_tag('js/functions/Script.js'); ?>
@@ -116,15 +119,14 @@
 
                         <input type="hidden" id="task_detail_id" name="taskDetailId" value="<?= $currentTaskDetail["task_detail_id"] ?>">
                         <label for="employee_id">Select Employee to work:</label>
-                        <select id="employee_id" name="employee">
-
-                            <?php foreach ($employeeList as $key => $employee) { ?>
-                                <option value="<?= $employee["id"] ?>">
-                                    <?= $employee["name"] ?>
-                                </option>
-
-                            <?php } ?>
-                        </select>
+                        <select id="employee_id_split" name="employee">
+                                    <?php foreach ($employeeList as $employee) { ?>
+                                        <option value="<?= $employee["id"] ?>"
+                                            <?= ($employee["id"] == $currentTask[Task::EmployeeId]) ? 'selected' : '' ?>>
+                                            <?= $employee["name"] ?>
+                                        </option>
+                                    <?php } ?>
+                                </select>
                         <div class="button-row">
                             <button id="emp_map_form_btn" type="submit"> Start</button>
                         </div>
@@ -158,19 +160,15 @@
                     <div class="modal-header" style="padding:15px 50px;">
                         <h4> Confirm selection</h4>
                         <button type="button" class="close top-close" data-bs-dismiss="modal">&times;</button>
-
                     </div>
                     <div class="modal-body ctr-segment-body" style="padding:20px;">
                         <p> Are you sure you want to change the product type?</p>
-
                         <div class="d-grid">
                             <button type="button" onclick="inProgressFormSubmit()" class="btn btn-danger confirm pull-right"><span class="fa fa-trash"></span>
                                 Confirm</button>
                             <button type="button" class="btn btn-outline-secondary Cancel pull-left close" data-bs-dismiss="modal"><span class="fa fa-remove"></span> Cancel</button>
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </div>
