@@ -350,7 +350,7 @@
             //     return false;
 
             // } else 
-            if (isNaN(weight)) {
+            if (isNaN(weight) || weight<=0) {
 
                 $(this).find(".weight_error").text("Please enter valid weight.")
                 isError = true;
