@@ -67,8 +67,8 @@
 								</td>
 								<td class="actions-order-list">
 									<a class="view-btn" <?php if ($task['is_qa'] == 0) { ?>
-											href="<?= base_url("task/mapEmployee/" . $task['task_id']) ?>" <?php } elseif ($task['is_qa'] == 1) { ?> href="<?= base_url("task/qualityCheck/" . $task['task_id']) ?>"
-										<?php } ?>>
+											href="<?= base_url("task/mapEmployee/" . $task['task_id']) ?>" <?php }  elseif ($task['is_qa'] == 1) {if($task['status'] == "Completed"){  echo "style='pointer-events:none;background:#e63b3b;padding:10px 15px;border-radius:5px;border: 0px solid #000;filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%) contrast(102%);'";} else { ?> href="<?= base_url("task/qualityCheck/" . $task['task_id']) ?>"
+										<?php } }?>>
 										Check
 									</a>
 									<button onclick='nextTask(<?= json_encode($task["next_task"]) ?>)' <?php if ($task['status'] == "Completed") {

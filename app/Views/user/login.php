@@ -40,7 +40,7 @@
               </div>
               <div class="text-center"><button type="submit" class="btn btn-color px-5 w-100">Login</button></div>
               &nbsp;
-              <div class="text-center"><a class="btn btn-color px-5 w-100" href="<?= base_url("/signup") ?>"> Signup</a></div>
+              <!-- <div class="text-center"><a class="btn btn-color px-5 w-100" href="<?= base_url("/signup") ?>"> Signup</a></div> -->
             </form>
 
 
