@@ -201,7 +201,7 @@
 								row += '<td>' + item.item_id + '</td>';
 								row += '<td>' + item.customer_id + '</td>';
 								row += '<td>' + item.order_date + '</td>';
-								row += '<td>' + item.type + ' ' + item.colour + ' ' + item.length + ' ' + item.texture + ' ' + item.ext_size + '</td>';
+								row += '<td>' + item.item_description + '</td>';
 								row += '<td>' + item.bundle_count + '</td>';
 								row += '<td>' + item.quantity + '</td>';
 								row += '<td>' + item.status + '</td>';
