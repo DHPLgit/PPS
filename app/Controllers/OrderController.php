@@ -46,6 +46,9 @@ class OrderController extends BaseController
 
                 $orderId=$order[Order::OrderId];
             }
+
+
+            
             $response = Response::SetResponse(200, $orderList, new Error());
             return view('order/orderList', ["orderList" => $orderList]);
         } catch (DataBaseException $ex) {
@@ -111,7 +114,7 @@ class OrderController extends BaseController
                 "bundle_count" => $order[Order::BundleCount],
                 "quantity" => $order[Order::Quantity],
                 "status" => $order[Order::Status],
-                "due_date" => $order[Order::DueDate]
+                "due_data" => $order[Order::DueDate]
             ];
             array_push($res, $data);
         }
@@ -504,6 +507,11 @@ class OrderController extends BaseController
     {
 
         $request = $this->request->getGet();
+
+        // $condition["key"] = Order::OrderId;
+        // $condition["value"] = $request['query'];
+        // $condition["side"] = "after";
+        // $req[0]=$condition;
         $model = ModelFactory::createModel(ModelNames::Order);
 
         $selectArray = [Order::OrderListId, Order::OrderId, Order::ItemId, Order::CustomerId, Order::OrderDate, Order::Type, Order::Colour, Order::Length, Order::Texture, Order::ExtSize, Order::BundleCount, Order::Quantity, Order::Status, Order::DueDate];
@@ -524,11 +532,14 @@ class OrderController extends BaseController
                 "bundle_count" => $order[Order::BundleCount],
                 "quantity" => $order[Order::Quantity],
                 "status" => $order[Order::Status],
-                "due_date" => $order[Order::DueDate]
+                "due_data" => $order[Order::DueDate]
             ];
             array_push($res, $data);
         }
 
+        //  $orderList= $this->modelHelper->GetDataUsingLike($model, $req);
+
         return json_encode(["success" => true, 'csrf' => csrf_hash(), 'output' => $res]);
+        //  return view('order/orderList', ["orderList" => $orderList]);
     }
 }
