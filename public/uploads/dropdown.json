@@ -44,6 +44,7 @@
     "10N",
     "11A",
     "11B",
+    "12A",
     "12B",
     "12N",
     "6N/9N",
@@ -61,7 +62,7 @@
     "Gray white",
     "Others"],
     "types": ["Poly", "Weft", "Cylinder"],
-    "Ext_sizes":["Half","Full","Thin","Micro","N/A"],
+    "Ext_sizes":["N/A","Full","Half","Quarter","Thin","Micro","Heavy","Thick","Fine"],
     "Sizings":["SD","DD"],
     "Length":["12","14","16","18","20","22","24","26","28","30","32"]
   }

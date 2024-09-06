@@ -39,12 +39,12 @@
                         <?php echo stripslashes($stock['texture']); ?>
                     </p>
                 </div>
-                <!-- <div class="view-data-details">
-                    <p class="title">Out:</p>
+                <div class="view-data-details">
+                    <p class="title">Ext size:</p>
                     <p class="data">
-                    <?php echo stripslashes($stock['out']); ?>
+                    <?php echo stripslashes($stock['ext_size']); ?>
                     </p>
-                </div> -->
+                </div>
             </div>
             <div class="col-md-6">
                 <div class="view-data-details">
@@ -77,12 +77,6 @@
                     <?php echo stripslashes($stock['date']); ?>
                     </p>
                 </div>
-                <!-- <div class="view-data-details">
-                    <p class="title">In:</p>
-                    <p class="data">
-                    <?php echo stripslashes($stock['in']); ?>
-                    </p>
-                </div> -->
             </div>
         </div>
     </div>

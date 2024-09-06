@@ -17,7 +17,7 @@
             <?php $action = base_url() . "resetpwd/" . $encrptVal . "/" . $randomKey ?>
             <div class="col-md-6 col-sm-12 col-xs-12 forget-password">
                 <h2 class="login-head mt-5 mb-4">Reset Password</h2>
-                <form class="form-Centered form-forget sign-in" action="<?= base_url($action); ?>" method="post">
+                <form class="form-Centered form-forget sign-in" action="<?= $action; ?>" method="post">
 
 
                     <div class="mb-4">

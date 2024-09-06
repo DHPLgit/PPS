@@ -9,7 +9,7 @@
         <label for="countryInput" class="form-label">Order ID:</label></br>
         <input type="hidden" id="orderListId">
         <input type="hidden" id="ordItemId">
-        <input type="text" id="orderidsearch" class="form-control" placeholder="Search Order ID" class="taskini-input">
+        <input type="text" id="orderidsearch" autocomplete="off" class="form-control" placeholder="Search Order ID" class="taskini-input">
         <button id="clear" type="button" onclick="clearInput()" class="d-none">x</button>
         <p style="color:red" class="error" id="order_list_id_error" type="hidden"></p>
         <div>
@@ -32,12 +32,12 @@
           </div>
           <div class="col-md-6">
             <div class="orderid">
-              <label>length:</label></br>
+              <label>Length:</label></br>
               <input type="search" class="taskini-input form-control" id="length" readonly />
             </div>
 
             <div class="orderid">
-              <label>quantity(gms):</label></br>
+              <label>Quantity(gms):</label></br>
               <input type="search" class="taskini-input form-control" id="quantity" readonly />
             </div>
           </div>
@@ -113,7 +113,8 @@
               </div>
               <div class="col-md-6">
                 <label for="quantity">Quantity(gms):</label><br>
-                <input type="number" id="quantity" name="quantity" placeholder="Please enter the Quantity " class="taskini-input form-control" step="any">
+                <input type="number" id="quantity" name="quantity" placeholder="Please enter the Quantity "
+                  class="taskini-input form-control" step="any">
                 <p style="color:red" class="error" id="quantity_error" type="hidden"></p>
                 <div class="">
                   <div class="mt-5">
@@ -127,14 +128,15 @@
         </div>
         <div id="preview"></div>
 
-        
+
         <form action="<?= base_url("task/createTask") ?>" id="create-task-form" method="post">
           <input type="hidden" id="stock" name="stock">
           <div class="row mt-5">
             <div class="taskselect">
               <h4>Select Task</h4>
               <select id="dropdown-task" class="taskini-input">
-                <?php foreach ($taskDetailList as $taskDetail) { ?> <option value="<?= $taskDetail["task_detail_id"] ?>"><?= $taskDetail["task_name"] ?></option><?php } ?>
+                <?php foreach ($taskDetailList as $taskDetail) { ?>
+                  <option value="<?= $taskDetail["task_detail_id"] ?>"><?= $taskDetail["task_name"] ?></option><?php } ?>
 
               </select>
             </div>
@@ -153,30 +155,24 @@
 <?php echo script_tag('js/jquery.min.js'); ?>
 <?php echo script_tag('js/functions/Script.js'); ?>
 <script>
-  $("#stock-search").submit(function(event) {
+  $("#stock-search").submit(function (event) {
     event.preventDefault();
     searchStocks($(this))
   });
-  $("#orderidsearch").keyup(function() {
+  $("#orderidsearch").keyup(function () {
     $("#order_list_id_error").text("")
     var query = $(this).val();
     var url = "<?= base_url('order/search') ?>"
     searchOrder(url, query);
   });
-  $("#AddStock-form").submit(function(event) {
+  $("#AddStock-form").submit(function (event) {
     event.preventDefault();
     console.log($('#AddStock-form').serializeArray());
     saveStockInput($(this))
   });
-  $("#submit-create-task").on("click", function() {
+  $("#submit-create-task").on("click", function () {
     var url = "<?= base_url("task/createTask") ?>";
     createTask(url);
   })
-  // $("#create-task-form").submit(function(event) {
-  //   event.preventDefault();
-  //   $('#stock').val(JSON.stringify(toArray));
-  //   console.log($('#create-task-form').serializeArray());
-  //   //saveStockInput($(this))
-  // });
 </script>
 <?= $this->endSection() ?>

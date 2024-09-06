@@ -36,11 +36,11 @@
               </div>
               <!-- <div id="emailHelp" class="form-text forget"><a href="<?= base_url("/forgetPassword") ?>" class=""> Forget Password ?</a>
               </div> -->
-              <div id="emailHelp" class="form-text forget"><button id="fp" type="button">Forget Password ?</button>
+              <div id="emailHelp" class="form-text forget"><button id="fp" type="button">Forgot Password ?</button>
               </div>
               <div class="text-center"><button type="submit" class="btn btn-color px-5 w-100">Login</button></div>
               &nbsp;
-              <div class="text-center"><a class="btn btn-color px-5 w-100" href="<?= base_url("/signup") ?>"> Signup</a></div>
+              <!-- <div class="text-center"><a class="btn btn-color px-5 w-100" href="<?= base_url("/signup") ?>"> Signup</a></div> -->
             </form>
 
 
@@ -62,7 +62,7 @@
           </div>
         </div>
         <div class="col-md-6" id="fp-div" style="display: none;">
-        <h2 class="login-head mt-5">Forget Password</h2>
+        <h2 class="login-head mt-5">Forgot Password</h2>
           <div class="card mt-2">
             <form id="fp-form" action="<?= base_url('forgetPassword') ?>">
 
@@ -72,6 +72,9 @@
                 <p style="color:red" class="error" id="fp_mail_id_error" type="hidden"></p>
               </div>
               <div class="text-center"><button type="submit" class="btn btn-color px-5 w-100">Submit</button></div>
+              <div class="row p-3">
+                <a class="bck-to-login" href="<?php echo base_url("/") ?>">Back to Login</a>
+              </div>
             </form>
           </div>
         </div>

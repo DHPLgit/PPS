@@ -866,10 +866,22 @@ a {
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   position: absolute;
   z-index: 99;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
 }
 
 #autocompleteList li {
-  list-style: none;
+  cursor: pointer;
+  padding: 8px;
+  border-bottom: 1px solid #ddd; 
+}
+
+#autocompleteList li:hover {
+  background-color: #f0f0f0; 
 }
 
 #clear {
