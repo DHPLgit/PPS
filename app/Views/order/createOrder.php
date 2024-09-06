@@ -189,7 +189,7 @@
                         </div>
                         <!-- <div id="bundle-qty-div" style="display: none;"> -->
                         <div class="form-list" id="bundle-count-div" style="display: none;">
-                            <label class="login-label">Bundle count</label>
+                            <label class="login-label">Quantity(Bundles)</label>
                             <div class="mb-3">
                                 <input type="text" class="form-control" placeholder="Bundle count" id="bundle_count" name="bundle_count">
                                 <p style="color:red" class="error" id="bundle_count_error" type="hidden"></p>
@@ -201,7 +201,7 @@
                             </div>
                         </div>
                         <div class="form-list" id="quantity-div" style="display: none;">
-                            <label class="login-label">Quantity(gms)</label>
+                            <label class="login-label">Weight(gms)</label>
                             <div class="mb-3">
                                 <input type="text" class="form-control" placeholder="Quantity" id="quantity" name="quantity">
                                 <p style="color:red" class="error" id="quantity_error" type="hidden"></p>

@@ -83,15 +83,6 @@
     </div>
 </section>
 <script>
-    // $("#complete").on("click", function() {
-    //     $("#next_task_div").show();
-
-    //     $("#next_task_detail_div").hide();
-    // });
-    // $("#move_to_next_task").on("click", function() {
-    //     $("#next_task_div").show();
-    //     $("#next_task_detail_div").show();
-    // });
 
     <?php $flag = ($qaTask["status"] == "In progress") ? true : false ?>
     flag = false;
@@ -114,14 +105,6 @@
         }
         if (checkedCount == qcCount) {
 
-            //$("#radio_check_div").show();
-            // const element = document.getElementById('ok');
-
-            // element.style.pointerEvents = 'auto';
-
-            // const element2 = document.getElementById('not_ok');
-
-            // element2.style.pointerEvents = 'none';
             $("#not_ok").hide();
             console.log(<?=$qaTask["task_detail_id"] ?>)
 
@@ -139,17 +122,9 @@
 
             $("#not_ok").show();
             $("#next_task_div").hide();
-            //$("#radio_check_div").hide();
-            // const element = document.getElementById('ok');
-
-            // element.style.pointerEvents = 'none';
-
-            // const element2 = document.getElementById('not_ok');
-
-            // element2.style.pointerEvents = 'auto';
+          
             console.log("not ok");
         }
-        //  $(this).closest("li").toggleClass("active", this.checked);
     });
 
     $(".allow-focus").on("click", function(e) {
@@ -181,16 +156,6 @@
     })
     $("#next_task_form").submit(function(event) {
         event.preventDefault();
-
-        // var radioButtons = document.getElementsByName('is_complete');
-        // var is_complete = "";
-        // for (var i = 0; i < radioButtons.length; i++) {
-        //     if (radioButtons[i].checked) {
-        //         is_complete = radioButtons[i].value;
-        //         break;
-        //     }
-        // }
-        // var complete = $("#is_complete")
         var current_task_detail_id=<?= $qaTask["task_detail_id"] ?>;
         var input = {
             parent_task: <?= $task["task_id"] ?>,
@@ -201,11 +166,7 @@
 
          if (current_task_detail_id != 101) {
             input.next_task_detail_id = $("#next_task_detail_id").val()
-         }
-       // input.is_complete = is_complete;
-        // } else {
-        //     input.is_complete = is_complete;
-        // }
+         }  
         $.ajax({
             type: "post",
             url: "<?= base_url("task/qualityCheck/" . $task['task_id']) ?>",

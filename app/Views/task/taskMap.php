@@ -1,5 +1,8 @@
+<?php
+namespace App\Models;
+    use App\Libraries\EnumsAndConstants\Task;
+?>
 <?= $this->extend("layouts/app") ?>
-
 <?= $this->section("body") ?>
 <?php echo script_tag('js/jquery.min.js'); ?>
 <?php echo script_tag('js/functions/Script.js'); ?>
@@ -23,7 +26,8 @@
                     <p class="para"><span>Type:</span>
                         <?= $order["type"] ?>
                     </p>
-                    <p class="para"><span>Extn size:</span></p>
+                    <p class="para"><span>Extn size:</span>
+                        <?= $order["ext_size"] ?></p>
 
                     <p class="para"><span>Length:</span>
                         <?= $order["length"] ?>
@@ -33,7 +37,7 @@
                 <div class="para-input-2">
                     <?php foreach ($inputDetails as $key => $input) { ?>
                         <div class="inpt-details-row">
-                            <p class="para"><span>Size:</span>
+                            <p class="para"><span>Extn size:</span>
                                 <?= $input["in_ext_size"] ?>
                             </p>
                             <p class="para"><span>Colour:</span>
@@ -72,7 +76,7 @@
                     <div>
                         <label for="split">Split Job</label>
                         <input type="radio" id="split" name="split"> Yes
-                        <input type="radio" id="no_split" name="split"> No
+                        <input checked type="radio" id="no_split" name="split"> No
                         <br />
                         <!-- <label for="">Quality Check:</label>
                         <a type="button" href="<?= base_url("task/qualityCheck/" . $task['task_id']) ?>"> Click here for QA</a> -->
@@ -99,7 +103,7 @@
                                 </select>
                             </div>
                             <p style="color:red" class="error" id="quantity_error" type="hidden"></p>
-                            <p style="color:red" class="error" id="employee_eror" type="hidden"></p>
+                            <p style="color:red" class="error" id="employee_error" type="hidden"></p>
                             <div>
                                 <button type="submit"> Add</button>
                             </div>
@@ -115,15 +119,14 @@
 
                         <input type="hidden" id="task_detail_id" name="taskDetailId" value="<?= $currentTaskDetail["task_detail_id"] ?>">
                         <label for="employee_id">Select Employee to work:</label>
-                        <select id="employee_id" name="employee">
-
-                            <?php foreach ($employeeList as $key => $employee) { ?>
-                                <option value="<?= $employee["id"] ?>">
-                                    <?= $employee["name"] ?>
-                                </option>
-
-                            <?php } ?>
-                        </select>
+                        <select id="employee_id_split" name="employee">
+                                    <?php foreach ($employeeList as $employee) { ?>
+                                        <option value="<?= $employee["id"] ?>"
+                                            <?= ($employee["id"] == $currentTask[Task::EmployeeId]) ? 'selected' : '' ?>>
+                                            <?= $employee["name"] ?>
+                                        </option>
+                                    <?php } ?>
+                                </select>
                         <div class="button-row">
                             <button id="emp_map_form_btn" type="submit"> Start</button>
                         </div>
@@ -157,19 +160,15 @@
                     <div class="modal-header" style="padding:15px 50px;">
                         <h4> Confirm selection</h4>
                         <button type="button" class="close top-close" data-bs-dismiss="modal">&times;</button>
-
                     </div>
                     <div class="modal-body ctr-segment-body" style="padding:20px;">
                         <p> Are you sure you want to change the product type?</p>
-
                         <div class="d-grid">
                             <button type="button" onclick="inProgressFormSubmit()" class="btn btn-danger confirm pull-right"><span class="fa fa-trash"></span>
                                 Confirm</button>
                             <button type="button" class="btn btn-outline-secondary Cancel pull-left close" data-bs-dismiss="modal"><span class="fa fa-remove"></span> Cancel</button>
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </div>
@@ -229,7 +228,7 @@
             var length = '<label for="Length">Length:</label><br/><input type="number" step="0.25" min="0" placeholder="0.00" class="length" placeholder="length"><p style="color:red;display:none" class="error length_error"></p> <br/>';
             var texture = '<label for="texture">Texture:</label><br/><select id="texture_dropdown" class="texture_select" name="texture"><?php if (isset($drpdwnData)) {
                                                                                                                                                 foreach ($drpdwnData->Textures as $texture) { ?><option value="<?php echo $texture ?>"><?php echo $texture ?></option><?php }
-                                                                                                                                                                                                                                                        } ?></select><br/>';
+                                                                                                                                                                                                                                                                } ?></select><br/>';
             var weight = '<label for="weight">Weight (gm):</label><br/><input type="number" class="weight" placeholder="weight"><p style="color:red;display:none" class="error weight_error"></p> <br/>';
 
             var type = '<label for="Type">Type:</label><br/><select id="type_dropdown" class="type_select" name="type"><?php if (isset($drpdwnData)) {
@@ -330,8 +329,8 @@
             var type = typeSelect[0].options[typeSelect[0].selectedIndex].value;
             var extSize = extSizeSelect[0].options[extSizeSelect[0].selectedIndex].value;
 
-            if(type.includes("Bulk")){
-                extSize="N/A";
+            if (type.includes("Bulk")) {
+                extSize = "N/A";
             }
 
             var weight = parseInt($(this).find('.weight').val());
@@ -349,7 +348,7 @@
             //     return false;
 
             // } else 
-            if (isNaN(weight)) {
+            if (isNaN(weight) || weight<=0) {
 
                 $(this).find(".weight_error").text("Please enter valid weight.")
                 isError = true;
@@ -381,7 +380,7 @@
                     texture: texture,
                     weight: weight,
                     type: type,
-                    extSize:extSize
+                    extSize: extSize
                 };
                 formData.push(data);
             } else {
@@ -446,7 +445,8 @@
         $("#preview").show();
         $("#split_div").show();
         $("#emp_map_form").hide();
-        $("#employee_eror").text("");
+        $("#employee_error").text("");
+        $("#quantity_error").text("");
 
         emptyPreview();
 
@@ -469,16 +469,21 @@
         event.preventDefault();
         console.log($('#add_split_form').serializeArray());
         var form = $(this);
-
+        $("#employee_error").text("");
         $("#stock_id_error").text("");
         $("#quantity_error").text("");
         var in_qty_elements = document.querySelectorAll('input[name="in_qty[]"]');
         var in_qty_id_elements = document.querySelectorAll('input[name="in_qty_id[]"]');
         var in_qty_list = [];
         var in_qty = 0;
+        var qtyError = false;
         for (let index = 0; index < in_qty_elements.length; index++) {
             in_qty = in_qty_elements[index].value;
-
+            var parsedQty = parseInt(in_qty);
+            if (isNaN(parsedQty) || parsedQty <= 0) {
+                qtyError = true;
+                break;
+            }
             overAllReqQty += parseInt(in_qty);
             console.log("overAllReqQty", overAllReqQty);
             const in_qty_id = in_qty_id_elements[index].value;
@@ -487,101 +492,107 @@
                 in_qty_id: in_qty_id
             };
             in_qty_list.push(qty_pair);
-            console.log(in_qty_list);
+            console.log("in_qty_list", in_qty_list);
         }
+        if (!qtyError) {
+            var employee = form.find('select[name="employee"]').val();
+            console.log(employee);
+            var qtyElement = document.getElementById("quantity");
+            var selectElement = document.getElementById("employee_id_split");
+            var selectedOption = selectElement.options[selectElement.selectedIndex];
+            console.log("selectedOption", selectedOption);
 
-        var employee = form.find('select[name="employee"]').val();
-        console.log(employee);
-        var qtyElement = document.getElementById("quantity");
-        var selectElement = document.getElementById("employee_id_split");
-        var selectedOption = selectElement.options[selectElement.selectedIndex];
-        console.log("selectedOption", selectedOption);
+            console.log(qty_emp_input)
 
-        console.log(qty_emp_input)
-
-        var selectedOptionText = selectedOption.innerText;
-        console.log(selectedOptionText);
+            var selectedOptionText = selectedOption.innerText;
+            console.log(selectedOptionText);
 
 
-        //Adding the preview of a entered quantity if condition satisfies.
+            //Adding the preview of a entered quantity if condition satisfies.
         // console.log("overAllReqQty", overAllReqQty);
         // console.log("overAllAccQty", overAllAccQty);
         // console.log("overAllQty", overAllQty);
-        if ((overAllReqQty + overAllAccQty) <= overAllQty) {
+            if ((overAllReqQty + overAllAccQty) <= overAllQty) {
 
-            if (employee) {
-                overAllAccQty += parseFloat(in_qty);
-                console.log("overAllAccQty", overAllAccQty);
-                var input = {
-                    qty: in_qty_list,
-                };
-                console.log(input);
-                document.querySelectorAll("#employee_id_split option").forEach(opt => {
-                    if (opt.value == employee) {
-                        opt.disabled = true;
-                    }
-                });
-
-                var previewContainer = document.getElementById('preview');
-                var employee_div = document.createElement('div');
-                employee_div.className = 'employee_div';
-                employee_div.innerText = selectedOptionText;
-                var quantity_div = document.createElement('div');
-                quantity_div.className = "quantity_div";
-
-                var qty_inner_text = "";
-                count = 0;
-                in_qty_list.forEach(element => {
-                    count++;
-                    console.log("element", element);
-                    if (count >= 2) {
-                        qty_inner_text += "\n" + "quantity " + count + ": " + element.in_qty;
-                    } else {
-                        qty_inner_text += "quantity " + count + ": " + element.in_qty;
-                    }
-
-                });
-                quantity_div.innerText = qty_inner_text;
-                employee_div.appendChild(quantity_div);
-                var removeButton = document.createElement('button');
-                removeButton.innerText = 'X';
-                removeButton.onclick = function() {
-
+                if (employee) {
+                    overAllAccQty += overAllReqQty;
+                    console.log("overAllAccQty", overAllAccQty);
+                    var input = {
+                        qty: in_qty_list,
+                    };
+                    console.log(input);
                     document.querySelectorAll("#employee_id_split option").forEach(opt => {
-
                         if (opt.value == employee) {
-                            opt.disabled = false;
-                            console.log("removed", qty_emp_input[employee][0].in_qty);
-                            overAllAccQty -= parseFloat(qty_emp_input[employee][0].in_qty);
-                            console.log("overAllAccQty", overAllAccQty);
-                            delete qty_emp_input[employee];
+                            opt.disabled = true;
                         }
                     });
 
-                    previewContainer.removeChild(employee_div);
+                    var previewContainer = document.getElementById('preview');
+                    var employee_div = document.createElement('div');
+                    employee_div.className = 'employee_div';
+                    employee_div.innerText = selectedOptionText;
+                    var quantity_div = document.createElement('div');
+                    quantity_div.className = "quantity_div";
+
+                    var qty_inner_text = "";
+                    count = 0;
+                    in_qty_list.forEach(element => {
+                        count++;
+                        console.log("element", element);
+                        if (count >= 2) {
+                            qty_inner_text += "\n" + "quantity " + count + ": " + element.in_qty;
+                        } else {
+                            qty_inner_text += "quantity " + count + ": " + element.in_qty;
+                        }
+
+                    });
+                    quantity_div.innerText = qty_inner_text;
+                    employee_div.appendChild(quantity_div);
+                    var removeButton = document.createElement('button');
+                    removeButton.innerText = 'X';
+                    removeButton.onclick = function() {
+
+                        document.querySelectorAll("#employee_id_split option").forEach(opt => {
+
+                            if (opt.value == employee) {
+                                opt.disabled = false;
+                                console.log("removed", qty_emp_input[employee][0].in_qty);
+                                overAllAccQty -= parseFloat(qty_emp_input[employee][0].in_qty);
+                                console.log("overAllAccQty", overAllAccQty);
+                                delete qty_emp_input[employee];
+                            }
+                        });
+
+                        previewContainer.removeChild(employee_div);
+                    }
+                    employee_div.appendChild(removeButton);
+                    previewContainer.appendChild(employee_div);
+                    console.log("employee", employee);
+                    qty_emp_input[employee] = in_qty_list;
+                    console.log("2", qty_emp_input)
+                    console.log("here2", JSON.stringify(qty_emp_input));
+
+                } else {
+                    $("#quantity_error").text("Please select different employee.")
                 }
-                employee_div.appendChild(removeButton);
-                previewContainer.appendChild(employee_div);
-                console.log("employee", employee);
-                qty_emp_input[employee] = in_qty_list;
-                console.log("2", qty_emp_input)
-                console.log("here2", JSON.stringify(qty_emp_input));
 
             } else {
-                $("#quantity_error").text("Please select different employee.")
+                $("#quantity_error").text("Sum of the entered quantities should be less than or equal to the input quantity.")
             }
-
-        } else {
+        }
+        else{
             $("#quantity_error").text("Please enter valid quantity.")
+
         }
     });
 
     //Split task
     $("#save_split").on("click", function() {
+        $("#quantity_error").text("");
         var a = qty_emp_input.length;
         console.log("len", a);
         $("#save_split").prop("disabled", true);
-        if (Object.keys(qty_emp_input).length > 0) {
+        if (Object.keys(qty_emp_input).length > 1) {
             $.ajax({
                 url: "<?php echo base_url('task/splitTask/' . $task["task_id"]) ?>",
                 type: 'post',
@@ -609,10 +620,12 @@
                 }
 
             });
+        } else if (Object.keys(qty_emp_input).length == 1) {
+            $("#save_split").prop("disabled", false);
+            $("#employee_error").text("Please split the task to two or more employees.")
         } else {
             $("#save_split").prop("disabled", false);
-            $("#employee_eror").text("Please enter quantity and select employee to map.")
-            console.log("no dat a found.");
+            $("#employee_error").text("Please enter quantity and select employee to map.")
         }
     });
 
