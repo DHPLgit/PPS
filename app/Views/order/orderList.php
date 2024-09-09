@@ -36,7 +36,7 @@
 
 							<th scope="col">Order Id</th>
 							<!-- <th scope="col">Item number</th> -->
-							<!-- <th scope="col">Customer Id</th> -->
+							<th scope="col">Customer Id</th>
 							<th scope="col">Order date</th>
 							<!-- <th scope="col">Item description</th>
 							<th scope="col">Bundle count</th>
@@ -76,9 +76,9 @@
 										<?php echo stripslashes($order['item_id']); ?>
 									</td> -->
 
-									<!-- <td>
+									<td>
 										<?php echo stripslashes($order['customer_id']); ?>
-									</td> -->
+									</td>
 									<td>
 										<?php echo stripslashes($order['order_date']); ?>
 									</td>
