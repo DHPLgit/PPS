@@ -43,7 +43,7 @@
 									<?php echo stripslashes($task['task_id']); ?>
 								</td>
 								<td>
-									<?php echo stripslashes($task['order_id'] ."-".$task['item_id']); ?>
+									<?php echo stripslashes($task['order_id'] . "-" . $task['item_id']); ?>
 								</td>
 								<td>
 									<?php echo stripslashes($task['supervisor_name']); ?>
@@ -67,8 +67,12 @@
 								</td>
 								<td class="actions-order-list">
 									<a class="view-btn" <?php if ($task['is_qa'] == 0) { ?>
-											href="<?= base_url("task/mapEmployee/" . $task['task_id']) ?>" <?php }  elseif ($task['is_qa'] == 1) {if($task['status'] == "Completed"){  echo "style='pointer-events:none;background:#e63b3b;padding:10px 15px;border-radius:5px;border: 0px solid #000;filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%) contrast(102%);'";} else { ?> href="<?= base_url("task/qualityCheck/" . $task['task_id']) ?>"
-										<?php } }?>>
+											href="<?= base_url("task/mapEmployee/" . $task['task_id']) ?>" <?php } elseif ($task['is_qa'] == 1) {
+										if ($task['status'] == "Completed") {
+											echo "style='pointer-events:none;background:#e63b3b;padding:10px 15px;border-radius:5px;border: 0px solid #000;filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%) contrast(102%);'";
+										} else { ?>
+												href="<?= base_url("task/qualityCheck/" . $task['task_id']) ?>" <?php }
+									} ?>>
 										Check
 									</a>
 									<button onclick='nextTask(<?= json_encode($task["next_task"]) ?>)' <?php if ($task['status'] == "Completed") {
@@ -119,10 +123,11 @@
 						<thead>
 							<tr>
 								<th>Task</th>
-								<th>supervisor</th>
+								<th>Supervisor</th>
 								<th>Employee</th>
 								<th>Start time</th>
 								<th>End time</th>
+								<th>Quantity</th>
 							</tr>
 						</thead>
 						<tbody id="table-body">
@@ -172,9 +177,9 @@
 				<!-- Modal content-->
 				<div class="modal-content">
 					<div class="modal-header" style="padding:15px 50px;">
-					<h4> Delete task</h4>
+						<h4> Delete task</h4>
 						<button type="button" class="top-close " data-bs-dismiss="modal">&times;</button>
-						
+
 					</div>
 					<form action="<?= base_url('task/deleteTask') ?>" class="form" id="DeleteTaskForm" name="DeleteTask"
 						method="post">
@@ -206,9 +211,7 @@
 </section>
 <script>
 	function getPrevTaskList(taskId) {
-
 		$.ajax({
-
 			url: "<?= base_url('task/getPrevTaskList/') ?>" + taskId,
 			type: 'get',
 			dataType: 'json',
@@ -216,23 +219,18 @@
 				console.log(response);
 				if (response.success) {
 					console.log("successentry");
-
 					console.log("response.output", response.output);
 					populateModalTable(response.output);
-
-
 					$("#prev_task_list_modal").modal("show");
 
 				} else {
 					console.log(response.error);
 					console.log("failure");
-
 				}
 			},
 			error: function (response) {
 				console.log(response);
 			}
-
 		});
 	}
 
@@ -246,7 +244,7 @@
 		// Loop through the data and create table rows
 		data.forEach(item => {
 			const row = document.createElement('tr');
-			row.innerHTML = "<td>" + item.task_name + "</td><td>" + item.supervisor_name + "</td><td>" + item.employee_name + "</td><td>" + item.start_time + "</td><td>" + item.end_time + "</td>";
+			row.innerHTML = "<td>" + item.task_name + "</td><td>" + item.supervisor_name + "</td><td>" + item.employee_name + "</td><td>" + item.start_time + "</td><td>" + item.end_time + "</td><td>" + item.out_qty + "</td>";
 			// Add more cells if needed
 			tableBody.appendChild(row);
 		});
