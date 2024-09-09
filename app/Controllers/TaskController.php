@@ -1019,21 +1019,18 @@ class TaskController extends BaseController
             $worker = $this->FindElement($empData, Employee::Id, $taskData[Task::EmployeeId]);
             $supervisor = $this->FindElement($empData, Employee::Id, $taskData[Task::SupervisorId]);
 
-
             array_unshift($taskArr, $taskData);
             $condition = [TaskDetail::TaskDetailId => $taskData[Task::TaskDetailId]];
             $taskDetailData = $modelHelper->GetSingleData($taskDetailModel, $condition);
             $taskId = $taskData[Task::ParentTaskId];
             array_unshift($taskDetailArr, $taskDetailData);
 
-
             $data = [
                 "task_name" => $taskDetailData[TaskDetail::TaskName],
                 "start_time" => $taskData[Task::StartTime],
                 "end_time" => $taskData[Task::EndTime],
-
-                "supervisor_name" => $supervisor[Employee::Name]
-
+                "supervisor_name" => $supervisor[Employee::Name],
+                "out_qty" => $taskData[Task::OutQty]
             ];
             $data["employee_name"] = "";
             if ($worker) {
@@ -1041,7 +1038,6 @@ class TaskController extends BaseController
             }
             array_unshift($result, $data);
         }
-
 
         return json_encode(['success' => true, 'csrf' => csrf_hash(), "output" => $result]);
     }
