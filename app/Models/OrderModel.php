@@ -54,8 +54,9 @@ class OrderModel extends Model
         //     $this->select($select)->like($condition[$i]['key'], $condition[$i]['value'], $condition[$i]['side']);
         // }
 
-        $this->select($select)->like(Order::OrderId, $condition, "after")->orLike(Order::ReferenceId, $condition, "after");
-
+        // $this->select($select)->like(Order::OrderId, $condition, "after")->orLike(Order::ReferenceId, $condition, "after");
+        $this->select($select)->like(Order::OrderId, $condition, "after");
+        
         $result =  $this->findAll();
 
         return $result;
