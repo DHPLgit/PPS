@@ -155,91 +155,139 @@
 </section>
 
 <script>
-$(document).ready(function () {
-	
-    $(document).on('click', '.expand', function () {
-        var orderId = $(this).data('order-id');
-        var button = $(this);
-        var action = button.text() === '+' ? 'show' : 'hide';
+	$(document).ready(function () {
+		$(document).on('click', '.expand', function () {
+			var orderId = $(this).data('order-id');
+			var button = $(this);
+			var action = button.text() === '+' ? 'show' : 'hide';
 
-        $('tr[data-order-id="' + orderId + '"]').not(':first').each(function () {
-            if (action === 'show') {
-                $(this).show().addClass('expanded');
-            } else {
-                $(this).hide().removeClass('expanded');
-            }
-        });
-        button.text(action === 'show' ? '-' : '+');
-    });
+			$('tr[data-order-id="' + orderId + '"]').not(':first').each(function () {
+				if (action === 'show') {
+					$(this).show().addClass('expanded');
+				} else {
+					$(this).hide().removeClass('expanded');
+				}
+			});
+			button.text(action === 'show' ? '-' : '+');
+		});
 
-    $("#search").on("click", function () {
-        var query = $("#query").val();
-        $.ajax({
-            url: "<?= base_url('order/filter') ?>",
-            type: "get",
-            data: { query: query },
-            dataType: "json",
-            success: function (response) {
-                var table_body = $('#table_body');
-                table_body.empty();
-                $('#show-more').hide();
-                $('#no_records').hide();
+		$("#search").on("click", function () {
+			var query = $("#query").val();
+			if (query.trim() === "") {
+				$.ajax({
+					url: "<?= base_url('order/getAllOrders') ?>",
+					type: "get",
+					dataType: "json",
+					success: function (response) {
+						var table_body = $('#table_body');
+						table_body.empty();
+						$('#show-more').hide();
+						$('#no_records').hide();
 
-                if (response.success) {
-                    var data = response.output;
-                    var rows = [];
-                    var index = 0;
+						if (response.success) {
+							var data = response.output;
+							var rows = [];
+							var index = 0;
 
-                    if (data.length > 0) {
-                        data.forEach(function (item, idx) {
-                            index++;
-                            var orderDate = item.order_date.split(" ")[0];
+							if (data.length > 0) {
+								data.forEach(function (item, idx) {
+									index++;
+									var orderDate = item.order_date.split(" ")[0];
 
-                            var row = '<tr class="order-row" data-order-id="' + item.order_id + '" style="display:none;">';
-                            row += '<td>' + index + '</td>';
-                            row += '<td style="display:none;">' + item.order_list_id + '</td>';
-                            row += '<td>' + item.order_id;
-                            row += '<br /><div id="item-button"><button type="button" class="addItem" onclick="addItem(\'' + item.order_id + '\')">AddItem +</button></div></td>';
-                            row += '<td>' + item.item_id + '</td>';
-                            row += '<td>' + item.customer_id + '</td>';
-                            row += '<td>' + orderDate + '</td>';
-                            row += '<td>' + item.item_description + '</td>';
-                            row += '<td>' + item.bundle_count + '</td>';
-                            row += '<td>' + item.quantity + '</td>';
-                            row += '<td>' + item.status + '</td>';
-                            row += '<td>' + item.due_date + '</td>';
-                            row += '<td class="action"><button type="button" class="btn editOrder"><img src="<?= base_url() ?>images/icons/Create.png" class="img-centered img-fluid"></button><button type="button" class="btn deleteOrder"><img src="<?= base_url() ?>images/icons/remove.png" class="img-centered img-fluid"></button></td>';
-                            row += '</tr>';
-                            rows.push(row);
-                        });
-                        table_body.append(rows.join(''));
-                        table_body.find('tr:first').show();
-                        if (rows.length > 1) {
-                            $('#show-more').show(); 
-                        }
+									var row = '<tr class="order-row" data-order-id="' + item.order_id + '">';
+									row += '<td>' + index + '</td>';
+									row += '<td style="display:none;">' + item.order_list_id + '</td>';
+									row += '<td>' + item.order_id;
+									row += '<br /><div id="item-button"><button type="button" class="addItem" onclick="addItem(\'' + item.order_id + '\')">AddItem +</button></div></td>';
+									row += '<td>' + item.item_id + '</td>';
+									row += '<td>' + item.customer_id + '</td>';
+									row += '<td>' + orderDate + '</td>';
+									row += '<td>' + item.item_description + '</td>';
+									row += '<td>' + item.bundle_count + '</td>';
+									row += '<td>' + item.quantity + '</td>';
+									row += '<td>' + item.status + '</td>';
+									row += '<td>' + item.due_date + '</td>';
+									row += '<td class="action"><button type="button" class="btn editOrder"><img src="<?= base_url() ?>images/icons/Create.png" class="img-centered img-fluid"></button><button type="button" class="btn deleteOrder"><img src="<?= base_url() ?>images/icons/remove.png" class="img-centered img-fluid"></button></td>';
+									row += '</tr>';
+									rows.push(row);
+								});
+								table_body.append(rows.join(''));
+								table_body.find('tr').show();
+							} else {
+								$('#no_records').show();
+							}
+						}
+					},
+					error: function (response) {
+						console.error('Error fetching all orders:', response);
+					}
+				});
+			} else {
+				$.ajax({
+					url: "<?= base_url('order/filter') ?>",
+					type: "get",
+					data: { query: query },
+					dataType: "json",
+					success: function (response) {
+						var table_body = $('#table_body');
+						table_body.empty();
+						$('#show-more').hide();
+						$('#no_records').hide();
 
-                        if (rows.length === 0) {
-                            $('#no_records').show();
-                        }
-                    } else {
-                        $('#no_records').show(); 
-                    }
+						if (response.success) {
+							var data = response.output;
+							var rows = [];
+							var index = 0;
 
-                    $('#order_table').find('.expand').hide();
-                }
-            },
-            error: function (response) {
-                console.error('Error fetching search results:', response);
-            }
-        });
-    });
+							if (data.length > 0) {
+								data.forEach(function (item, idx) {
+									index++;
+									var orderDate = item.order_date.split(" ")[0];
 
-    $('#show-more').on('click', function () {
-        $('#table_body').find('tr').show(); 
-        $(this).hide(); 
-    });
-});
+									var row = '<tr class="order-row" data-order-id="' + item.order_id + '" style="display:none;">';
+									row += '<td>' + index + '</td>';
+									row += '<td style="display:none;">' + item.order_list_id + '</td>';
+									row += '<td>' + item.order_id;
+									row += '<br /><div id="item-button"><button type="button" class="addItem" onclick="addItem(\'' + item.order_id + '\')">AddItem +</button></div></td>';
+									row += '<td>' + item.item_id + '</td>';
+									row += '<td>' + item.customer_id + '</td>';
+									row += '<td>' + orderDate + '</td>';
+									row += '<td>' + item.item_description + '</td>';
+									row += '<td>' + item.bundle_count + '</td>';
+									row += '<td>' + item.quantity + '</td>';
+									row += '<td>' + item.status + '</td>';
+									row += '<td>' + item.due_date + '</td>';
+									row += '<td class="action"><button type="button" class="btn editOrder"><img src="<?= base_url() ?>images/icons/Create.png" class="img-centered img-fluid"></button><button type="button" class="btn deleteOrder"><img src="<?= base_url() ?>images/icons/remove.png" class="img-centered img-fluid"></button></td>';
+									row += '</tr>';
+									rows.push(row);
+								});
+								table_body.append(rows.join(''));
+								table_body.find('tr:first').show();
+								if (rows.length > 1) {
+									$('#show-more').show();
+								} else {
+									$('#show-more').hide();
+								}
 
+								if (rows.length === 0) {
+									$('#no_records').show();
+								}
+							} else {
+								$('#no_records').show();
+							}
+						}
+					},
+					error: function (response) {
+						console.error('Error fetching search results:', response);
+					}
+				});
+			}
+		});
 
+		$('#show-more').on('click', function () {
+			$('#table_body').find('tr').show();
+			$(this).hide();
+		});
+	});
 </script>
 <?= $this->endSection() ?>
