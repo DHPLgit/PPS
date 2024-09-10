@@ -156,6 +156,7 @@
 
 <script>
 $(document).ready(function () {
+	
     $(document).on('click', '.expand', function () {
         var orderId = $(this).data('order-id');
         var button = $(this);
