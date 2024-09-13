@@ -114,7 +114,7 @@ class OrderController extends BaseController
                 "bundle_count" => $order[Order::BundleCount],
                 "quantity" => $order[Order::Quantity],
                 "status" => $order[Order::Status],
-                "due_data" => $order[Order::DueDate]
+                "due_date" => $order[Order::DueDate]
             ];
             array_push($res, $data);
         }
@@ -532,7 +532,7 @@ class OrderController extends BaseController
                 "bundle_count" => $order[Order::BundleCount],
                 "quantity" => $order[Order::Quantity],
                 "status" => $order[Order::Status],
-                "due_data" => $order[Order::DueDate]
+                "due_date" => $order[Order::DueDate]
             ];
             array_push($res, $data);
         }
