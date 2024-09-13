@@ -53,54 +53,33 @@
 						foreach ($orders as $order) {
 							$count++; ?>
 							<tr class="order-row" data-order-id="<?= $order['order_id'] ?>" <?= !$isFirst ? 'style="display:none;"' : '' ?>>
-								<td scope="row">
-									<?= $count ?>
-								</td>
-								<td style="display:none;">
-									<?= stripslashes($order['order_list_id']) ?>
-								</td>
+								<td scope="row"><?= $count ?></td>
+								<td style="display:none;"><?= stripslashes($order['order_list_id']) ?></td>
 								<td>
 									<?= stripslashes($order['order_id']) ?>
 									<br />
 									<div id="item-button">
 										<button type="button" class="addItem"
-											onclick="addItem('<?= $order['order_id'] ?>')">AddItem +</button><br /><br />
-										<?php if ($isFirst && count($orders) > 1): ?>
-											<button type="button" class="btn expand"
-												data-order-id="<?= $order['order_id'] ?>">+</button>
-										<?php endif; ?>
+											onclick="addItem('<?= $order['order_id'] ?>')">AddItem +</button>
 									</div>
+									<?php if ($isFirst && count($orders) > 1): ?>
+										<div id="expand-button">
+											<button type="button" class="btn expand-more"
+												data-order-id="<?= $order['order_id'] ?>">+</button>
+										</div>
+									<?php endif; ?>
 								</td>
+								<td><?= stripslashes($order['item_id']) ?></td>
+								<td><?= stripslashes($order['customer_id']) ?></td>
 								<td>
-									<?= stripslashes($order['item_id']) ?>
+									<?= ($order['order_date'] === '0000-00-00 00:00:00' || $order['order_date'] === null) ? '0000-00-00' : date('Y-m-d', strtotime($order['order_date'])) ?>
 								</td>
-								<td>
-									<?= stripslashes($order['customer_id']) ?>
+								<td><?= $order['type'] . " " . $order['colour'] . " " . $order['length'] . " " . $order['texture'] . " " . $order['ext_size'] ?>
 								</td>
-								<td>
-									<?php
-									if ($order['order_date'] === '0000-00-00 00:00:00' || $order['order_date'] === null) {
-										echo '0000-00-00';
-									} else {
-										echo date('Y-m-d', strtotime($order['order_date']));
-									}
-									?>
-								</td>
-								<td>
-									<?= $order['type'] . " " . $order['colour'] . " " . $order['length'] . " " . $order['texture'] . " " . $order['ext_size'] ?>
-								</td>
-								<td>
-									<?= stripslashes($order['bundle_count']) ?>
-								</td>
-								<td>
-									<?= stripslashes($order['quantity']) ?>
-								</td>
-								<td>
-									<?= stripslashes($order['status']) ?>
-								</td>
-								<td>
-									<?= stripslashes($order['due_date']) ?>
-								</td>
+								<td><?= stripslashes($order['bundle_count']) ?></td>
+								<td><?= stripslashes($order['quantity']) ?></td>
+								<td><?= stripslashes($order['status']) ?></td>
+								<td><?= stripslashes($order['due_date']) ?></td>
 								<td class="action">
 									<button type="button" <?= $order['status'] != "Not started" ? 'style="pointer-events:none"' : '' ?> class="btn editOrder">
 										<img src="<?= base_url() ?>images/icons/Create.png" class="img-centered img-fluid">
@@ -113,7 +92,8 @@
 							<?php
 							$isFirst = false;
 						}
-					} ?>
+					}
+					?>
 				</tbody>
 			</table>
 			<div class="text-center">
@@ -155,91 +135,102 @@
 </section>
 
 <script>
-$(document).ready(function () {
-	
-    $(document).on('click', '.expand', function () {
-        var orderId = $(this).data('order-id');
-        var button = $(this);
-        var action = button.text() === '+' ? 'show' : 'hide';
+	$(document).ready(function () {
+		$(document).on('click', '.expand-more', function () {
+			var orderId = $(this).data('order-id');
+			var button = $(this);
+			var isExpanded = button.text() === '-';
+			var rows = $('tr.order-row[data-order-id="' + orderId + '"]');
 
-        $('tr[data-order-id="' + orderId + '"]').not(':first').each(function () {
-            if (action === 'show') {
-                $(this).show().addClass('expanded');
-            } else {
-                $(this).hide().removeClass('expanded');
-            }
-        });
-        button.text(action === 'show' ? '-' : '+');
-    });
+			rows.each(function (index) {
+				if (index > 0) {
+					$(this).toggle(!isExpanded).toggleClass('expanded', !isExpanded);
+				}
+			});
 
-    $("#search").on("click", function () {
-        var query = $("#query").val();
-        $.ajax({
-            url: "<?= base_url('order/filter') ?>",
-            type: "get",
-            data: { query: query },
-            dataType: "json",
-            success: function (response) {
-                var table_body = $('#table_body');
-                table_body.empty();
-                $('#show-more').hide();
-                $('#no_records').hide();
+			button.text(isExpanded ? '+' : '-');
+		});
 
-                if (response.success) {
-                    var data = response.output;
-                    var rows = [];
-                    var index = 0;
+		$("#search").on("click", function () {
+			var query = $("#query").val().trim();
+			if (query === "") {
+				location.reload();
+			} else {
+				$.ajax({
+					url: "<?= base_url('order/filter') ?>",
+					type: "get",
+					data: { query: query },
+					dataType: "json",
+					success: function (response) {
+						var table_body = $('#table_body');
+						table_body.empty();
+						$('#no_records').hide();
 
-                    if (data.length > 0) {
-                        data.forEach(function (item, idx) {
-                            index++;
-                            var orderDate = item.order_date.split(" ")[0];
+						if (response.success && response.output.length > 0) {
+							var data = response.output;
+							var rows = [];
+							var orderGroups = {};
 
-                            var row = '<tr class="order-row" data-order-id="' + item.order_id + '" style="display:none;">';
-                            row += '<td>' + index + '</td>';
-                            row += '<td style="display:none;">' + item.order_list_id + '</td>';
-                            row += '<td>' + item.order_id;
-                            row += '<br /><div id="item-button"><button type="button" class="addItem" onclick="addItem(\'' + item.order_id + '\')">AddItem +</button></div></td>';
-                            row += '<td>' + item.item_id + '</td>';
-                            row += '<td>' + item.customer_id + '</td>';
-                            row += '<td>' + orderDate + '</td>';
-                            row += '<td>' + item.item_description + '</td>';
-                            row += '<td>' + item.bundle_count + '</td>';
-                            row += '<td>' + item.quantity + '</td>';
-                            row += '<td>' + item.status + '</td>';
-                            row += '<td>' + item.due_date + '</td>';
-                            row += '<td class="action"><button type="button" class="btn editOrder"><img src="<?= base_url() ?>images/icons/Create.png" class="img-centered img-fluid"></button><button type="button" class="btn deleteOrder"><img src="<?= base_url() ?>images/icons/remove.png" class="img-centered img-fluid"></button></td>';
-                            row += '</tr>';
-                            rows.push(row);
-                        });
-                        table_body.append(rows.join(''));
-                        table_body.find('tr:first').show();
-                        if (rows.length > 1) {
-                            $('#show-more').show(); 
-                        }
+							data.forEach(function (item) {
+								if (!orderGroups[item.order_id]) {
+									orderGroups[item.order_id] = [];
+								}
+								orderGroups[item.order_id].push(item);
+							});
 
-                        if (rows.length === 0) {
-                            $('#no_records').show();
-                        }
-                    } else {
-                        $('#no_records').show(); 
-                    }
+							Object.keys(orderGroups).forEach(function (orderId) {
+								var items = orderGroups[orderId];
+								var isExpanded = false;
 
-                    $('#order_table').find('.expand').hide();
-                }
-            },
-            error: function (response) {
-                console.error('Error fetching search results:', response);
-            }
-        });
-    });
+								items.forEach(function (item, index) {
+									var orderDate = item.order_date.split(" ")[0];
+									var isHeader = index === 0;
 
-    $('#show-more').on('click', function () {
-        $('#table_body').find('tr').show(); 
-        $(this).hide(); 
-    });
-});
+									var row = '<tr class="order-row' + (isHeader ? ' order-header' : '') + '" data-order-id="' + orderId + '" style="' + (isHeader ? 'display: table-row;' : 'display: none;') + '">';
+									row += '<td>' + (index + 1) + '</td>';
+									row += '<td style="display:none;">' + item.order_list_id + '</td>';
+									row += '<td>' + item.order_id;
+									row += '<br /><div id="item-button"><button type="button" class="addItem" onclick="addItem(\'' + item.order_id + '\')">AddItem +</button></div>';
 
+									if (items.length > 1 && isHeader) {
+										row += '<div id="expand-button"><button type="button" class="btn expand-more" data-order-id="' + orderId + '">+</button></div>';
+									}
+
+									row += '</td>';
+									row += '<td>' + item.item_id + '</td>';
+									row += '<td>' + item.customer_id + '</td>';
+									row += '<td>' + orderDate + '</td>';
+									row += '<td>' + item.item_description + '</td>';
+									row += '<td>' + item.bundle_count + '</td>';
+									row += '<td>' + item.quantity + '</td>';
+									row += '<td>' + item.status + '</td>';
+									row += '<td>' + item.due_date + '</td>';
+									row += '<td class="action"><button type="button" class="btn editOrder"><img src="<?= base_url() ?>images/icons/Create.png" class="img-centered img-fluid"></button><button type="button" class="btn deleteOrder"><img src="<?= base_url() ?>images/icons/remove.png" class="img-centered img-fluid"></button></td>';
+									row += '</tr>';
+
+									rows.push(row);
+								});
+							});
+
+							table_body.append(rows.join(''));
+
+							table_body.find('tr.order-header').each(function () {
+								var orderId = $(this).data('order-id');
+								if (orderId) {
+									$(this).show();
+								}
+							});
+						} else {
+							$('#no_records').show();
+						}
+					},
+					error: function (response) {
+						console.error('Error fetching search results:', response);
+					}
+				});
+			}
+		});
+	});
 
 </script>
 <?= $this->endSection() ?>
