@@ -16,17 +16,20 @@
                 <div class="para-input">
                     <p class="para"><span>Texture:</span><?= $order["texture"] ?></p>
                     <p class="para"><span>Type:</span><?= $order["type"] ?></p>
-                    <p class="para"><span>Extn size:</span></p>
-                    <p class="para"><span>Length:</span><?= $order["length"] ?></p>
+                    <p class="para"><span>Extn size:</span><?= $order["ext_size"] ?></p>
+                    <p class="para"><span>Colour:</span><?= $order["colour"] ?></p>
+
+                    <p class="para"><span>Quantity:</span><?= $order["quantity"] ?></p>
+                    <p class="para"><span>Length:</span><?= $order["length"] ?></p>                     
                 </div>
                 <h4 class="title">Input details:</h4>
-                <div class="para-input">
+                <div class="para-input-2">
                     <?php foreach ($inputDetails as $key => $input) { ?>
-
-                        <p class="para"><span>Size:</span><?= $input["in_ext_size"] ?></p>
+                        <p class="para"><span>Type:</span> <?= $input["in_type"] ?></p>
+                        <p class="para"><span>Extn Size:</span><?= $input["in_ext_size"] ?></p>
                         <p class="para"><span>Colour:</span><?= $input["in_colour"] ?></p>
                         <p class="para"><span>Quantity:</span><?= $input["in_quantity"] ?></p>
-
+                        <p class="para"><span>Length:</span><?= $input["in_length"] ?></p>
                     <?php } ?>
                 </div>
 

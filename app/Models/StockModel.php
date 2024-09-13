@@ -42,7 +42,8 @@ class StockModel extends Model
 
   public function GetStockList()
   {
-    $result = $this->findAll();
+    $condition=[Stock::ActiveStatus=>"1"];
+    $result = $this->where($condition)->findAll();
 
     return $result;
   }
@@ -86,7 +87,8 @@ class StockModel extends Model
 
     $colour = [Stock::Colour => $query];
     $length = [Stock::Length => $query];
-    $result =  $this->like(Stock::StockId, $query, "after")->orWhere($colour)->orWhere($length)->findAll();
+    $condition=[Stock::ActiveStatus=>"1"];
+    $result =  $this->like(Stock::StockId, $query, "after")->where($condition)->orWhere($colour)->orWhere($length)->findAll();
     return $result;
   }
 }

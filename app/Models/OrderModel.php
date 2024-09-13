@@ -49,14 +49,10 @@ class OrderModel extends Model
     public function FilterOrder($select,$condition)
     {
 
-        // for ($i = 0; $i < count($condition); $i++) {
-        //     # code...
-        //     $this->select($select)->like($condition[$i]['key'], $condition[$i]['value'], $condition[$i]['side']);
-        // }
 
-        // $this->select($select)->like(Order::OrderId, $condition, "after")->orLike(Order::ReferenceId, $condition, "after");
-        $this->select($select)->like(Order::OrderId, $condition, "after");
-        
+        $this->select($select)->like(Order::OrderId, $condition, "after");//->orLike(Order::ReferenceId, $condition, "after");
+
+
         $result =  $this->findAll();
 
         return $result;

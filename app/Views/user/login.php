@@ -6,7 +6,7 @@
 <section class="login">
   <div class="container">
     <?php if (session()->getFlashdata('response') !== NULL) : ?>
-      <p style="color:green; font-size:18px;">
+      <p id="flashData" style="color:green; font-size:18px;">
         <?php echo session()->getFlashdata('response'); ?>
       </p>
     <?php endif; ?>
@@ -53,7 +53,7 @@
             <form id="otp-form" action="<?= base_url('otpcheck') ?>">
               <input type="hidden" name="user_id" id="user_id">
               <div class="mb-3">
-                <label class="login-label">Enter 6 digit otp</label>
+                <label class="login-label">Enter 6 digit OTP</label>
                 <input class="form-control" type="num" name="otp" id="otp">
               </div>
               <p style="color:red" class="error" id="otp_error"></p>
@@ -100,6 +100,7 @@
     login();
 
     $('#fp').on('click', function() {
+      $("#flashData").hide()
       $("#login-form").hide();
       $("#fp-div").show();
 

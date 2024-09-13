@@ -43,8 +43,8 @@
                     </div>
                     <div class="row m-0">
                         <button type="submit" class="btn btn-primary btn-style Centered mb-3">Submit</button>
-                        <a class="bck-to-login" href="<?php echo base_url("/") ?>">Back to
-                            Login</a>
+                        <!-- <a class="bck-to-login" href="<?php echo base_url("/") ?>">Back to
+                            Login</a> -->
                     </div>
                 </form>
             </div>

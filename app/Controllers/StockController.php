@@ -18,18 +18,15 @@ require_once APPPATH . 'Libraries/EnumsAndConstants/Constants.php';
 class StockController extends BaseController
 {
 
+    //search stock for task initialize.
     public function SearchStocks()
     {
         $request = $this->request->getPost();
         $data = [];
-        // foreach ($request as $key => $value) {
-        # code...
         if ($request["colour"] != "") $data[Stock::Colour] = $request["colour"];
         if ($request["texture"] != "") $data[Stock::Texture] = $request["texture"];
         if ($request["length"] != "") $data[Stock::Length] = $request["length"];
-        // }
 
-        //$data=[Stock::Colour=>,Stock::Length=> Stock::]
         $flag = false;
         $result = [];
         if (count($data) > 0) {
@@ -49,6 +46,7 @@ class StockController extends BaseController
         $request["query"] = isset($request["query"]) ? $request["query"] : "";
 
         if ($this->request->getMethod() == 'get') {
+            
             $result = $this->GetStockData($request);
             $empstocklist = $result[0];
             $stdData = $result[1];
@@ -155,7 +153,8 @@ class StockController extends BaseController
         $stockCode = $this->request->getPost('id');
         // Fetch the unique Stock data based on the stock id
         $model = ModelFactory::createModel(ModelNames::Stock);
-        $stockData = $model->where("stock_id", $stockCode)->first();
+        $condition=[Stock::StockListId=>$stockCode];
+        $stockData = $model->where($condition)->first();
         return view('stock_details', ["stock" => $stockData]);
     }
     private function InsertStock(array $postdata)
