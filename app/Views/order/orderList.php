@@ -81,10 +81,10 @@
 								<td><?= stripslashes($order['status']) ?></td>
 								<td><?= stripslashes($order['due_date']) ?></td>
 								<td class="action">
-									<button type="button" <?= $order['status'] != "Not started" ? 'style="pointer-events:none"' : '' ?> class="btn editOrder">
+									<button type="button" onclick="editOrder(this)" <?= $order['status'] != "Not started" ? 'style="pointer-events:none"' : '' ?> class="btn editOrder">
 										<img src="<?= base_url() ?>images/icons/Create.png" class="img-centered img-fluid">
 									</button>
-									<button type="button" <?= $order['status'] != "Not started" ? 'style="pointer-events:none"' : '' ?> class="btn deleteOrder">
+									<button type="button" onclick="deleteOrder(this)" <?= $order['status'] != "Not started" ? 'style="pointer-events:none"' : '' ?> class="btn deleteOrder">
 										<img src="<?= base_url() ?>images/icons/remove.png" class="img-centered img-fluid">
 									</button>
 								</td>
@@ -135,7 +135,40 @@
 </section>
 
 <script>
+	function deleteOrder(element) {
+		//getting data of selected row using id.
+		console.log("ENtry");
+		$tr = $(element).closest('tr');
+		var data = $tr.children().map(function() {
+			return $(this).text();
+		}).get();
+		console.log(data[1].trim());
+		var orderId = data[1].trim();
+		$('#orderListId').val(orderId);
+		$("#orderDeleteModal").modal('show');
+
+	}
+
+	function editOrder(element) {
+		//getting data of selected row using id.
+
+		$tr = $(element).closest('tr');
+		var data = $tr.children().map(function() {
+			return $(this).text();
+		}).get();
+		console.log(data[1].trim());
+		var orderId = data[1].trim();
+		var url = "<?= base_url('order/editOrder/') ?>" + orderId;
+		window.location.href = url;
+
+	}
+
+	function addItem(orderId) {
+		var url = "<?= base_url('order/generateItemId/') ?>" + orderId;
+		window.location.href = url;
+	}
 	$(document).ready(function () {
+		
 		$(document).on('click', '.expand-more', function () {
 			var orderId = $(this).data('order-id');
 			var button = $(this);
@@ -205,7 +238,7 @@
 									row += '<td>' + item.quantity + '</td>';
 									row += '<td>' + item.status + '</td>';
 									row += '<td>' + item.due_date + '</td>';
-									row += '<td class="action"><button type="button" class="btn editOrder"><img src="<?= base_url() ?>images/icons/Create.png" class="img-centered img-fluid"></button><button type="button" class="btn deleteOrder"><img src="<?= base_url() ?>images/icons/remove.png" class="img-centered img-fluid"></button></td>';
+									row += '<td class="action"><button type="button" onclick="editOrder(this)" class="btn editOrder"><img src="<?= base_url() ?>images/icons/Create.png" class="img-centered img-fluid"></button><button type="button" onclick="deleteOrder(this)" class="btn deleteOrder"><img src="<?= base_url() ?>images/icons/remove.png" class="img-centered img-fluid"></button></td>';
 									row += '</tr>';
 
 									rows.push(row);
@@ -230,6 +263,7 @@
 				});
 			}
 		});
+
 	});
 
 </script>
