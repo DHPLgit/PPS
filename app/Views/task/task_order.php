@@ -123,6 +123,7 @@
 								<th>Employee</th>
 								<th>Start time</th>
 								<th>End time</th>
+								<th>Quantity</th>
 							</tr>
 						</thead>
 						<tbody id="table-body">
@@ -246,7 +247,7 @@
 		// Loop through the data and create table rows
 		data.forEach(item => {
 			const row = document.createElement('tr');
-			row.innerHTML = "<td>" + item.task_name + "</td><td>" + item.supervisor_name + "</td><td>" + item.employee_name + "</td><td>" + item.start_time + "</td><td>" + item.end_time + "</td>";
+			row.innerHTML = "<td>" + item.task_name + "</td><td>" + item.supervisor_name + "</td><td>" + item.employee_name + "</td><td>" + item.start_time + "</td><td>" + item.end_time + "</td><td>" + item.out_qty + "</td>";
 			// Add more cells if needed
 			tableBody.appendChild(row);
 		});

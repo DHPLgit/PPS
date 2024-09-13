@@ -1032,8 +1032,8 @@ class TaskController extends BaseController
                 "start_time" => $taskData[Task::StartTime],
                 "end_time" => $taskData[Task::EndTime],
 
-                "supervisor_name" => $supervisor[Employee::Name]
-
+                "supervisor_name" => $supervisor[Employee::Name],
+                "out_qty" => $taskData[Task::OutQty]
             ];
             $data["employee_name"] = "";
             if ($worker) {
