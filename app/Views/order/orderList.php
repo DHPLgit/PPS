@@ -135,99 +135,102 @@
 </section>
 
 <script>
-$(document).ready(function () {
-    $(document).on('click', '.expand-more', function () {
-        var orderId = $(this).data('order-id');
-        var button = $(this);
-        var action = button.text() === '+' ? 'show' : 'hide';
+	$(document).ready(function () {
+		$(document).on('click', '.expand-more', function () {
+			var orderId = $(this).data('order-id');
+			var button = $(this);
+			var isExpanded = button.text() === '-';
+			var rows = $('tr.order-row[data-order-id="' + orderId + '"]');
 
-        $('tr[data-order-id="' + orderId + '"]').not(':first').each(function () {
-            if (action === 'show') {
-                $(this).show().addClass('expanded');
-            } else {
-                $(this).hide().removeClass('expanded');
-            }
-        });
+			rows.each(function (index) {
+				if (index > 0) {
+					$(this).toggle(!isExpanded).toggleClass('expanded', !isExpanded);
+				}
+			});
 
-        button.text(action === 'show' ? '-' : '+');
-    });
+			button.text(isExpanded ? '+' : '-');
+		});
 
-    $("#search").on("click", function () {
-        var query = $("#query").val();
-        $.ajax({
-            url: query.trim() === "" ? "<?= base_url('order/getAllOrders') ?>" : "<?= base_url('order/filter') ?>",
-            type: "get",
-            data: query.trim() === "" ? {} : { query: query },
-            dataType: "json",
-            success: function (response) {
-                var table_body = $('#table_body');
-                table_body.empty(); 
-                $('#no_records').hide(); 
+		$("#search").on("click", function () {
+			var query = $("#query").val().trim();
+			if (query === "") {
+				location.reload();
+			} else {
+				$.ajax({
+					url: "<?= base_url('order/filter') ?>",
+					type: "get",
+					data: { query: query },
+					dataType: "json",
+					success: function (response) {
+						var table_body = $('#table_body');
+						table_body.empty();
+						$('#no_records').hide();
 
-                if (response.success && response.output.length > 0) {
-                    var data = response.output;
-                    var rows = [];
-                    var index = 0;
-                    var orderCount = {};
+						if (response.success && response.output.length > 0) {
+							var data = response.output;
+							var rows = [];
+							var orderGroups = {};
 
-                    data.forEach(function (item) {
-                        if (!orderCount[item.order_id]) {
-                            orderCount[item.order_id] = 0;
-                        }
-                        orderCount[item.order_id]++;
-                    });
+							data.forEach(function (item) {
+								if (!orderGroups[item.order_id]) {
+									orderGroups[item.order_id] = [];
+								}
+								orderGroups[item.order_id].push(item);
+							});
 
-                    data.forEach(function (item, idx) {
-                        index++;
-                        var orderDate = item.order_date.split(" ")[0];
-                        var row = '<tr class="order-row" data-order-id="' + item.order_id + '" style="display:none;">';
-                        row += '<td>' + index + '</td>';
-                        row += '<td style="display:none;">' + item.order_list_id + '</td>';
-                        row += '<td>' + item.order_id;
-                        row += '<br /><div id="item-button"><button type="button" class="addItem" onclick="addItem(\'' + item.order_id + '\')">AddItem +</button></div>';
-                        
-                        if (orderCount[item.order_id] > 1) {
-                            if (rows.filter(row => row.includes('data-order-id="' + item.order_id + '"')).length === 0) {
-                                row += '<div id="expand-button"><button type="button" class="btn expand-more" data-order-id="' + item.order_id + '">+</button></div>';
-                            }
-                        }
-                        
-                        row += '</td>';
-                        row += '<td>' + item.item_id + '</td>';
-                        row += '<td>' + item.customer_id + '</td>';
-                        row += '<td>' + orderDate + '</td>';
-                        row += '<td>' + item.item_description + '</td>';
-                        row += '<td>' + item.bundle_count + '</td>';
-                        row += '<td>' + item.quantity + '</td>';
-                        row += '<td>' + item.status + '</td>';
-                        row += '<td>' + item.due_date + '</td>';
-                        row += '<td class="action"><button type="button" class="btn editOrder"><img src="<?= base_url() ?>images/icons/Create.png" class="img-centered img-fluid"></button><button type="button" class="btn deleteOrder"><img src="<?= base_url() ?>images/icons/remove.png" class="img-centered img-fluid"></button></td>';
-                        row += '</tr>';
-                        rows.push(row);
-                    });
+							Object.keys(orderGroups).forEach(function (orderId) {
+								var items = orderGroups[orderId];
+								var isExpanded = false;
 
-                    table_body.append(rows.join(''));
+								items.forEach(function (item, index) {
+									var orderDate = item.order_date.split(" ")[0];
+									var isHeader = index === 0;
 
-                    table_body.find('tr.order-row').each(function () {
-                        var orderId = $(this).data('order-id');
-                        if (orderId) {
-                            if ($(this).prevAll('tr.order-row[data-order-id="' + orderId + '"]').length === 0) {
-                                $(this).show(); 
-                            } else {
-                                $(this).hide(); 
-                            }
-                        }
-                    });
-                } else {
-                    $('#no_records').show();
-                }
-            },
-            error: function (response) {
-                console.error('Error fetching search results:', response);
-            }
-        });
-    });
-});
+									var row = '<tr class="order-row' + (isHeader ? ' order-header' : '') + '" data-order-id="' + orderId + '" style="' + (isHeader ? 'display: table-row;' : 'display: none;') + '">';
+									row += '<td>' + (index + 1) + '</td>';
+									row += '<td style="display:none;">' + item.order_list_id + '</td>';
+									row += '<td>' + item.order_id;
+									row += '<br /><div id="item-button"><button type="button" class="addItem" onclick="addItem(\'' + item.order_id + '\')">AddItem +</button></div>';
+
+									if (items.length > 1 && isHeader) {
+										row += '<div id="expand-button"><button type="button" class="btn expand-more" data-order-id="' + orderId + '">+</button></div>';
+									}
+
+									row += '</td>';
+									row += '<td>' + item.item_id + '</td>';
+									row += '<td>' + item.customer_id + '</td>';
+									row += '<td>' + orderDate + '</td>';
+									row += '<td>' + item.item_description + '</td>';
+									row += '<td>' + item.bundle_count + '</td>';
+									row += '<td>' + item.quantity + '</td>';
+									row += '<td>' + item.status + '</td>';
+									row += '<td>' + item.due_date + '</td>';
+									row += '<td class="action"><button type="button" class="btn editOrder"><img src="<?= base_url() ?>images/icons/Create.png" class="img-centered img-fluid"></button><button type="button" class="btn deleteOrder"><img src="<?= base_url() ?>images/icons/remove.png" class="img-centered img-fluid"></button></td>';
+									row += '</tr>';
+
+									rows.push(row);
+								});
+							});
+
+							table_body.append(rows.join(''));
+
+							table_body.find('tr.order-header').each(function () {
+								var orderId = $(this).data('order-id');
+								if (orderId) {
+									$(this).show();
+								}
+							});
+						} else {
+							$('#no_records').show();
+						}
+					},
+					error: function (response) {
+						console.error('Error fetching search results:', response);
+					}
+				});
+			}
+		});
+	});
 
 </script>
 <?= $this->endSection() ?>
