@@ -201,7 +201,7 @@
 						<td class="actions">
 
 							<form action="<?= base_url('stock/details') ?>" method="post">
-								<input type="text" name="id" value="<?php echo stripslashes($stock['stock_id']); ?>" hidden>
+								<input type="text" name="id" value="<?php echo stripslashes($stock['stock_list_id']); ?>" hidden>
 
 								<button class="btn-view" type="submit">View</button>
 							</form>

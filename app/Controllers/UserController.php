@@ -221,7 +221,6 @@ class UserController extends BaseController
                 $mail->SMTPAuth     = true;
                 $mail->Username     = 'AKIASKRV7H5JDOJCUGGT';
                 $mail->Password     = 'BAYiFnjSzn1W4zX8+UC+xINscVJXCNY6XbQqTeY5p3V9';
-                
             } else {
                 $mail->Host         = 'smtp.gmail.com';
                 $mail->SMTPAuth     =  true;
@@ -238,7 +237,7 @@ class UserController extends BaseController
             $mail->addAddress($postdata["mail_id"]);
             $mail->isHTML(true);
             $response = $mail->send();
-           
+
             if (!$response) {
                 return "Something went wrong. Please try again." . $mail->ErrorInfo;
             } else {
@@ -340,7 +339,6 @@ class UserController extends BaseController
                 $mail->SMTPAuth     = true;
                 $mail->Username     = 'AKIASKRV7H5JDOJCUGGT';
                 $mail->Password     = 'BAYiFnjSzn1W4zX8+UC+xINscVJXCNY6XbQqTeY5p3V9';
-                
             } else {
                 $mail->Host         = 'smtp.gmail.com';
                 $mail->SMTPAuth     =  true;
@@ -357,11 +355,11 @@ class UserController extends BaseController
             $mail->addAddress($userData["mail_id"]);
             $mail->isHTML(true);
             $response = $mail->send();
-            
+
             if (!$response) {
                 return "Something went wrong. Please try again." . $mail->ErrorInfo;
             } else {
-                return "Password reset link has been send to your email";
+                return "Password reset link has been sent to your email";
             }
         } catch (Exception $e) {
             return "Something went wrong. Please try again." . $mail->ErrorInfo;
@@ -381,7 +379,6 @@ class UserController extends BaseController
                 $mail->SMTPAuth     = true;
                 $mail->Username     = 'AKIASKRV7H5JDOJCUGGT';
                 $mail->Password     = 'BAYiFnjSzn1W4zX8+UC+xINscVJXCNY6XbQqTeY5p3V9';
-                
             } else {
                 $mail->Host         = 'smtp.gmail.com';
                 $mail->SMTPAuth     =  true;
@@ -398,11 +395,9 @@ class UserController extends BaseController
             $mail->addAddress($userData["mail_id"]);
             $mail->isHTML(true);
             $response = $mail->send();
-            
+
             if (!$response) {
                 return "Something went wrong. Please try again." . $mail->ErrorInfo;
-            } else {
-                return "Password reset link has been send to your email";
             }
         } catch (Exception $e) {
             return "Something went wrong. Please try again." . $mail->ErrorInfo;
@@ -412,8 +407,16 @@ class UserController extends BaseController
     {
 
         try {
+            $userId = decrypt_url_segment($encryptedVal);
+
             if ($this->request->getMethod() == "get") {
 
+                if (!$this->CheckKey($randomKey, $userId)) {
+                    $changeStatus = "Link expired, please try again.";
+                    session()->setFlashdata('response', $changeStatus);
+                    return redirect()->to(uri: base_url());
+
+                }
                 return view("user/resetPassword", ["encrptVal" => $encryptedVal, "randomKey" => $randomKey]);
             } elseif ($this->request->getMethod() == "post") {
                 $rules = [
@@ -441,9 +444,8 @@ class UserController extends BaseController
                     //$response = Response::SetResponse(400, null, new Error($errorMsg));
 
                     //return json_encode(['success' => false, 'csrf' => csrf_hash(), 'error' => $output]);
-                    return view("user/resetPassword", ["encrptVal" => $encryptedVal, "randomKey" => $randomKey,"validation" => $this->validator]);
+                    return view("user/resetPassword", ["encrptVal" => $encryptedVal, "randomKey" => $randomKey, "validation" => $this->validator]);
                 } else {
-                    $userId = decrypt_url_segment($encryptedVal);
 
                     if (!$this->CheckKey($randomKey, $userId)) {
                         $changeStatus = "Link expired, please try again.";
@@ -457,14 +459,14 @@ class UserController extends BaseController
                         $update = $model->update($updateId, $data);
 
                         if ($update) {
-                            $changeStatus = "password changed successfully.";
+                            $changeStatus = "Password changed successfully.";
                         } else  $changeStatus = "Something went wrong. Please try again.";
                         // $response = Response::SetResponse(201, $update, new Error());
-                        
+
                     }
-                    session()->setFlashdata('response', $changeStatus);
+                    session()->setFlashdata(data: 'response', value: $changeStatus);
+                    return redirect()->to(uri: base_url());
                 }
-                return view("user/resetPassword", ["encrptVal" => $encryptedVal, "randomKey" => $randomKey]);
             }
         } catch (DataBaseException $ex) {
 

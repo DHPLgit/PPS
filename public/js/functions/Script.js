@@ -3,6 +3,7 @@
 function login() {
 
     $("#log_in").submit(function (event) {
+      $("#flashData").hide();
         event.preventDefault();
         $('#loader').show();
         var form = $(this);
@@ -199,7 +200,7 @@ function orderUpdate(form) {
 
             if (response.success) {
                 console.log("successentry");
-                
+
                 window.location.href = response.url;
             } else {
                 $("#submitBtn").prop("disabled", false);
@@ -306,7 +307,7 @@ function mapEditOrderData(order, url) {
 
             }
             if (!matched && drpdwn.id == "colour") {
-                drpdwn.value="Others";
+                drpdwn.value = "Others";
                 $("#other_colour").show();
                 $("#other_colour").val(editOrderData["colour"])
 
@@ -674,7 +675,7 @@ function saveStockInput(form) {
     //if (inputArr) {
     var qty = form.find('input[name="quantity"]').val();
     var stockId = form.find('select[name="stock_id"]').val();
-    console.log(qty);
+    console.log("qty", qty);
     console.log(stockId);
     var qtyElement = document.getElementById("quantity");
     var selectElement = document.getElementById("dropdown-stock");
@@ -689,9 +690,8 @@ function saveStockInput(form) {
     console.log(selectedOptionText);
 
 
-
     //Adding the preview of a selected stock if condition satisfies.
-    if (parseFloat(qty) <= parseFloat(stockArr[3])) {
+    if (parseFloat(qty) > 0 && parseFloat(qty) <= parseFloat(stockArr[3]) ) {
         // var flag = selectedList.includes(stockId)
         // console.log("flag",flag);
         if (stockId) {

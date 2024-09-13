@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-
+use App\Libraries\EnumsAndConstants\Employee;
 use PHPMailer\PHPMailer\PHPMailer;
 use Exception;
 use CodeIgniter\Database\Exceptions\DatabaseException;
@@ -102,7 +102,7 @@ class EmployeeController extends BaseController
     {
         $model = ModelFactory::createModel(ModelNames::Employee);
         // Perform a query to check if the employee exists based on the emp_code
-        //$condition=[Employee::Status=>"1"];
+        $condition=[Employee::Status=>"1"];
         $result = $model->GetAllEmployee();
         return $result;
     }
@@ -217,8 +217,9 @@ class EmployeeController extends BaseController
                 $request = $this->request->getPost();
 
                 $model = ModelFactory::createModel(ModelNames::Employee);
-
-                $delete_status = $model->DeleteEmployee($request['id']);
+                $data=[Employee::Status=>"0"];
+                $delete_status =$model->UpdateEmployee($request['id'], $data);
+                //$delete_status = $model->DeleteEmployee($request['id']);
 
                 if ($delete_status) {
                     $status = "Employee deleted successfully!";

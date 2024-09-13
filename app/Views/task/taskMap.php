@@ -1,6 +1,8 @@
 <?php
+
 namespace App\Models;
-    use App\Libraries\EnumsAndConstants\Task;
+
+use App\Libraries\EnumsAndConstants\Task;
 ?>
 <?= $this->extend("layouts/app") ?>
 <?= $this->section("body") ?>
@@ -20,23 +22,21 @@ namespace App\Models;
 
                 <h4 class="title">Order details:</h4>
                 <div class="para-input">
-                    <p class="para"><span>Texture:</span>
-                        <?= $order["texture"] ?>
-                    </p>
-                    <p class="para"><span>Type:</span>
-                        <?= $order["type"] ?>
-                    </p>
-                    <p class="para"><span>Extn size:</span>
-                        <?= $order["ext_size"] ?></p>
+                    <p class="para"><span>Texture:</span><?= $order["texture"] ?></p>
+                    <p class="para"><span>Type:</span><?= $order["type"] ?></p>
+                    <p class="para"><span>Extn size:</span><?= $order["ext_size"] ?></p>
+                    <p class="para"><span>Colour:</span><?= $order["colour"] ?></p>
 
-                    <p class="para"><span>Length:</span>
-                        <?= $order["length"] ?>
-                    </p>
+                    <p class="para"><span>Quantity:</span><?= $order["quantity"] ?></p>
+                    <p class="para"><span>Length:</span><?= $order["length"] ?></p>
                 </div>
                 <h4 class="title">Input details:</h4>
                 <div class="para-input-2">
                     <?php foreach ($inputDetails as $key => $input) { ?>
                         <div class="inpt-details-row">
+                            <p class="para"><span>Type:</span>
+                                <?= $input["in_type"] ?>
+                            </p>
                             <p class="para"><span>Extn size:</span>
                                 <?= $input["in_ext_size"] ?>
                             </p>
@@ -46,9 +46,10 @@ namespace App\Models;
                             <p class="para"><span>Quantity:</span>
                                 <?= $input["in_quantity"] ?>
                             </p>
-                            <p class="para"><span>Type:</span>
-                                <?= $input["in_type"] ?>
+                            <p class="para"><span>Length:</span>
+                                <?= $input["in_length"] ?>
                             </p>
+
                         </div>
                     <?php } ?>
                 </div>
@@ -120,13 +121,13 @@ namespace App\Models;
                         <input type="hidden" id="task_detail_id" name="taskDetailId" value="<?= $currentTaskDetail["task_detail_id"] ?>">
                         <label for="employee_id">Select Employee to work:</label>
                         <select id="employee_id_split" name="employee">
-                                    <?php foreach ($employeeList as $employee) { ?>
-                                        <option value="<?= $employee["id"] ?>"
-                                            <?= ($employee["id"] == $currentTask[Task::EmployeeId]) ? 'selected' : '' ?>>
-                                            <?= $employee["name"] ?>
-                                        </option>
-                                    <?php } ?>
-                                </select>
+                            <?php foreach ($employeeList as $employee) { ?>
+                                <option value="<?= $employee["id"] ?>"
+                                    <?= ($employee["id"] == $currentTask[Task::EmployeeId]) ? 'selected' : '' ?>>
+                                    <?= $employee["name"] ?>
+                                </option>
+                            <?php } ?>
+                        </select>
                         <div class="button-row">
                             <button id="emp_map_form_btn" type="submit"> Start</button>
                         </div>
@@ -231,11 +232,11 @@ namespace App\Models;
                                                                                                                                                                                                                                                                 } ?></select><br/>';
             var weight = '<label for="weight">Weight (gm):</label><br/><input type="number" class="weight" placeholder="weight"><p style="color:red;display:none" class="error weight_error"></p> <br/>';
 
-            var type = '<label for="Type">Type:</label><br/><select id="type_dropdown" class="type_select" name="type"><?php if (isset($drpdwnData)) {
-                                                                                                                            foreach ($drpdwnData->Types as $type) { ?><option value="<?php echo $type ?>"><?php echo $type ?></option><?php }
+            var type = '<label for="Type">Type:</label><br/><select id="type_dropdown' + index + '" class="type_select" name="type"><?php if (isset($drpdwnData)) {
+                                                                                                                                        foreach ($drpdwnData->Types as $type) { ?><option value="<?php echo $type ?>"><?php echo $type ?></option><?php }
                                                                                                                                                                                                                                 } ?></select>';
-            var extSize = '<div id="ext_size_div" style="display:none"><label for="ext_size">Ext size:</label><br/><select id="ext_size_dropdown" class="ext_size_select" name="ext_size"><?php if (isset($drpdwnData)) {
-                                                                                                                                                                                                foreach ($drpdwnData->Ext_sizes as $ext_size) { ?><option value="<?php echo $ext_size ?>"><?php echo $ext_size ?></option><?php }
+            var extSize = '<div id="ext_size_div' + index + '" style="display:none"><label for="ext_size">Ext size:</label><br/><select id="ext_size_dropdown" class="ext_size_select" name="ext_size"><?php if (isset($drpdwnData)) {
+                                                                                                                                                                                                            foreach ($drpdwnData->Ext_sizes as $ext_size) { ?><option value="<?php echo $ext_size ?>"><?php echo $ext_size ?></option><?php }
                                                                                                                                                                                                                                                                                                                     } ?></select><br/> </div>';
             var closing_div = '</div>';
 
@@ -243,19 +244,22 @@ namespace App\Models;
 
             $("#form_inputs").append(output_form);
 
-            $("#type_dropdown").on("change", function() {
 
-                var type = $(this).val();
-                if (type.includes("Bulk")) {
-                    $("#ext_size_div").hide();
-                } else {
-                    $("#ext_size_div").show();
-                }
-            })
         }
-
+        $(".type_select").on("change", function() {
+        var idName = $(this).attr("id");
+        console.log($(this).attr("id"));
+        var index=idName.substring(idName.length-1);
+        var type = $(this).val();
+        if (type.includes("Bulk")) {
+            $("#ext_size_div"+index).hide();
+        } else {
+            $("#ext_size_div"+index).show();
+        }
     })
 
+    })
+   
     $("#emp_map_form").submit(function() {
 
         $("#emp_map_form_btn").prop("disabled", true);
@@ -348,7 +352,7 @@ namespace App\Models;
             //     return false;
 
             // } else 
-            if (isNaN(weight) || weight<=0) {
+            if (isNaN(weight) || weight <= 0) {
 
                 $(this).find(".weight_error").text("Please enter valid weight.")
                 isError = true;
@@ -509,9 +513,9 @@ namespace App\Models;
 
 
             //Adding the preview of a entered quantity if condition satisfies.
-        // console.log("overAllReqQty", overAllReqQty);
-        // console.log("overAllAccQty", overAllAccQty);
-        // console.log("overAllQty", overAllQty);
+            // console.log("overAllReqQty", overAllReqQty);
+            // console.log("overAllAccQty", overAllAccQty);
+            // console.log("overAllQty", overAllQty);
             if ((overAllReqQty + overAllAccQty) <= overAllQty) {
 
                 if (employee) {
@@ -579,8 +583,7 @@ namespace App\Models;
             } else {
                 $("#quantity_error").text("Sum of the entered quantities should be less than or equal to the input quantity.")
             }
-        }
-        else{
+        } else {
             $("#quantity_error").text("Please enter valid quantity.")
 
         }
