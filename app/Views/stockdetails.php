@@ -3,6 +3,7 @@
 <?= $this->section("body") ?>
 <?php echo script_tag('js/jquery.min.js'); ?>
 <?php echo script_tag('js/functions/Script.js'); ?>
+
 <section class="upload-files">
 	<div class="container">
 		<?php if (session()->getFlashdata('response') !== NULL): ?>
@@ -10,6 +11,7 @@
 				<?php echo session()->getFlashdata('response'); ?>
 			</p>
 		<?php endif; ?>
+
 		<!-- Flash message -->
 		<?php if (session()->getFlashdata('success')): ?>
 			<div class="alert alert-success" id="flash-success">
@@ -22,7 +24,8 @@
 				<?= session()->getFlashdata('error') ?>
 			</div>
 		<?php endif; ?>
-		<!-- Flash message gone in 5 sec -->
+
+		<!-- Flash message auto-hide script -->
 		<script>
 			document.addEventListener("DOMContentLoaded", function () {
 				var timeoutDuration = 5000;
@@ -47,166 +50,61 @@
 			<div class="drop_box">
 				<header>
 					<h4>Select CSV File here</h4>
-					<!-- Updated text for CSV file selection -->
 				</header>
 				<p>Files Supported: CSV</p>
-				<!-- Updated to include CSV -->
 				<form method="post" class="csvuploadfile" action="<?= base_url('stock/upload') ?>"
 					enctype="multipart/form-data">
 					<input type="file" accept=".csv" id="uploadfile" name="formData">
-					<!-- Removed 'hidden' attribute -->
 					<button type="submit" class="btn">Submit</button>
 				</form>
 				<button data-bs-target="#formatModal" data-bs-toggle="modal" class="stock-chk-btn pull-left mb-3"
 					id="output" type="button">
-					<span class="description">click here to check the format.
-					</span>
+					<span class="description">Click here to check the format.</span>
 				</button>
-
 				<a href="<?php echo base_url(); ?>uploads/stock_template.csv" class="pull-left mb-3" id="output"
-					download><span class="description">(click here to download CSV
-						template)</span></a>
+					download><span class="description">(Click here to download CSV template)</span></a>
 			</div>
 		</div>
+
 		<form action="<?= base_url("stock/upload") ?>" method="get">
-			<input type="text" placeholder="" id="query" name="query" value="<?= isset($query) ? $query : ''; ?>">
+			<input type="text" id="query" name="query" value="<?= isset($query) ? $query : ''; ?>">
 			<button type="submit" id="search">Search</button>
 		</form>
+
 		<button type="button" id="reset">Reset</button>
 	</div>
-	<div class="container">
-		<div class="modal fade" id="formatModal">
-			<div class="modal-dialog">
-				<!-- Modal content-->
-				<div class="modal-content">
-					<div class="modal-header" style="padding:15px 50px;">
-						<h4>Format</h4>
-						<button type="button" class="close top-close" data-bs-dismiss="modal">&times;</button>
-
-					</div>
-					<div class="modal-body ctr-segment-body" style="padding:20px;">
-						<table class="stock-modal-popup">
-							<thead>
-								<tr>
-									<td>Colour</td>
-									<td>Texture</td>
-									<td>Size</td>
-									<td>Type</td>
-									<td>Extension size</td>
-									<td>Quantity</td>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>
-										<?php foreach ($stdData->Colours as $Colour) { ?>
-											<div>
-												<?php echo $Colour; ?>
-											</div>
-										<?php } ?>
-									</td>
-									<td style="height:05px; vertical-align:top;">
-
-										<?php foreach ($stdData->Textures as $texture) { ?>
-											<div>
-												<?php echo $texture; ?>
-											</div>
-										<?php } ?>
-									</td>
-									<td style="height:05px; vertical-align:top;">
-										<?php foreach ($stdData->Length as $length) { ?>
-											<div>
-												<?php echo $length; ?>
-											</div>
-										<?php } ?>
-
-									</td>
-									<td style="height:05px; vertical-align:top;">
-										<?php foreach ($stdData->Types as $type) { ?>
-											<div>
-												<?php echo $type; ?>
-											</div>
-										<?php } ?>
-
-									</td>
-									<td style="height:05px; vertical-align:top;">
-										<?php foreach ($stdData->Ext_sizes as $ext_size) { ?>
-											<div>
-												<?php echo $ext_size; ?>
-											</div>
-										<?php } ?>
-
-									</td>
-									<td style="height:05px; vertical-align:top;">
-										Quantity should be in grams.
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-
-	</div>
 </section>
+
+<!-- Filter Section -->
 <section>
 	<div class="container">
 		<?php if (!empty($empstocklist)) { ?>
-			<table class="employee-table">
-				<!-- <th> -->
-				<td>
-					<b>Stock ID</b>
-				</td>
-				<td>
-					<b>Length</b>
-				</td>
+			<table class="employee-table" border="1" cellpadding="10" cellspacing="0">
+				<tr>
+					<td><strong>Stock ID</strong></td>
+					<td><strong>Length</strong></td>
+					<td><strong>Color</strong></td>
+					<td><strong>Actions</strong></td>
+				</tr>
 
-				<td>
-					<b>Color</b>
-				</td>
-				<!-- <td>
-										<b>Texture</b>
-								</td>
-								<td>
-										<b>Unit</b>
-								</td> -->
-				<td>
-					<b>Action</b>
-				</td>
-				<!-- </th> -->
-				<?php $count = 0;
-				foreach ($empstocklist as $stock) {
-					$count++; ?>
-					<tr id="stock-det-row">
-						<td class="d-none">
-							<?php echo stripslashes($stock['stock_list_id']); ?>
-						</td>
-						<td>
-							<?php echo stripslashes($stock['stock_id']); ?>
-						</td>
-						<td>
-							<?php echo stripslashes($stock['length']); ?>
-						</td>
-						<td>
-							<?php echo stripslashes($stock['colour']); ?>
-						</td>
-						<!-- <td>
-														<?php echo stripslashes($stock['texture']); ?>
-												</td>
-												<td>
-														<?php echo stripslashes($stock['unit']); ?>
-												</td> -->
+				<tr>
+					<td><input type="text" id="filterStockID" placeholder="Filter by Stock ID"></td>
+					<td><input type="text" id="filterLength" placeholder="Filter by Length"></td>
+					<td><input type="text" id="filterColor" placeholder="Filter by Color"></td>
+					<td></td> 
+				</tr>
 
-						<td class="actions">
-
+				<!-- Data Rows -->
+				<?php foreach ($empstocklist as $stock) { ?>
+					<tr>
+						<td><?php echo stripslashes($stock['stock_id']); ?></td>
+						<td><?php echo stripslashes($stock['length']); ?></td>
+						<td><?php echo stripslashes($stock['colour']); ?></td>
+						<td>
 							<form action="<?= base_url('stock/details') ?>" method="post">
-								<input type="text" name="id" value="<?php echo stripslashes($stock['stock_list_id']); ?>" hidden>
-
+								<input type="hidden" name="id" value="<?php echo stripslashes($stock['stock_list_id']); ?>">
 								<button class="btn-view" type="submit">View</button>
-							</form>
-							&nbsp;
-							<button class="btn-view deleteStockDetail" type="buttom">Delete</button>
+								<button class="btn-view deleteStockDetail" type="button">Delete</button></form>
 						</td>
 					</tr>
 				<?php } ?>
@@ -217,32 +115,58 @@
 			</div>
 		<?php } ?>
 	</div>
-
 </section>
 
 <script>
-	$('.deleteStockDetail').on('click', function () {
-		//getting data of selected row using id.
+	// Filtering function
+	function filterTable() {
+		var stockIDFilter = document.getElementById('filterStockID').value.toUpperCase();
+		var lengthFilter = document.getElementById('filterLength').value.toUpperCase();
+		var colorFilter = document.getElementById('filterColor').value.toUpperCase();
+		var table = document.querySelector('.employee-table');
+		var tr = table.getElementsByTagName('tr');
 
-		console.log("ENtry");
-		$id = document.getElementById('stock-det-row');
-		console.log($id);
-		$tr = $(this).closest('tr');
-		console.log($tr);
-		var data = $tr.children().map(function () {
-			return $(this).text();
-		}).get();
-		console.log(data[0].trim());
-		var taskDetId = data[0].trim();
-		var url = "<?= base_url('stock/delete') ?>";
-		console.log(url);
-		stockDetailDelete(url, taskDetId);
+		// Loop through all rows except the first two (header and filter row)
+		for (var i = 2; i < tr.length; i++) {
+			var tdStockID = tr[i].getElementsByTagName('td')[0];
+			var tdLength = tr[i].getElementsByTagName('td')[1];
+			var tdColor = tr[i].getElementsByTagName('td')[2];
+
+			if (tdStockID && tdLength && tdColor) {
+				var stockIDValue = tdStockID.textContent || tdStockID.innerText;
+				var lengthValue = tdLength.textContent || tdLength.innerText;
+				var colorValue = tdColor.textContent || tdColor.innerText;
+
+				if (stockIDValue.toUpperCase().indexOf(stockIDFilter) > -1 &&
+					lengthValue.toUpperCase().indexOf(lengthFilter) > -1 &&
+					colorValue.toUpperCase().indexOf(colorFilter) > -1) {
+					tr[i].style.display = "";
+				} else {
+					tr[i].style.display = "none";
+				}
+			}
+		}
+	}
+
+	document.getElementById('filterStockID').addEventListener('keyup', filterTable);
+	document.getElementById('filterLength').addEventListener('keyup', filterTable);
+	document.getElementById('filterColor').addEventListener('keyup', filterTable);
+
+	// Reset filter
+	$("#reset").on("click", function () {
+		document.getElementById('filterStockID').value = "";
+		document.getElementById('filterLength').value = "";
+		document.getElementById('filterColor').value = "";
+		filterTable(); // Call filter function to reset table display
 	});
 
-	$("#reset").on("click", function () {
-
-		var currentUrl = window.location.href;
-		window.location.href = currentUrl.split('?')[0];
-	})
+	// Delete stock detail function
+	$('.deleteStockDetail').on('click', function () {
+		var $tr = $(this).closest('tr');
+		var stockListId = $tr.find('input[name="id"]').val();
+		var url = "<?= base_url('stock/delete') ?>";
+		stockDetailDelete(url, stockListId);
+	});
 </script>
+
 <?= $this->endSection() ?>
