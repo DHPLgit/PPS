@@ -14,6 +14,7 @@ use App\Libraries\Response\Response;
 use App\Libraries\Response\Error;
 use App\Libraries\EnumsAndConstants\Order;
 use App\Libraries\TokenManagement\TokenManagement;
+use CodeIgniter\Model;
 use Config\Services;
 
 use function PHPUnit\Framework\containsOnly;
@@ -35,22 +36,33 @@ class OrderController extends BaseController
     public function GetOrderList()
     {
         try {
+            $request = $this->request->getGet();
+$search="";
+            $currentPage = $this->request->getGet('page') ? $this->request->getGet('page') : 1;
+
+            // Define the number of records per page
+            $perPage = 20;
+
+            // Calculate the offset
+            $offset = ($currentPage - 1) * $perPage;
 
             //$order_id = $this->request->getGet('Order_list_id');
             $model = ModelFactory::createModel(ModelNames::Order);
             $selectArray = [Order::OrderListId, Order::OrderId, Order::ItemId, Order::CustomerId, Order::OrderDate, Order::Type, Order::Colour, Order::Length, Order::Texture, Order::ExtSize, Order::Unit, Order::BundleCount, Order::Quantity, Order::Status, Order::DueDate];
-            $orderList = $model->select($selectArray)->where(Order::Status . "!=", WorkStatus::C)->orderBy(Order::OrderId)->findAll();
 
-            foreach ($orderList as $key => $order) {
-                # code...
-
-                $orderId=$order[Order::OrderId];
+            if (isset($request["query"]) && !empty($request["query"])) {
+                $search=$request["query"];
+                $result = $model->GetOrders($selectArray,  $perPage, $offset,$request['query']);
+            } else {
+              $result=$model->GetOrders($selectArray,$perPage, $offset);
             }
+            $totalRecords=$result[0];
+            $orderList=$result[1];
 
+            $pageLinks = GetPaginationLinks($totalRecords, $perPage, $currentPage);
 
-            
             $response = Response::SetResponse(200, $orderList, new Error());
-            return view('order/orderList', ["orderList" => $orderList]);
+            return view('order/orderList', ["orderList" => $orderList, "pageLinks" => $pageLinks,"search"=>$search]);
         } catch (DataBaseException $ex) {
 
             $response = Response::SetResponse($ex->getCode(), null, new Error($ex->getMessage()));
@@ -61,6 +73,7 @@ class OrderController extends BaseController
         return json_encode($response);
     }
 
+    //search the order for task initialize page
     public function SearchOrder()
     {
         try {
@@ -96,9 +109,9 @@ class OrderController extends BaseController
 
         $selectArray = [Order::OrderListId, Order::OrderId, Order::ItemId, Order::CustomerId, Order::OrderDate, Order::Type, Order::Colour, Order::Length, Order::Texture, Order::ExtSize, Order::BundleCount, Order::Quantity, Order::Status, Order::DueDate];
 
-        $modelHelper= new ModelHelper();
-        $condition=[Order::OrderId=>$request['orderId']];
-        $orderList = $modelHelper->GetAllDataUsingWhere($model,$condition);
+        $modelHelper = new ModelHelper();
+        $condition = [Order::OrderId => $request['orderId']];
+        $orderList = $modelHelper->GetAllDataUsingWhere($model, $condition);
 
         $res = [];
         foreach ($orderList as $key => $order) {
@@ -508,16 +521,21 @@ class OrderController extends BaseController
 
         $request = $this->request->getGet();
 
-        // $condition["key"] = Order::OrderId;
-        // $condition["value"] = $request['query'];
-        // $condition["side"] = "after";
-        // $req[0]=$condition;
         $model = ModelFactory::createModel(ModelNames::Order);
 
         $selectArray = [Order::OrderListId, Order::OrderId, Order::ItemId, Order::CustomerId, Order::OrderDate, Order::Type, Order::Colour, Order::Length, Order::Texture, Order::ExtSize, Order::BundleCount, Order::Quantity, Order::Status, Order::DueDate];
 
-        $orderList = $model->FilterOrder($selectArray, $request['query']);
+        $perPage = 20;
+        $currentPage = $this->request->getGet('page') ? (int)$this->request->getGet('page') : 1;
 
+        // Calculate the offset
+        $offset = ($currentPage - 1) * $perPage;
+        $result = $model->FilterOrder($selectArray, $request['query'], $perPage, $offset);
+
+        $orderList = $result[1];
+        $totalRecords = $result[0];
+
+        $pageLinks = GetPaginationLinks($totalRecords, 20, $currentPage);
         $res = [];
         foreach ($orderList as $key => $order) {
 
@@ -539,7 +557,8 @@ class OrderController extends BaseController
 
         //  $orderList= $this->modelHelper->GetDataUsingLike($model, $req);
 
-        return json_encode(["success" => true, 'csrf' => csrf_hash(), 'output' => $res]);
-        //  return view('order/orderList', ["orderList" => $orderList]);
+        // return json_encode(["success" => true, 'csrf' => csrf_hash(), 'output' => $res,'pageLinks'=>$pageLinks]);
+        //return view('order/orderList', ["orderList" => $orderList]);
+        return view('order/orderList', ["orderList" => $orderList, "pageLinks" => $pageLinks]);
     }
 }

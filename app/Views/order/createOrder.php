@@ -115,7 +115,7 @@
                                         </option>
                                     <?php } ?>
                                 </select>
-                                <input type="text" name="other_colour" id="other_colour" style="display: none;"> 
+                                <input type="text" name="other_colour" id="other_colour" style="display: none;">
                                 <p style="color:red" class="error" id="colour_error" type="hidden"></p>
                                 <?php if (isset($validation)) : ?>
                                     <div style="color:red">
@@ -323,17 +323,22 @@
             $("#bundle-count-div").hide();
             $("#quantity-div").hide();
             $("#bundle_count").val("");
-            console.log("hi");
         })
+        $("#type").on("change", function() {
 
+            $("#is_bundle").prop("checked", false);
+            $("#is_bundle1").prop("checked", false);
+            $("#bundle-count-div").hide();
+            $("#quantity-div").hide();
+            $("#bundle_count").val("");
+        })
         $("#colour").on("change", function() {
 
             var colour = $(this).val();
             if (colour == "Others") {
                 $("#other_colour").val("");
-               $("#other_colour").show();
-            }
-            else{
+                $("#other_colour").show();
+            } else {
                 $("#other_colour").hide();
             }
             console.log("colour", colour)

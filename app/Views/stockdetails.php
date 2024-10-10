@@ -109,6 +109,9 @@
 					</tr>
 				<?php } ?>
 			</table>
+			<div id="pageLinks">
+				<?php echo $pageLinks; ?>
+			</div>
 		<?php } else { ?>
 			<div class="no-data">
 				<p>No data found!</p>
