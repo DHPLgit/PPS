@@ -13,6 +13,8 @@ use App\Models\ModelFactory;
 use App\Libraries\EnumsAndConstants\ModelNames;
 use App\Libraries\EnumsAndConstants\Stock;
 
+use function PHPUnit\Framework\isEmpty;
+
 require_once APPPATH . 'Libraries/EnumsAndConstants/Enums.php';
 require_once APPPATH . 'Libraries/EnumsAndConstants/Constants.php';
 class StockController extends BaseController
@@ -46,11 +48,13 @@ class StockController extends BaseController
         $request["query"] = isset($request["query"]) ? $request["query"] : "";
 
         if ($this->request->getMethod() == 'get') {
-            
+
             $result = $this->GetStockData($request);
             $empstocklist = $result[0];
             $stdData = $result[1];
-            return view('stockdetails', ["empstocklist" => $empstocklist, "stdData" => $stdData, "query" => $request["query"]]);
+            $pageLinks = $result[2];
+
+            return view('stockdetails', ["empstocklist" => $empstocklist, "stdData" => $stdData, "query" => $request["query"],"pageLinks" => $pageLinks]);
         } else {
             $rules = [
                 'formData' => 'uploaded[formData]|max_size[formData,2048]|ext_in[formData,csv]'
@@ -87,7 +91,7 @@ class StockController extends BaseController
                                     $csvArr[$i]['Size'] = $filedata[4];
                                     $csvArr[$i]['IN'] = $filedata[5];
                                     $csvArr[$i]['Type'] = $filedata[6];
-                                    $csvArr[$i]['Ext size']=$filedata[7];
+                                    $csvArr[$i]['Ext size'] = $filedata[7];
                                 };
 
                                 $i++;
@@ -115,8 +119,8 @@ class StockController extends BaseController
                 $result = $this->GetStockData($request);
                 $empstocklist = $result[0];
                 $stdData = $result[1];
-
-                return view('stockdetails', ["empstocklist" => $empstocklist, "stdData" => $stdData, "query" => $request["query"]]);
+                $pageLinks = $result[2];
+                return view('stockdetails', ["empstocklist" => $empstocklist, "stdData" => $stdData, "query" => $request["query"], "pageLinks" => $pageLinks]);
             }
         }
     }
@@ -135,17 +139,26 @@ class StockController extends BaseController
     }
     public function GetStockData($request)
     {
-       // $request = $this->request->getGet();
+        // $request = $this->request->getGet();
         $model = ModelFactory::createModel(ModelNames::Stock);
+        $currentPage = $this->request->getGet('page') ? $this->request->getGet('page') : 1;
 
-        if (isset($request["query"])) {
-            $stockList = $model->FilterStock($request["query"]);
+        // Define the number of records per page
+        $perPage = 20;
 
+        // Calculate the offset
+        $offset = ($currentPage - 1) * $perPage;
+       $a=empty($request["query"]);
+        if (isset($request["query"]) && !empty($request["query"])) {
+            $result = $model->GetStockList( $perPage, $offset,$request["query"]);
         } else {
-            $stockList = $model->GetStockList();
+            $result = $model->GetStockList($perPage, $offset);
         }
+        $totalRecords = $result[0];
+        $stockList = $result[1];
+        $pageLinks = GetPaginationLinks($totalRecords, 20, $currentPage);
         $stdData = GetJson();
-        $result = [$stockList, $stdData];
+        $result = [$stockList, $stdData, $pageLinks];
         return $result;
     }
     public function GetUniqueStockData()
@@ -153,7 +166,7 @@ class StockController extends BaseController
         $stockCode = $this->request->getPost('id');
         // Fetch the unique Stock data based on the stock id
         $model = ModelFactory::createModel(ModelNames::Stock);
-        $condition=[Stock::StockListId=>$stockCode];
+        $condition = [Stock::StockListId => $stockCode];
         $stockData = $model->where($condition)->first();
         return view('stock_details', ["stock" => $stockData]);
     }

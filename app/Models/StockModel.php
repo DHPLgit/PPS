@@ -40,10 +40,20 @@ class StockModel extends Model
   protected $beforeDelete   = [];
   protected $afterDelete    = [];
 
-  public function GetStockList()
+  public function GetStockList($perPage, $offset, $query=null)
   {
-    $condition=[Stock::ActiveStatus=>"1"];
-    $result = $this->where($condition)->findAll();
+    $condition = [Stock::ActiveStatus => "1"];
+
+    if ($query) {
+      $colour = [Stock::Colour => $query];
+      $length = [Stock::Length => $query];
+      $query = $this->like(Stock::StockId, $query, "after")->where($condition)->orWhere($colour)->orWhere($length);
+    } else {
+      $query = $this->where($condition);
+    }
+    $result[0] = $query->countAllResults(false);
+
+    $result[1] = $query->findAll($perPage, $offset);
 
     return $result;
   }
@@ -82,13 +92,18 @@ class StockModel extends Model
 
     return $result;
   }
-  public function FilterStock($query)
+  public function FilterStock($query, $perPage, $offset)
   {
 
     $colour = [Stock::Colour => $query];
     $length = [Stock::Length => $query];
-    $condition=[Stock::ActiveStatus=>"1"];
-    $result =  $this->like(Stock::StockId, $query, "after")->where($condition)->orWhere($colour)->orWhere($length)->findAll();
+    $condition = [Stock::ActiveStatus => "1"];
+    $query = $this->like(Stock::StockId, $query, "after")->where($condition)->orWhere($colour)->orWhere($length);
+
+    $result[0] = $query->countAllResults(false);
+
+    $stock =  $query->findAll($perPage, $offset);
+    $result[1] = $stock;
     return $result;
   }
 }
