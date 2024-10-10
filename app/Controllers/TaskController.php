@@ -296,10 +296,12 @@ class TaskController extends BaseController
             $condition = $this->GetCondition($request);
         }
         $condition[Task::TaskDetailId] = $taskDetailId;
-        $condition[Task::IsSplit] = "0";
+        // $condition[Task::IsSplit] = "0";
+        $whereInVal = ["0", "3"];
 
         $taskModel = ModelFactory::createModel(ModelNames::Task);
-        $taskList = $taskModel->GetTaskList($condition);
+        //$taskList = $taskModel->GetTaskList($condition);
+        $taskList = $taskModel->GetTaskList1($condition, Task::IsSplit, $whereInVal);
 
         $model = ModelFactory::createModel(ModelNames::TaskDetail);
         $condition = [task::TaskDetailId => $taskDetailId];
@@ -452,9 +454,7 @@ class TaskController extends BaseController
                 $request = "";
 
                 $taskOrderDetails = $this->GetTaskAndOrderDetails($taskId);
-                // print_r($taskOrderDetails);
                 $task = $taskOrderDetails["task"];
-                // print_r($task);
                 $drpdwnData = null;
                 if ($task[Task::Status] == WorkStatus::IP) {
                     $drpdwnData = GetJson();
@@ -552,6 +552,7 @@ class TaskController extends BaseController
                     $parentTaskId = $parentTask[Task::TaskId];
                     $parentTask[Task::TaskId] = null;
                     $count = 0;
+                    $splitTaskIds = [];
                     // for ($i = 0; $i < count($postData); $i++) {
                     foreach ($postData as $employee => $qtyList) {
                         $count++;
@@ -560,7 +561,7 @@ class TaskController extends BaseController
                         $parentTask[Task::Part] = $count;
                         $parentTask[Task::SplitFrom] = $parentTaskId;
                         $splitTaskId = $modelHelper->InsertData($taskModel, $parentTask);
-
+                        array_push($splitTaskIds, $splitTaskId);
                         foreach ($qtyList as $key => $value) {
                             //for ($j = 0; $i < $postData[$i][]; $i++) {
                             $splitInput = $inputKeyValue[$value->in_qty_id];
@@ -571,7 +572,8 @@ class TaskController extends BaseController
                             $modelHelper->InsertData($taskInputModel, $splitInput);
                         }
                     }
-
+                    $data = [Task::SiblingIdList => implode(",", $splitTaskIds)];
+                    $this->modelHelper->UpdateDataUsingWhereIn($taskModel, Task::TaskId, array_values($splitTaskIds), $data);
                     // $response = Response::SetResponse(201, null, new Error());
                     return json_encode(['success' => true, 'csrf' => csrf_hash(), "url" => base_url("task/orderList/" . $request["taskDetailId"])]);
                 }
@@ -727,14 +729,26 @@ class TaskController extends BaseController
                 //update the task
                 $data = [
                     Task::EndTime => date("Y-m-d H:i:s"),
-                    Task::Status => WorkStatus::C
+                    Task::Status => WorkStatus::C,
+                    Task::NextTaskDetailId => $request["next_task_detail_id"]
                 ];
+                if (isset($request["separate_task"]) && $request["separate_task"] == 0) {
+                    $data[Task::Status] = WorkStatus::TM;
+                }
                 $this->modelHelper->UpdateData($taskModel, $request["qa_task"], $data);
-
-                if ($request["current_task_detail_id"] != 101) {
-                    $condition = [Task::TaskId => $request["parent_task"]];
+                $qaParent = $request["parent_task"];
+                $qaTaskId = $request["qa_task"];
+                $waitForMerge = false;
+                if (isset($request["separate_task"]) && $request["separate_task"] == 0) {
+                    $result = $this->MergeTasks($qaParent);
+                    $waitForMerge = $result["waitForMerge"];
+                    $qaParent = $result["qaParentTaskId"];
+                    $qaTaskId = $result["qaTaskId"];
+                }
+                if ($request["current_task_detail_id"] != 101 && !$waitForMerge) {
+                    $condition = [Task::TaskId => $qaParent];
                     $parentTask = $this->modelHelper->GetSingleData($taskModel, $condition);
-                    $previousTaskId = $request["qa_task"];
+                    $previousTaskId = $qaTaskId;
                     //insert next task
                     $insertedtaskId = $this->InsertNextTask($parentTask, $request["next_task_detail_id"], $previousTaskId);
                     $parentTask[Task::TaskId] = $insertedtaskId;
@@ -767,10 +781,37 @@ class TaskController extends BaseController
         $qaTask = [];
         if ($task[Task::IsQa] == 1) {
             $qaTask = $task;
+            $qaTask["isLastTask"] = 0;
             $condition = [Task::TaskId => $task[Task::ParentTaskId]];
 
-            //assign parent task as a task to get the input detais for that.
+            //Assign parent task as a task to get the input details for that.
             $task = $this->modelHelper->GetSingleData($taskModel, $condition);
+
+ //Get all the split tasks if the task is split from the parent task.
+            if ($task[Task::SplitFrom] != 0) {
+                $condition = [Task::SplitFrom => $task[Task::SplitFrom]];
+                $childTasks = $this->modelHelper->GetAllDataUsingWhere($taskModel, $condition);
+                $count = 0;
+                foreach ($childTasks as $key => $child) {
+                    if ($child[Task::Status] == "Completed") {
+                        $count++;
+                    } else break;
+                }
+                if ($count == count($childTasks)) {
+                    $qaCount = 0;
+                    foreach ($childTasks as $key => $child) {
+                        $condition = [Task::ParentTaskId => $child[Task::TaskId]];
+                        $childQaTask = $this->modelHelper->GetSingleData($taskModel, $condition);
+                        if ($childQaTask[Task::Status] == "Completed") {
+                            $qaCount++;
+                        } else break;
+                    }
+                    if ($qaCount == ($count - 1)) {
+                        //$isLastTask = 1;
+                        $qaTask["isLastTask"] = 1;
+                    }
+                }
+            }
 
             $taskDetcondition = [TaskDetail::TaskDetailId => $qaTask[Task::TaskDetailId]];
         } else {
@@ -808,7 +849,6 @@ class TaskController extends BaseController
 
         //get the department details
         $deptEmpModel = ModelFactory::createModel(ModelNames::DeptEmpMap);
-        //    $condition = [Department::DepartmentId => $taskDetail[TaskDetail::DepartmentId]];
         $condition = [DeptEmpMap::DeptId => $taskDetail[TaskDetail::DepartmentId], DeptEmpMap::Status => "1"];
         $deptEmp = $deptEmpModel->GetDeptEmpMap($condition);
 
@@ -1045,7 +1085,7 @@ class TaskController extends BaseController
 
         return json_encode(['success' => true, 'csrf' => csrf_hash(), "output" => $result]);
     }
-    public function InsertQaTask($parentTask, $parentTaskDetail)
+    public function InsertQaTask($parentTask, $parentTaskDetail, $workStatus = WorkStatus::NS)
     {
 
         $taskDetModel = ModelFactory::createModel(ModelNames::TaskDetail);
@@ -1062,7 +1102,7 @@ class TaskController extends BaseController
             Task::ItemId => $parentTask[Task::ItemId],
             Task::SupervisorId => $parentTask[Task::SupervisorId],
             Task::TaskDetailId => $qaTaskDetail[TaskDetail::TaskDetailId],
-            Task::Status => WorkStatus::NS,
+            Task::Status => $workStatus,
             Task::CreatedBy => session()->get('id'),
             Task::UpdatedBy => session()->get('id')
         ];
@@ -1092,8 +1132,7 @@ class TaskController extends BaseController
 
                 if ($task_status && $input_status) {
                     $status = "Task deleted successfully!";
-                } else
-                    $status = "Something went wrong!";
+                } else $status = "Something went wrong!";
                 session()->setFlashdata('response', $status);
 
                 //$response = Response::SetResponse(201, null, new Error());
@@ -1109,6 +1148,219 @@ class TaskController extends BaseController
                 $response = Response::SetResponse($ex->getCode(), null, new Error($ex->getMessage()));
             }
             return json_encode($response);
+        }
+    }
+
+    public function MergeTasks($taskId)
+    {
+        $waitForMerge = false;
+        $qaTaskId = 0;
+        $qaParentTaskId = 0;
+        $model = ModelFactory::createModel(ModelNames::Task);
+        $condition = [Task::TaskId => $taskId];
+        $task = $this->modelHelper->GetSingleData($model, $condition);
+
+        $condition    = [Task::SplitFrom => $task[Task::SplitFrom]];
+        $childTasks   = $this->modelHelper->GetAllDataUsingWhere($model, $condition);
+        $totalQty     = 0;
+        $count        = 0;
+        $mergeTasks   = [];
+        $mergeQaTasks = [];
+
+        foreach ($childTasks as $key => $child) {
+            if ($child[Task::Status] == "Completed") {
+                $count++;
+            } else break;
+        }
+        $qaCount = 0;
+        $incompleteTaskCount = 0;
+        if ($count == count($childTasks)) {
+            foreach ($childTasks as $key => $child) {
+                $condition = [Task::ParentTaskId => $child[Task::TaskId]];
+                $childQaTask = $this->modelHelper->GetSingleData($model, $condition);
+                if ($childQaTask[Task::Status] == WorkStatus::TM) {
+
+                    $totalQty += $child[Task::OutQty];
+                    $data[Task::IsSplit]     = 2;
+                    $taskIds=[$child[Task::TaskId],$childQaTask[Task::TaskId]];
+                    //$result = $this->modelHelper->UpdateData($model, $child[Task::TaskId], $data);
+                    $result = $this->modelHelper->UpdateDataUsingWhereIn($model, Task::TaskId, $taskIds, $data);
+
+                    //store the tasks in array if merging is only for some tasks
+                    array_push($mergeTasks, $child);
+                    array_push($mergeQaTasks, $childQaTask);
+
+                    $qaCount++;
+                } else if ($childQaTask[Task::Status] == WorkStatus::NS || $childQaTask[Task::Status] != WorkStatus::IP) {
+                    $incompleteTaskCount++;
+                }
+            }
+        }
+
+        if ($qaCount == count($childTasks)) {
+            $parentTask[Task::OutQty]      = $totalQty;
+            $parentTask[Task::OutColour]   = $task[Task::OutColour];
+            $parentTask[Task::OutExtSize]  = $task[Task::OutExtSize];
+            $parentTask[Task::OutTexture]  = $task[Task::OutTexture];
+            $parentTask[Task::OutLength]   = $task[Task::OutLength];
+            $parentTask[Task::OutType]     = $task[Task::OutType];
+            $parentTask[Task::IsSplit]     = "3";
+            $parentTask[Task::Status]      = WorkStatus::C;
+
+            $result = $this->modelHelper->UpdateData($model, $task[Task::SplitFrom], $parentTask);
+            $qaParentTaskId = $task[Task::SplitFrom];
+        } else if ($count == count($childTasks) && $incompleteTaskCount == 0) {
+            $insertTask = $mergeTasks[0];
+            $insertTask[Task::OutQty] = $totalQty;
+            unset($insertTask[Task::TaskId], $insertTask[Task::EmployeeId], $insertTask[Task::StartTime], $insertTask[Task::EndTime]);
+
+            $insertedId = $this->modelHelper->InsertData($model, $insertTask);
+            $qaParentTaskId = $insertedId;
+        } else {
+            $waitForMerge = true;
+        }
+        if (!$waitForMerge) {
+            //update the status of the merged tasks to "MERGED"
+            $taskIds = [];
+            foreach ($mergeTasks as $key => $value) {
+                 array_push($taskIds, $value[Task::TaskId]);
+            }
+            foreach ($mergeQaTasks as $key => $value) {
+                 array_push($taskIds, $value[Task::TaskId]);
+            }
+            $data = [Task::Status => WorkStatus::M];
+            $result = $this->modelHelper->UpdateDataUsingWhereIn($model, Task::TaskId, $taskIds, $data);
+
+
+            //Get the parent task of QA
+            $condition = [Task::TaskId => $qaParentTaskId];
+            $parentTask = $this->modelHelper->GetSingleData($model, $condition);
+
+            //create a respective Qa task for that parent task
+            $qaTaskId = $this->InsertQaTask($parentTask, $parentTask[Task::TaskDetailId], WorkStatus::C);
+        }
+        $result = ["qaTaskId" => $qaTaskId, "qaParentTaskId" => $qaParentTaskId, "waitForMerge" => $waitForMerge];
+        return $result;
+        //return redirect()->to(base_url("task/orderList/" . $request["taskDetailId"]));
+    }
+
+    public function MergeTasks1()
+    {
+
+        $request = $this->request->getPost();
+        $model = ModelFactory::createModel(ModelNames::Task);
+        $condition = [Task::TaskId => $request["taskId"]];
+        $task = $this->modelHelper->GetSingleData($model, $condition);
+        $updateData = [Task::Status => "WFM"];
+        $this->modelHelper->UpdateData($model, $request["taskId"], $updateData);
+
+        $condition = [Task::SplitFrom => $task[Task::SplitFrom]];
+        $childTasks = $this->modelHelper->GetAllDataUsingWhere($model, $condition);
+        $totalQty = 0;
+        $count = 0;
+        foreach ($childTasks as $key => $child) {
+            # code...
+            if ($child[Task::Status] == "WFM") {
+                $totalQty += $child[Task::OutQty];
+                $count++;
+            } else break;
+        }
+        if ($count == count($childTasks)) {
+
+            $parentTask[Task::OutQty]      = $totalQty;
+            $parentTask[Task::OutColour]   = $task[Task::OutColour];
+            $parentTask[Task::OutExtSize]  = $task[Task::OutExtSize];
+            $parentTask[Task::OutTexture]  = $task[Task::OutTexture];
+            $parentTask[Task::OutLength]   = $task[Task::OutLength];
+            $parentTask[Task::OutType]     = $task[Task::OutType];
+            $parentTask[Task::IsSplit]     = 3;
+            $parentTask[Task::Status]      = "Completed";
+
+            $result = $this->modelHelper->UpdateData($model, $task[Task::SplitFrom], $parentTask);
+        }
+
+        return redirect()->to(base_url("task/orderList/" . $request["taskDetailId"]));
+    }
+
+    public function MergeScript()
+    {
+
+        $model = new TaskModel();
+        $condition = ["status" => "To merge"];
+        $result = $model->where($condition)->findAll();
+        foreach ($result as $key => $qaTask) {
+            $condition = ["task_id" => $qaTask["parent_task_id"]];
+            $result = $model->where($condition)->first();
+
+
+            $values = explode(",", $result["sibling_id_list"]);
+            $qaTaskList = $model->whereIn("parent_task_id", $values)->findAll();
+            $flag = true;
+            $toMergeList = [];
+            foreach ($qaTaskList as $key => $value) {
+
+                if ($value["status"] == "Inprogress" || $value["status"] == "Not started") {
+                    $flag = false;
+                } elseif ($value["status"] == "To merge") {
+                    array_push($toMergeList, $value);
+                }
+            }
+            if ($flag && count($toMergeList) > 0) {
+                $mergeArr = [];
+                foreach ($toMergeList as $key => $value) {
+
+
+                    if (array_key_exists($value["next_task_detail_id"], $mergeArr)) {
+                        $taskArr = $mergeArr[$value["next_task_detail_id"]];
+                    } else {
+                        $taskArr = [];
+                    }
+                    $mergeArr[$value["next_task_detail_id"]][0] = array_push($taskArr, $value);
+                    $mergeArr[$value["next_task_detail_id"]][1] += $value["out_qty"];
+                }
+
+                foreach ($mergeArr as $key => $value) {
+                    $taskList = $value[0];
+                    if (count($taskList) > 1) {
+                        $totalQty = $value[1];
+                        $insertTask = $taskList[0];
+                        $insertTask["out_qty"] = $totalQty;
+                        unset($insertTask["task_id"], $insertTask["employee_id"], $insertTask["start_time"], $insertTask["end_time"]);
+
+                        $insertedId = $model->insert($insertTask);
+                        $qaParentTaskId = $insertedId;
+                        //update the status of the merged tasks to "MERGED"
+                        $taskIds = [];
+                        foreach ($taskList as $key => $value) {
+                            $taskIds = array_push($taskIds, $value["task_id"]);
+                        }
+                        foreach ($taskList as $key => $value) {
+                            $taskIds = array_push($taskIds, $value["task_id"]);
+                        }
+                        $data = ["status" => "Merged"];
+                        $result = $this->modelHelper->UpdateDataUsingWhereIn($model, "task_id", $taskIds, $data);
+
+                        //Get the parent task of QA
+                        $condition = ["task_id" => $qaParentTaskId];
+                        $parentTask = $model->where($condition)->first();
+
+                        //create a respective Qa task for that parent task
+                        $qaTaskId = $this->InsertQaTask($parentTask, $parentTask[Task::TaskDetailId], "Completed");
+                    }
+                    else{
+                        $parentTask=$taskList[0];
+                        $data = ["status" => "Completed"];
+                        $model->update($parentTask["task_id"],$data);
+                    }
+                    $condition = ["task_id" => $parentTask["task_id"]];
+                    $parentTask = $model->where($condition)->first();
+                    $previousTaskId = $qaTaskId;
+                    //insert next task
+                    $insertedtaskId = $this->InsertNextTask($parentTask, $parentTask["next_task_detail_id"], $previousTaskId);
+                    $parentTask["task_id"] = $insertedtaskId;
+                    $this->InsertInputs($parentTask);
+                }
+            }
         }
     }
 }

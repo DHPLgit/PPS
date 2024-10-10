@@ -97,5 +97,10 @@ class ModelHelper
         return $result;
     }
 
-    
+    public function UpdateDataUsingWhereIn(Model $model, $WhereInKey, $whereInVal, $data)
+    {
+        $builder = $model->builder();
+        $result = $builder->whereIn($WhereInKey, $whereInVal)->update($data);
+        return $result;
+    }
 }

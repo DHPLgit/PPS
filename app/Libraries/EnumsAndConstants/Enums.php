@@ -20,15 +20,15 @@ abstract class ModelNames
     const Task = 'Task';
     const Input = 'Input';
     const Access = 'Access';
-    const Stock="Stock";
-    const Employee="Employee";
-    const TaskDetail="TaskDetail";
-    const QualityCheck="QualityCheck";
-    const OrderStockMap="OrderStockMap";
+    const Stock = "Stock";
+    const Employee = "Employee";
+    const TaskDetail = "TaskDetail";
+    const QualityCheck = "QualityCheck";
+    const OrderStockMap = "OrderStockMap";
 
-    const WtStd="Wtstd";
-    const Department="Department";
-    const DeptEmpMap="DeptEmpMap";
+    const WtStd = "Wtstd";
+    const Department = "Department";
+    const DeptEmpMap = "DeptEmpMap";
 }
 
 // enum ProductType: int
@@ -50,6 +50,8 @@ abstract class WorkStatus
     const NS = "Not started";
     const IP = "In progress";
     const C = "Completed";
+    const TM = "To merge";
+    const M="Merged";
 }
 
 
@@ -58,9 +60,10 @@ abstract class WorkStatus
 //     const Inactive=0;
 // }
 
-abstract class Status{
-    const Active="1";
-    const Inactive="0";
+abstract class Status
+{
+    const Active = "1";
+    const Inactive = "0";
 }
 // enum Roles: int
 // {
@@ -85,6 +88,3 @@ abstract class Roles
     const Employee = "3";
     const Guest = "4";
 }
-
-
-

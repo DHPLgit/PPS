@@ -63,5 +63,11 @@ class TaskModel extends Model
         return $result;
     }
 
-   
+    public function GetTaskList1($where, $whereInKey,$whereInVal)
+    {
+
+        $result = $this->where($where)->whereIn($whereInKey,$whereInVal)->findAll();
+
+        return $result;
+    }
 }
