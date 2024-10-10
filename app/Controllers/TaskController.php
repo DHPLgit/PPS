@@ -91,24 +91,24 @@ class TaskController extends BaseController
                     $deptEmpData = $this->GetDeptEmpMapData($taskDetailData[TaskDetail::DepartmentId]);
 
                     $data = [
-                        //'Task_id'          => $taskId,
+                            //'Task_id'          => $taskId,
                         Task::ParentTaskId => $parentTaskId,
                         Task::OrderListId => $inputs['order_list_id'],
                         Task::OrderId => $inputs['order_id'],
                         Task::ItemId => $inputs['item_id'],
-                        //'Employee_id'     => $inputs,
+                            //'Employee_id'     => $inputs,
                         Task::SupervisorId => $deptEmpData[DeptEmpMap::SupervisorId],
-                        //'Start_time'      => $inputs,
-                        //'End_time'        => $inputs,
-                        //'Time_taken'      => $inputs,
+                            //'Start_time'      => $inputs,
+                            //'End_time'        => $inputs,
+                            //'Time_taken'      => $inputs,
                         Task::TaskDetailId => $inputs['task_detail_id'],
-                        // Task::Sizing       => $inputs['sizing'],
-                        // Task::OutLength    => $inputs['output_length'],
-                        // Task::OutTexture   => $inputs['output_texture'],
-                        // Task::OutColour    => $inputs['output_colour'],
-                        //'Out_qty'          => $inputs['outputlength'],
+                            // Task::Sizing       => $inputs['sizing'],
+                            // Task::OutLength    => $inputs['output_length'],
+                            // Task::OutTexture   => $inputs['output_texture'],
+                            // Task::OutColour    => $inputs['output_colour'],
+                            //'Out_qty'          => $inputs['outputlength'],
                         Task::Status => WorkStatus::NS,
-                        //'Next_task_id'=>,
+                            //'Next_task_id'=>,
 
                         Task::CreatedBy => session()->get('id'),
                         Task::UpdatedBy => session()->get('id')
@@ -339,7 +339,7 @@ class TaskController extends BaseController
                 $hours = floor($duration / 3600);
                 $minutes = floor(($duration % 3600) / 60);
                 $seconds = $duration % 60;
-                $taskList[$i]["time_taken"] = sprintf("%02d:%02d:%02d" , $hours,$minutes,$seconds);
+                $taskList[$i]["time_taken"] = sprintf("%02d:%02d:%02d", $hours, $minutes, $seconds);
             }
             $condition = [Task::ParentTaskId => $taskList[$i][Task::TaskId]];
             $result = $this->modelHelper->GetAllDataUsingWhere($taskModel, $condition);
@@ -361,46 +361,47 @@ class TaskController extends BaseController
     {
         $request = $this->request->getGet();
         $order_item_id = null;
+
         if (isset($request["order_item_id"])) {
-
             $condition = $this->GetCondition($request);
-
             $order_item_id = $request["order_item_id"];
         }
+
         $condition[Task::IsSplit] = "0";
 
+        // Fetch task detail list
         $taskDetailList = $this->GetTasksInOrder();
 
         $model = ModelFactory::createModel(ModelNames::Task);
 
+        // Get counts based on the current condition
         $overAllCount = $model->GetTaskCount($condition);
 
-        $condition[Task::Status] = "Not started";
+        $condition[Task::Status] = "Not started"; // Update condition for ToDo
         $toDoCount = $model->GetTaskCount($condition);
 
-        $condition[Task::Status] = "In progress";
+        $condition[Task::Status] = "In progress"; // Update condition for In Progress
         $inProgressCount = $model->GetTaskCount($condition);
+
         $result = [];
         foreach ($taskDetailList as $taskDetail) {
             $taskDetail['overAllCount'] = 0;
             $taskDetail['toDoCount'] = 0;
             $taskDetail['inProgressCount'] = 0;
-            foreach ($overAllCount as $key => $value) {
-                # code... 
+
+            foreach ($overAllCount as $value) {
                 if ($value[Task::TaskDetailId] == $taskDetail[TaskDetail::TaskDetailId]) {
                     $taskDetail['overAllCount'] = $value['count'];
                     break;
                 }
             }
-            foreach ($toDoCount as $key => $value) {
-                # code... 
+            foreach ($toDoCount as $value) {
                 if ($value[Task::TaskDetailId] == $taskDetail[TaskDetail::TaskDetailId]) {
                     $taskDetail['toDoCount'] = $value['count'];
                     break;
                 }
             }
-            foreach ($inProgressCount as $key => $value) {
-                # code... 
+            foreach ($inProgressCount as $value) {
                 if ($value[Task::TaskDetailId] == $taskDetail[TaskDetail::TaskDetailId]) {
                     $taskDetail['inProgressCount'] = $value['count'];
                     break;
@@ -410,9 +411,12 @@ class TaskController extends BaseController
                 array_push($result, $taskDetail);
             }
         }
-        return view('task/taskList', ["taskDetailList" => $result, "orderItemId" => $order_item_id]);
-    }
 
+        return view('task/taskList', [
+            "taskDetailList" => $result,
+            "orderItemId" => $order_item_id,
+        ]);
+    }
 
     //Get all the taskdetails along with QA in correct sequence.
     public function GetTasksInOrder()
@@ -652,24 +656,24 @@ class TaskController extends BaseController
             $condition = [Task::TaskId => $request["parent_task"]];
             $parentTask = $this->modelHelper->GetSingleData($taskModel, $condition);
             $data = [
-                //'Task_id'          => $taskId,
+                    //'Task_id'          => $taskId,
                 Task::ParentTaskId => $request["qa_task"],
                 Task::OrderListId => $parentTask[Task::OrderListId],
                 Task::OrderId => $parentTask[Task::OrderId],
                 Task::ItemId => $parentTask[Task::ItemId],
-                //'Employee_id'     => $inputs,
+                    //'Employee_id'     => $inputs,
                 Task::SupervisorId => $parentTask[Task::SupervisorId],
-                //'Start_time'      => $inputs,
-                //'End_time'        => $inputs,
-                //'Time_taken'      => $inputs,
+                    //'Start_time'      => $inputs,
+                    //'End_time'        => $inputs,
+                    //'Time_taken'      => $inputs,
                 Task::TaskDetailId => $parentTask[Task::TaskDetailId],
-                // Task::Sizing       => $inputs['sizing'],
-                // Task::OutLength    => $inputs['output_length'],
-                // Task::OutTexture   => $inputs['output_texture'],
-                // Task::OutColour    => $inputs['output_colour'],
-                //'Out_qty'          => $inputs['outputlength'],
+                    // Task::Sizing       => $inputs['sizing'],
+                    // Task::OutLength    => $inputs['output_length'],
+                    // Task::OutTexture   => $inputs['output_texture'],
+                    // Task::OutColour    => $inputs['output_colour'],
+                    //'Out_qty'          => $inputs['outputlength'],
                 Task::Status => WorkStatus::NS,
-                //'Next_task_id'=>,
+                    //'Next_task_id'=>,
 
                 Task::CreatedBy => session()->get('id'),
                 Task::UpdatedBy => session()->get('id')
@@ -933,24 +937,24 @@ class TaskController extends BaseController
         $deptEmpData = $this->GetDeptEmpMapData($taskDetailData[TaskDetail::DepartmentId]);
 
         $data = [
-            //'Task_id'          => $taskId,
+                //'Task_id'          => $taskId,
             Task::ParentTaskId => $previousTaskId,
             Task::OrderListId => $task[Task::OrderListId],
             Task::OrderId => $task[Task::OrderId],
             Task::ItemId => $task[Task::ItemId],
-            //'Employee_id'     => $inputs,
+                //'Employee_id'     => $inputs,
             Task::SupervisorId => $deptEmpData[DeptEmpMap::SupervisorId],
-            //'Start_time'      => $inputs,
-            //'End_time'        => $inputs,
-            //'Time_taken'      => $inputs,
+                //'Start_time'      => $inputs,
+                //'End_time'        => $inputs,
+                //'Time_taken'      => $inputs,
             Task::TaskDetailId => $nextTask,
-            // Task::Sizing       => $inputs['sizing'],
-            // Task::OutLength    => $inputs['output_length'],
-            // Task::OutTexture   => $inputs['output_texture'],
-            // Task::OutColour    => $inputs['output_colour'],
-            //'Out_qty'          => $inputs['outputlength'],
+                // Task::Sizing       => $inputs['sizing'],
+                // Task::OutLength    => $inputs['output_length'],
+                // Task::OutTexture   => $inputs['output_texture'],
+                // Task::OutColour    => $inputs['output_colour'],
+                //'Out_qty'          => $inputs['outputlength'],
             Task::Status => WorkStatus::NS,
-            //'Next_task_id'=>,
+                //'Next_task_id'=>,
 
             Task::CreatedBy => session()->get('id'),
             Task::UpdatedBy => session()->get('id')
