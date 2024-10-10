@@ -361,16 +361,10 @@ class TaskController extends BaseController
     {
         $request = $this->request->getGet();
         $order_item_id = null;
-        $status = null;
 
         if (isset($request["order_item_id"])) {
             $condition = $this->GetCondition($request);
             $order_item_id = $request["order_item_id"];
-        }
-
-        if (isset($request["status"])) { 
-            $status = $request["status"];
-            $condition[Task::Status] = $status; 
         }
 
         $condition[Task::IsSplit] = "0";
@@ -421,7 +415,6 @@ class TaskController extends BaseController
         return view('task/taskList', [
             "taskDetailList" => $result,
             "orderItemId" => $order_item_id,
-            "status" => $status // Pass the status to the view
         ]);
     }
 
