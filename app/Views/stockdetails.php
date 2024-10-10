@@ -157,11 +157,9 @@
 
 	// Reset filter
 	$("#reset").on("click", function () {
-		document.getElementById('filterStockID').value = "";
-		document.getElementById('filterLength').value = "";
-		document.getElementById('filterColor').value = "";
-		filterTable(); // Call filter function to reset table display
-	});
+    var currentUrl = window.location.href;
+        window.location.href = currentUrl.split('?')[0];
+    });
 
 	// Delete stock detail function
 	$('.deleteStockDetail').on('click', function () {
