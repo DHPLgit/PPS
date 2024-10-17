@@ -56,7 +56,7 @@ $routes->group("order", ["filter" => "auth"], function ($routes) {
     $routes->get('generateItemId/(:any)', 'OrderController::GenerateItemId/$1');
     $routes->post('search', 'OrderController::SearchOrder', ["filter" => "noauth"]);
     $routes->get('getWeight', 'OrderController::CalculateWeight', ["filter" => "auth"]);
-    $routes->get('filter', 'OrderController::FilterOrder', ["filter" => "auth"]);
+    $routes->get('filter', 'OrderController::GetOrderList', ["filter" => "auth"]);
     $routes->get('getItems', 'OrderController::GetItems', ["filter" => "auth"]);
 
     
