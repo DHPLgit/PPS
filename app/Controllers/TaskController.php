@@ -1185,10 +1185,10 @@ class TaskController extends BaseController
                 if ($childQaTask[Task::Status] == WorkStatus::TM) {
 
                     $totalQty += $child[Task::OutQty];
-                    $data[Task::IsSplit]     = 2;
-                    $taskIds=[$child[Task::TaskId],$childQaTask[Task::TaskId]];
-                    //$result = $this->modelHelper->UpdateData($model, $child[Task::TaskId], $data);
-                    $result = $this->modelHelper->UpdateDataUsingWhereIn($model, Task::TaskId, $taskIds, $data);
+                    // $data[Task::IsSplit]     = 2;
+                    // $taskIds=[$child[Task::TaskId],$childQaTask[Task::TaskId]];
+                    // //$result = $this->modelHelper->UpdateData($model, $child[Task::TaskId], $data);
+                    // $result = $this->modelHelper->UpdateDataUsingWhereIn($model, Task::TaskId, $taskIds, $data);
 
                     //store the tasks in array if merging is only for some tasks
                     array_push($mergeTasks, $child);
