@@ -73,6 +73,81 @@
 
 		<button type="button" id="reset">Reset</button>
 	</div>
+	<div class="container">
+		<div class="modal fade" id="formatModal">
+			<div class="modal-dialog">
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header" style="padding:15px 50px;">
+						<h4>Format</h4>
+						<button type="button" class="close top-close" data-bs-dismiss="modal">&times;</button>
+
+					</div>
+					<div class="modal-body ctr-segment-body" style="padding:20px;">
+						<table class="stock-modal-popup">
+							<thead>
+								<tr>
+									<td>Colour</td>
+									<td>Texture</td>
+									<td>Size</td>
+									<td>Type</td>
+									<td>Extension size</td>
+									<td>Quantity</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>
+										<?php foreach ($stdData->Colours as $Colour) { ?>
+											<div>
+												<?php echo $Colour; ?>
+											</div>
+										<?php } ?>
+									</td>
+									<td style="height:05px; vertical-align:top;">
+
+										<?php foreach ($stdData->Textures as $texture) { ?>
+											<div>
+												<?php echo $texture; ?>
+											</div>
+										<?php } ?>
+									</td>
+									<td style="height:05px; vertical-align:top;">
+										<?php foreach ($stdData->Length as $length) { ?>
+											<div>
+												<?php echo $length; ?>
+											</div>
+										<?php } ?>
+
+									</td>
+									<td style="height:05px; vertical-align:top;">
+										<?php foreach ($stdData->Types as $type) { ?>
+											<div>
+												<?php echo $type; ?>
+											</div>
+										<?php } ?>
+
+									</td>
+									<td style="height:05px; vertical-align:top;">
+										<?php foreach ($stdData->Ext_sizes as $ext_size) { ?>
+											<div>
+												<?php echo $ext_size; ?>
+											</div>
+										<?php } ?>
+
+									</td>
+									<td style="height:05px; vertical-align:top;">
+										Quantity should be in grams.
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
 </section>
 
 <!-- Filter Section -->

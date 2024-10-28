@@ -91,24 +91,24 @@ class TaskController extends BaseController
                     $deptEmpData = $this->GetDeptEmpMapData($taskDetailData[TaskDetail::DepartmentId]);
 
                     $data = [
-                            //'Task_id'          => $taskId,
+                        //'Task_id'          => $taskId,
                         Task::ParentTaskId => $parentTaskId,
                         Task::OrderListId => $inputs['order_list_id'],
                         Task::OrderId => $inputs['order_id'],
                         Task::ItemId => $inputs['item_id'],
-                            //'Employee_id'     => $inputs,
+                        //'Employee_id'     => $inputs,
                         Task::SupervisorId => $deptEmpData[DeptEmpMap::SupervisorId],
-                            //'Start_time'      => $inputs,
-                            //'End_time'        => $inputs,
-                            //'Time_taken'      => $inputs,
+                        //'Start_time'      => $inputs,
+                        //'End_time'        => $inputs,
+                        //'Time_taken'      => $inputs,
                         Task::TaskDetailId => $inputs['task_detail_id'],
-                            // Task::Sizing       => $inputs['sizing'],
-                            // Task::OutLength    => $inputs['output_length'],
-                            // Task::OutTexture   => $inputs['output_texture'],
-                            // Task::OutColour    => $inputs['output_colour'],
-                            //'Out_qty'          => $inputs['outputlength'],
+                        // Task::Sizing       => $inputs['sizing'],
+                        // Task::OutLength    => $inputs['output_length'],
+                        // Task::OutTexture   => $inputs['output_texture'],
+                        // Task::OutColour    => $inputs['output_colour'],
+                        //'Out_qty'          => $inputs['outputlength'],
                         Task::Status => WorkStatus::NS,
-                            //'Next_task_id'=>,
+                        //'Next_task_id'=>,
 
                         Task::CreatedBy => session()->get('id'),
                         Task::UpdatedBy => session()->get('id')
@@ -658,24 +658,24 @@ class TaskController extends BaseController
             $condition = [Task::TaskId => $request["parent_task"]];
             $parentTask = $this->modelHelper->GetSingleData($taskModel, $condition);
             $data = [
-                    //'Task_id'          => $taskId,
+                //'Task_id'          => $taskId,
                 Task::ParentTaskId => $request["qa_task"],
                 Task::OrderListId => $parentTask[Task::OrderListId],
                 Task::OrderId => $parentTask[Task::OrderId],
                 Task::ItemId => $parentTask[Task::ItemId],
-                    //'Employee_id'     => $inputs,
+                //'Employee_id'     => $inputs,
                 Task::SupervisorId => $parentTask[Task::SupervisorId],
-                    //'Start_time'      => $inputs,
-                    //'End_time'        => $inputs,
-                    //'Time_taken'      => $inputs,
+                //'Start_time'      => $inputs,
+                //'End_time'        => $inputs,
+                //'Time_taken'      => $inputs,
                 Task::TaskDetailId => $parentTask[Task::TaskDetailId],
-                    // Task::Sizing       => $inputs['sizing'],
-                    // Task::OutLength    => $inputs['output_length'],
-                    // Task::OutTexture   => $inputs['output_texture'],
-                    // Task::OutColour    => $inputs['output_colour'],
-                    //'Out_qty'          => $inputs['outputlength'],
+                // Task::Sizing       => $inputs['sizing'],
+                // Task::OutLength    => $inputs['output_length'],
+                // Task::OutTexture   => $inputs['output_texture'],
+                // Task::OutColour    => $inputs['output_colour'],
+                //'Out_qty'          => $inputs['outputlength'],
                 Task::Status => WorkStatus::NS,
-                    //'Next_task_id'=>,
+                //'Next_task_id'=>,
 
                 Task::CreatedBy => session()->get('id'),
                 Task::UpdatedBy => session()->get('id')
@@ -753,6 +753,8 @@ class TaskController extends BaseController
                     $condition = [Task::TaskId => $qaParent];
                     $parentTask = $this->modelHelper->GetSingleData($taskModel, $condition);
                     $previousTaskId = $qaTaskId;
+
+
                     //insert next task
                     $insertedtaskId = $this->InsertNextTask($parentTask, $request["next_task_detail_id"], $previousTaskId);
                     $parentTask[Task::TaskId] = $insertedtaskId;
@@ -760,7 +762,6 @@ class TaskController extends BaseController
                 }
 
                 return json_encode(["success" => true, "csrf" => csrf_hash(), "url" => base_url("task/orderList/" . $request["current_task_detail_id"])]);
-                // return redirect()->to(base_url("task/list"));
             }
         }
     }
@@ -791,7 +792,7 @@ class TaskController extends BaseController
             //Assign parent task as a task to get the input details for that.
             $task = $this->modelHelper->GetSingleData($taskModel, $condition);
 
- //Get all the split tasks if the task is split from the parent task.
+            //Get all the split tasks if the task is split from the parent task.
             if ($task[Task::SplitFrom] != 0) {
                 $condition = [Task::SplitFrom => $task[Task::SplitFrom]];
                 $childTasks = $this->modelHelper->GetAllDataUsingWhere($taskModel, $condition);
@@ -977,24 +978,24 @@ class TaskController extends BaseController
         $deptEmpData = $this->GetDeptEmpMapData($taskDetailData[TaskDetail::DepartmentId]);
 
         $data = [
-                //'Task_id'          => $taskId,
+            //'Task_id'          => $taskId,
             Task::ParentTaskId => $previousTaskId,
             Task::OrderListId => $task[Task::OrderListId],
             Task::OrderId => $task[Task::OrderId],
             Task::ItemId => $task[Task::ItemId],
-                //'Employee_id'     => $inputs,
+            //'Employee_id'     => $inputs,
             Task::SupervisorId => $deptEmpData[DeptEmpMap::SupervisorId],
-                //'Start_time'      => $inputs,
-                //'End_time'        => $inputs,
-                //'Time_taken'      => $inputs,
+            //'Start_time'      => $inputs,
+            //'End_time'        => $inputs,
+            //'Time_taken'      => $inputs,
             Task::TaskDetailId => $nextTask,
-                // Task::Sizing       => $inputs['sizing'],
-                // Task::OutLength    => $inputs['output_length'],
-                // Task::OutTexture   => $inputs['output_texture'],
-                // Task::OutColour    => $inputs['output_colour'],
-                //'Out_qty'          => $inputs['outputlength'],
+            // Task::Sizing       => $inputs['sizing'],
+            // Task::OutLength    => $inputs['output_length'],
+            // Task::OutTexture   => $inputs['output_texture'],
+            // Task::OutColour    => $inputs['output_colour'],
+            //'Out_qty'          => $inputs['outputlength'],
             Task::Status => WorkStatus::NS,
-                //'Next_task_id'=>,
+            //'Next_task_id'=>,
 
             Task::CreatedBy => session()->get('id'),
             Task::UpdatedBy => session()->get('id')
@@ -1110,6 +1111,10 @@ class TaskController extends BaseController
             Task::CreatedBy => session()->get('id'),
             Task::UpdatedBy => session()->get('id')
         ];
+        if ($workStatus == WorkStatus::C) {
+            $data[Task::StartTime] = $parentTask[Task::StartTime];
+            $data[Task::EndTime] = $parentTask[Task::EndTime];
+        }
         $qaTaskId = $this->modelHelper->InsertData($taskModel, $data);
 
 
@@ -1172,7 +1177,7 @@ class TaskController extends BaseController
         $mergeQaTasks = [];
 
         foreach ($childTasks as $key => $child) {
-            if ($child[Task::Status] == "Completed") {
+            if ($child[Task::Status] == WorkStatus::C) {
                 $count++;
             } else break;
         }
@@ -1185,41 +1190,53 @@ class TaskController extends BaseController
                 if ($childQaTask[Task::Status] == WorkStatus::TM) {
 
                     $totalQty += $child[Task::OutQty];
-                    // $data[Task::IsSplit]     = 2;
-                    // $taskIds=[$child[Task::TaskId],$childQaTask[Task::TaskId]];
-                    // //$result = $this->modelHelper->UpdateData($model, $child[Task::TaskId], $data);
-                    // $result = $this->modelHelper->UpdateDataUsingWhereIn($model, Task::TaskId, $taskIds, $data);
 
                     //store the tasks in array if merging is only for some tasks
                     array_push($mergeTasks, $child);
                     array_push($mergeQaTasks, $childQaTask);
 
                     $qaCount++;
-                } else if ($childQaTask[Task::Status] == WorkStatus::NS || $childQaTask[Task::Status] != WorkStatus::IP) {
+                } else if ($childQaTask[Task::Status] == WorkStatus::NS || $childQaTask[Task::Status] == WorkStatus::IP) {
                     $incompleteTaskCount++;
                 }
             }
         }
+        $startTime = null;
+        $endTime = null;
+        if ($qaCount == count($childTasks) || ($count == count($childTasks) && $incompleteTaskCount == 0) ){
 
-        if ($qaCount == count($childTasks)) {
-            $parentTask[Task::OutQty]      = $totalQty;
-            $parentTask[Task::OutColour]   = $task[Task::OutColour];
-            $parentTask[Task::OutExtSize]  = $task[Task::OutExtSize];
-            $parentTask[Task::OutTexture]  = $task[Task::OutTexture];
-            $parentTask[Task::OutLength]   = $task[Task::OutLength];
-            $parentTask[Task::OutType]     = $task[Task::OutType];
-            $parentTask[Task::IsSplit]     = "3";
-            $parentTask[Task::Status]      = WorkStatus::C;
 
-            $result = $this->modelHelper->UpdateData($model, $task[Task::SplitFrom], $parentTask);
-            $qaParentTaskId = $task[Task::SplitFrom];
-        } else if ($count == count($childTasks) && $incompleteTaskCount == 0) {
-            $insertTask = $mergeTasks[0];
-            $insertTask[Task::OutQty] = $totalQty;
-            unset($insertTask[Task::TaskId], $insertTask[Task::EmployeeId], $insertTask[Task::StartTime], $insertTask[Task::EndTime]);
+            $result = $this->GetStartAndEndTime($mergeTasks);
+            $startTime = $result["startTime"];
+            $endTime = $result["endTime"];
 
-            $insertedId = $this->modelHelper->InsertData($model, $insertTask);
-            $qaParentTaskId = $insertedId;
+            $result = $this->GetStartAndEndTime($mergeQaTasks);
+            $qaStartTime = $result["startTime"];
+            $qaEndTime = $result["endTime"];
+            if ($qaCount == count($childTasks)) {
+                $parentTask[Task::OutQty]      = $totalQty;
+                $parentTask[Task::OutColour]   = $task[Task::OutColour];
+                $parentTask[Task::OutExtSize]  = $task[Task::OutExtSize];
+                $parentTask[Task::OutTexture]  = $task[Task::OutTexture];
+                $parentTask[Task::OutLength]   = $task[Task::OutLength];
+                $parentTask[Task::OutType]     = $task[Task::OutType];
+                $parentTask[Task::IsSplit]     = "3";
+                $parentTask[Task::Status]      = WorkStatus::C;
+                $parentTask[Task::StartTime] = $startTime;
+                $parentTask[Task::EndTime] = $endTime;
+                $result = $this->modelHelper->UpdateData($model, $task[Task::SplitFrom], $parentTask);
+                $qaParentTaskId = $task[Task::SplitFrom];
+            } else if ($count == count($childTasks) && $incompleteTaskCount == 0) {
+                $insertTask = $mergeTasks[0];
+                $insertTask[Task::OutQty] = $totalQty;
+
+                $insertTask[Task::StartTime] = $startTime;
+                $insertTask[Task::EndTime] = $endTime;
+                unset($insertTask[Task::TaskId], $insertTask[Task::EmployeeId], $insertTask[Task::StartTime], $insertTask[Task::EndTime]);
+
+                $insertedId = $this->modelHelper->InsertData($model, $insertTask);
+                $qaParentTaskId = $insertedId;
+            }
         } else {
             $waitForMerge = true;
         }
@@ -1227,12 +1244,12 @@ class TaskController extends BaseController
             //update the status of the merged tasks to "MERGED"
             $taskIds = [];
             foreach ($mergeTasks as $key => $value) {
-                 array_push($taskIds, $value[Task::TaskId]);
+                array_push($taskIds, $value[Task::TaskId]);
             }
             foreach ($mergeQaTasks as $key => $value) {
-                 array_push($taskIds, $value[Task::TaskId]);
+                array_push($taskIds, $value[Task::TaskId]);
             }
-            $data = [Task::Status => WorkStatus::M];
+            $data = [Task::Status => WorkStatus::M, Task::IsSplit => 2];
             $result = $this->modelHelper->UpdateDataUsingWhereIn($model, Task::TaskId, $taskIds, $data);
 
 
@@ -1241,13 +1258,34 @@ class TaskController extends BaseController
             $parentTask = $this->modelHelper->GetSingleData($model, $condition);
 
             //create a respective Qa task for that parent task
+            $parentTask[Task::StartTime] = $qaStartTime;
+            $parentTask[Task::EndTime] = $qaEndTime;
             $qaTaskId = $this->InsertQaTask($parentTask, $parentTask[Task::TaskDetailId], WorkStatus::C);
         }
         $result = ["qaTaskId" => $qaTaskId, "qaParentTaskId" => $qaParentTaskId, "waitForMerge" => $waitForMerge];
         return $result;
-        //return redirect()->to(base_url("task/orderList/" . $request["taskDetailId"]));
     }
 
+    public function GetStartAndEndTime($tasks)
+    {
+        $startTime = null;
+        $endTime = null;
+        foreach ($tasks as $key => $value) {
+            $startTime = $startTime ?: $value[Task::StartTime];
+            $endTime = $endTime ?: $value[Task::EndTime];
+            if ($startTime > $value[Task::StartTime]) {
+                $startTime = $value[Task::StartTime];
+            }
+            if ($endTime < $value[Task::EndTime]) {
+                $endTime = $value[Task::EndTime];
+            }
+        }
+        $result = [
+            "startTime" => $startTime,
+            "endTime" => $endTime
+        ];
+        return $result;
+    }
     public function MergeTasks1()
     {
 
@@ -1350,11 +1388,10 @@ class TaskController extends BaseController
 
                         //create a respective Qa task for that parent task
                         $qaTaskId = $this->InsertQaTask($parentTask, $parentTask[Task::TaskDetailId], "Completed");
-                    }
-                    else{
-                        $parentTask=$taskList[0];
+                    } else {
+                        $parentTask = $taskList[0];
                         $data = ["status" => "Completed"];
-                        $model->update($parentTask["task_id"],$data);
+                        $model->update($parentTask["task_id"], $data);
                     }
                     $condition = ["task_id" => $parentTask["task_id"]];
                     $parentTask = $model->where($condition)->first();

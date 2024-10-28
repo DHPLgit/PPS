@@ -16,7 +16,7 @@ $condition = "status = 'To merge'";
 $result = GetData($taskTable, $condition);
 foreach ($result as $key => $qaTask) {
 
-//Get parent task of that qa task
+	//Get parent task of that qa task
 	$condition = "task_id = " . $qaTask['parent_task_id'];
 	$result = GetData($taskTable, $condition);
 
@@ -29,7 +29,7 @@ foreach ($result as $key => $qaTask) {
 	$mergeTasks   = [];
 	$mergeQaTasks = [];
 
-	//check if all thesplit tasks are completed
+	//check if all the split tasks are completed
 	foreach ($childTasks as $key => $child) {
 		if ($child["status"] == "Completed") {
 			$count++;
@@ -59,39 +59,48 @@ foreach ($result as $key => $qaTask) {
 				$incompleteTaskCount++;
 			}
 		}
+		$result = GetStartAndEndTime($mergeTasks);
+		$startTime = $result["startTime"];
+		$endTime = $result["endTime"];
 
+		$result = GetStartAndEndTime($mergeQaTasks);
+		$qaStartTime = $result["startTime"];
+		$qaEndTime = $result["endTime"];
 		//if all the qa tasks are completed or in to merge status
 		if ($incompleteTaskCount == 0) {
 			$insertTask = $mergeTasks[0];
 			$insertTask["out_qty"] = $totalQty;
 			unset($insertTask['task_id'], $insertTask['employee_id'], $insertTask['start_time'], $insertTask['end_time']);
-
+			$insertTask['start_ime'] = $startTime;
+			$insertTask['end_time'] = $endTime;
 
 			//insert new parent task which is the merged task for the split tasks.
 			$insertedId = InsertData($taskTable, $insertTask);
 			$qaParentTaskId = $insertedId;
 
 			$taskIds = [];
-            foreach ($mergeTasks as $key => $value) {
-                $taskIds = array_push($taskIds, $value["task_id"]);
-            }
-            foreach ($mergeQaTasks as $key => $value) {
-                $taskIds = array_push($taskIds, $value["task_id"]);
-            }
+			foreach ($mergeTasks as $key => $value) {
+				$taskIds = array_push($taskIds, $value["task_id"]);
+			}
+			foreach ($mergeQaTasks as $key => $value) {
+				$taskIds = array_push($taskIds, $value["task_id"]);
+			}
 
 			//update the tasks to merged status.
-			$strTaskIds=implode(",",$taskIds);
-			$condition=" task_id IN ( ".$strTaskIds. ")";
-            $data = "status = Merged";
-            $result = UpdateData($taskTable, $taskIds, $data);
+			$strTaskIds = implode(",", $taskIds);
+			$condition = " task_id IN ( " . $strTaskIds . ")";
+			$data = "status = Merged, is_split = 2";
+			$result = UpdateData($taskTable, $taskIds, $data);
 
 
-            //Get the parent task of QA
-            $condition = ["task_id" => $qaParentTaskId];
-            $parentTask = GetData($taskTable, $condition);
+			//Get the parent task of QA
+			$condition = ["task_id" => $qaParentTaskId];
+			$parentTask = GetData($taskTable, $condition);
 
-            //create a respective Qa task for that parent task
-            $qaTaskId = InsertQaTask($parentTask, $parentTask["task_detail_id"], "Completed");
+			//create a respective Qa task for that parent task
+			$parentTask['start_ime'] = $qaStartTime;
+            $parentTask['end_time'] = $qaEndTime;
+			$qaTaskId = InsertQaTask($parentTask, $parentTask["task_detail_id"], "Completed");
 			$qaParent = $qaParentTaskId;
 			if ($qaTask["task_detail_id"] != 101) {
 				$condition = ["task_id" => $qaParent];
@@ -110,7 +119,6 @@ foreach ($result as $key => $qaTask) {
 function InsertNextTask($task, $nextTask, $previousTaskId)
 {
 	$taskDetailTable = "pps_task_detail";
-	//$taskDetailData = $this->GetTaskDetailData($nextTask);
 	$condition = ["task_detail_id" => $nextTask];
 	$taskDetailData = GetData($taskDetailTable, $condition, 1);
 
@@ -173,12 +181,37 @@ function InsertQaTask($parentTask, $parentTaskDetail, $workStatus = "Not started
 		'created_by'     => 1,
 		'updated_by'     => 1
 	];
+	if ($workStatus == "Completed") {
+		$data['start_time'] = $parentTask['start_time'];
+		$data['end_time'] = $parentTask['end_time'];
+	}
 	$taskTable = "pps_task_list";
 
 	$qaTaskId =  InsertData($taskTable, $data);
 
 
 	return $qaTaskId;
+}
+
+function GetStartAndEndTime($tasks)
+{
+	$startTime = null;
+	$endTime = null;
+	foreach ($tasks as $key => $value) {
+		$startTime = $startTime ?: $value['start_time'];
+		$endTime = $endTime ?: $value['end_time'];
+		if ($startTime > $value['start_time']) {
+			$startTime = $value['start_time'];
+		}
+		if ($endTime < $value['end_time']) {
+			$endTime = $value['end_time'];
+		}
+	}
+	$result = [
+		"startTime" => $startTime,
+		"endTime" => $endTime
+	];
+	return $result;
 }
 
 $logFilePath = "";
