@@ -6,110 +6,127 @@ use Throwable;
 
 
 $message = "Process started";
+CreateLogFile();
 echo ($message);
-//LogMessage($message);
+LogMessage($message);
 
-
+$mergedTaskIds = [];
 //Get to merge list of all qa tasks
 $taskTable = "pps_task_list";
 $condition = "status = 'To merge'";
+
 $result = GetData($taskTable, $condition);
 foreach ($result as $key => $qaTask) {
+	if (!in_array($qaTask["task_id"], $mergedTaskIds)) {
+		//Get parent task of that qa task
+		$condition = "task_id = " . $qaTask['parent_task_id'];
+		$result = GetData($taskTable, $condition);
 
-	//Get parent task of that qa task
-	$condition = "task_id = " . $qaTask['parent_task_id'];
-	$result = GetData($taskTable, $condition);
 
+		//Get all the split tasks
+		$condition    = "split_from  = " . $result[0]["split_from"];
+		$childTasks   = GetData($taskTable, $condition);
+		$totalQty     = 0;
+		$count        = 0;
+		$mergeTasks   = [];
+		$mergeQaTasks = [];
 
-	//Get all the split tasks
-	$condition    = "split_from  = " . $task["split_from"];
-	$childTasks   = GetData($taskTable, $condition);
-	$totalQty     = 0;
-	$count        = 0;
-	$mergeTasks   = [];
-	$mergeQaTasks = [];
-
-	//check if all the split tasks are completed
-	foreach ($childTasks as $key => $child) {
-		if ($child["status"] == "Completed") {
-			$count++;
-		} else break;
-	}
-
-	//if all the split tasks are completed exceute it.
-	if ($count == count($childTasks)) {
-		$incompleteTaskCount = 0;
-
-		//loop through all the split tasks and check the respective qa task status
+		//check if all the split tasks are completed
 		foreach ($childTasks as $key => $child) {
-			$condition = "parent_task_id = " . $child["task_id"];
-			$childQaTask = GetData($taskTable, $condition);
-			if ($childQaTask["status"] == "To merge") {
-
-				$totalQty += $child["out_qty"];
-				// $data = "is_split = 2";
-				// $result = UpdateData($taskTable, $child["task_id"], $data);
-
-				//store the tasks in array if merging is only for some tasks
-				array_push($mergeTasks, $child);
-				array_push($mergeQaTasks, $childQaTask);
-
-				$qaCount++;
-			} else if ($childQaTask["status"] == "Not started" || $childQaTask["status"] != "In progress") {
-				$incompleteTaskCount++;
-			}
+			if ($child["status"] == "Completed") {
+				$count++;
+			} else break;
 		}
-		$result = GetStartAndEndTime($mergeTasks);
-		$startTime = $result["startTime"];
-		$endTime = $result["endTime"];
 
-		$result = GetStartAndEndTime($mergeQaTasks);
-		$qaStartTime = $result["startTime"];
-		$qaEndTime = $result["endTime"];
-		//if all the qa tasks are completed or in to merge status
-		if ($incompleteTaskCount == 0) {
-			$insertTask = $mergeTasks[0];
-			$insertTask["out_qty"] = $totalQty;
-			unset($insertTask['task_id'], $insertTask['employee_id'], $insertTask['start_time'], $insertTask['end_time']);
-			$insertTask['start_ime'] = $startTime;
-			$insertTask['end_time'] = $endTime;
+		//if all the split tasks are completed exceute it.
+		if ($count == count($childTasks)) {
+			$incompleteTaskCount = 0;
 
-			//insert new parent task which is the merged task for the split tasks.
-			$insertedId = InsertData($taskTable, $insertTask);
-			$qaParentTaskId = $insertedId;
+			//loop through all the split tasks and check the respective qa task status
+			foreach ($childTasks as $key => $child) {
+				$condition = "parent_task_id = " . $child["task_id"];
+				$childQaTask = GetData($taskTable, $condition);
+				if ($childQaTask[0]["status"] == "To merge") {
 
-			$taskIds = [];
-			foreach ($mergeTasks as $key => $value) {
-				$taskIds = array_push($taskIds, $value["task_id"]);
+					$totalQty += $child["out_qty"];
+					// $data = "is_split = 2";
+					// $result = UpdateData($taskTable, $child["task_id"], $data);
+
+					//store the tasks in array if merging is only for some tasks
+					array_push($mergeTasks, $child);
+					array_push($mergeQaTasks, $childQaTask[0]);
+
+					$qaCount++;
+				} else if ($childQaTask[0]["status"] == "Not started" || $childQaTask[0]["status"] == "In progress") {
+					$incompleteTaskCount++;
+				}
 			}
-			foreach ($mergeQaTasks as $key => $value) {
-				$taskIds = array_push($taskIds, $value["task_id"]);
-			}
+			$result = GetStartAndEndTime($mergeTasks);
+			$startTime = $result["startTime"];
+			$endTime = $result["endTime"];
 
-			//update the tasks to merged status.
-			$strTaskIds = implode(",", $taskIds);
-			$condition = " task_id IN ( " . $strTaskIds . ")";
-			$data = "status = Merged, is_split = 2";
-			$result = UpdateData($taskTable, $taskIds, $data);
+			$result = GetStartAndEndTime($mergeQaTasks);
+			$qaStartTime = $result["startTime"];
+			$qaEndTime = $result["endTime"];
+			//if all the qa tasks are completed or in to merge status
+			if ($incompleteTaskCount == 0) {
+				if (count($mergeTasks) > 1) {
+					$insertTask = $mergeTasks[0];
+					$insertTask["out_qty"] = $totalQty;
+					unset($insertTask['task_id'], $insertTask['employee_id'], $insertTask['start_time'], $insertTask['end_time']);
+					$insertTask['start_time'] = $startTime;
+					$insertTask['end_time'] = $endTime;
+
+					//insert new parent task which is the merged task for the split tasks.
+					$insertedId = InsertData($taskTable, $insertTask);
+					$qaParentTaskId = $insertedId;
+
+					$taskIds = [];
+					foreach ($mergeTasks as $key => $value) {
+						array_push($taskIds, $value["task_id"]);
+					}
+					foreach ($mergeQaTasks as $key => $value) {
+						array_push($taskIds, $value["task_id"]);
+					}
+					$mergedTaskIds = array_merge($mergedTaskIds, $taskIds);
+
+					//update the tasks to merged status.
+					$strTaskIds = implode(",", $taskIds);
+					$condition = " task_id IN ( " . $strTaskIds . ")";
+					$data = "status = 'Merged', is_split = 2";
+					$result = UpdateData($taskTable, $condition, $data);
 
 
-			//Get the parent task of QA
-			$condition = ["task_id" => $qaParentTaskId];
-			$parentTask = GetData($taskTable, $condition);
+					//Get the parent task of QA
+					$condition = "task_id = " . $qaParentTaskId;
+					$result = GetData($taskTable, $condition);
+					$parentTask = $result[0];
+					//create a respective Qa task for that parent task
+					$parentTask['start_ime'] = $qaStartTime;
+					$parentTask['end_time'] = $qaEndTime;
+					$qaTaskId = InsertQaTask($parentTask, $parentTask["task_detail_id"], "Completed");
+					$qaParent = $qaParentTaskId;
+				}
+				else{
+					$qaTaskId=$mergeQaTasks[0]["task_id"];
+					$qaParent=$mergeQaTasks[0]["parent_task_id"];
+					$condition = " task_id = ".$qaTaskId;
+					$data = "status = 'Completed'";
+					$result = UpdateData($taskTable, $condition, $data);
 
-			//create a respective Qa task for that parent task
-			$parentTask['start_ime'] = $qaStartTime;
-            $parentTask['end_time'] = $qaEndTime;
-			$qaTaskId = InsertQaTask($parentTask, $parentTask["task_detail_id"], "Completed");
-			$qaParent = $qaParentTaskId;
-			if ($qaTask["task_detail_id"] != 101) {
-				$condition = ["task_id" => $qaParent];
-				$parentTask = GetData($taskModel, $condition);
-				$previousTaskId = $qaTaskId;
-				//insert next task
-				$insertedtaskId = InsertNextTask($parentTask, $qaTask["next_task_detail_id"], $previousTaskId);
-				$parentTask["task_id"] = $insertedtaskId;
-				InsertInputs($parentTask);
+
+				}
+				if ($qaTask["task_detail_id"] != 101) {
+					$condition = "task_id = " . $qaParent;
+					$result = GetData($taskTable, $condition);
+					$parentTask = $result[0];
+
+					$previousTaskId = $qaTaskId;
+					//insert next task
+					$insertedtaskId = InsertNextTask($parentTask, $qaTask["next_task_detail_id"], $previousTaskId);
+					$parentTask["task_id"] = $insertedtaskId;
+					InsertInputs($parentTask);
+				}
 			}
 		}
 	}
@@ -119,13 +136,13 @@ foreach ($result as $key => $qaTask) {
 function InsertNextTask($task, $nextTask, $previousTaskId)
 {
 	$taskDetailTable = "pps_task_detail";
-	$condition = ["task_detail_id" => $nextTask];
-	$taskDetailData = GetData($taskDetailTable, $condition, 1);
-
+	$condition = "task_detail_id = " . $nextTask;
+	$result = GetData($taskDetailTable, $condition);
+	$taskDetailData = $result[0];
 	$deptEmpTable = 'pps_dept_emp_map';
-	$condition = 'dept_id = ' . $taskDetailData[0]['dept_id'];
-	$deptEmpData = GetData($deptEmpTable, $condition);
-
+	$condition = 'dept_id = ' . $taskDetailData['dept_id'];
+	$result = GetData($deptEmpTable, $condition);
+	$deptEmpData = $result[0];
 	$data = [
 		"parent_task_id" => $previousTaskId,
 		"order_list_id"  => $task['order_list_id'],
@@ -166,8 +183,8 @@ function InsertQaTask($parentTask, $parentTaskDetail, $workStatus = "Not started
 {
 	$taskDetailTable = "pps_task_detail";
 	$condition = 'parent_task = ' . $parentTaskDetail;
-	$qaTaskDetail =  GetData($taskDetailTable, $condition);
-
+	$result =  GetData($taskDetailTable, $condition);
+	$qaTaskDetail = $result[0];
 
 	$data = [
 		'is_qa'          => "1",
@@ -290,15 +307,15 @@ function ConnectDB()
 	}
 	$message = "database connected";
 	echo ($message);
-	//LogMessage($message);
+	LogMessage($message);
 	return $conn;
 }
 
 function CreateLogFile()
 {
 	global $logFilePath;
-	$curr_date = date('Y-m-d H:i:s');
-	$logFilePath = '/var/www/html/public_html/jobs/Logs/log-' . $curr_date . '.txt';
+	$curr_date = date('Y-m-d');
+	$logFilePath = 'D:/xampp/htdocs/pps/jobs/Logs/log-' . $curr_date . '.txt';
 	if (file_exists($logFilePath)) {
 		echo "File exists!";
 		return true;
