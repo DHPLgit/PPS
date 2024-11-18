@@ -20,10 +20,10 @@
                     <p class="para"><span>Colour:</span><?= $order["colour"] ?></p>
 
                     <p class="para"><span>Quantity:</span><?= $order["quantity"] ?></p>
-                    <p class="para"><span>Length:</span><?= $order["length"] ?></p>                     
+                    <p class="para"><span>Length:</span><?= $order["length"] ?></p>
                 </div>
                 <h4 class="title">Input details:</h4>
-                <div class="para-input-2">
+                <div class="para-input">
                     <?php foreach ($inputDetails as $key => $input) { ?>
                         <p class="para"><span>Type:</span> <?= $input["in_type"] ?></p>
                         <p class="para"><span>Extn Size:</span><?= $input["in_ext_size"] ?></p>
@@ -75,18 +75,25 @@
                                 <?php } ?>
                             </select>
                         </div>
-
                         <button class="button" id="ok"> Ok</button>
 
                     </form>
                 </div>
                 <button class="button" id="not_ok" style="display: none;"> Not ok</button>
 
+                <!-- <form action="<?= base_url("/task/merge") ?>" method="post">
+<input type="hidden" name="taskId" value="<?= $qaTask['task_id'] ?>">
+<input type="hidden" name="taskDetailId" value="<?= $taskDetail["task_detail_id"] ?>">
+<button class="button" id="merge"> Merge</button>
+</form> -->
+                <?php if ($task["split_from"] != 0) { ?>
+                    <span> Separate task<input type="checkbox" id="separateTask" name="separateTask"></span>
+                <?php } ?>
         </div>
+    </div>
     </div>
 </section>
 <script>
-
     <?php $flag = ($qaTask["status"] == "In progress") ? true : false ?>
     flag = false;
     flag = <?php if (isset($flag)) {
@@ -100,6 +107,16 @@
     }
     var qcCount = <?= count($qcList) ?>;
     var checkedCount = 0;
+    var separate_task = 0;
+    $("#separateTask").on("change", function() {
+
+        if ($("#separateTask").prop("checked")) {
+            separate_task = 1;
+        } else {
+            separate_task = 0;
+        }
+    })
+
     $(".checkbox-menu").on("change", "input[type='checkbox']", function() {
         if ($(this).prop("checked") == true) {
             checkedCount += 1;
@@ -108,15 +125,15 @@
         }
         if (checkedCount == qcCount) {
 
-            $("#not_ok").hide();
-            console.log(<?=$qaTask["task_detail_id"] ?>)
 
-            if (<?= $qaTask["task_detail_id"] ?> != 101) {
+            $("#not_ok").hide();
+            console.log(<?= $qaTask["task_detail_id"] ?>)
+
+            if ((<?= $qaTask["task_detail_id"] ?> != 101)) {
 
                 $("#next_task_div").show();
                 console.log("ok");
-            }
-            else{
+            } else {
                 $("#next_task_div").show();
 
                 $("#next_task_detail_div").hide();
@@ -125,7 +142,7 @@
 
             $("#not_ok").show();
             $("#next_task_div").hide();
-          
+
             console.log("not ok");
         }
     });
@@ -159,17 +176,27 @@
     })
     $("#next_task_form").submit(function(event) {
         event.preventDefault();
-        var current_task_detail_id=<?= $qaTask["task_detail_id"] ?>;
+
+
+        var current_task_detail_id = <?= $qaTask["task_detail_id"] ?>;
+
         var input = {
             parent_task: <?= $task["task_id"] ?>,
             qa_task: <?= $qaTask["task_id"] ?>,
             current_task_detail_id: current_task_detail_id,
+           // separate_task: separate_task,
+            is_last_task: <?= $qaTask["isLastTask"] ?>
 
         };
+        var splitFrom = <?= $task["split_from"] ?>;
+        if (splitFrom != 0) {
+            input.separate_task = separate_task;
 
-         if (current_task_detail_id != 101) {
+        }
+        if (current_task_detail_id != 101) {
             input.next_task_detail_id = $("#next_task_detail_id").val()
-         }  
+        }
+
         $.ajax({
             type: "post",
             url: "<?= base_url("task/qualityCheck/" . $task['task_id']) ?>",

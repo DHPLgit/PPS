@@ -16,10 +16,9 @@ use App\Libraries\EnumsAndConstants\Task;
             </h3>
             <label class="login-label">Order id</label>
             <div class="mb-3">
-                <input type="text" readonly class="form-control" aria-describedby="emailHelp" placeholder="Order id" id="order_id" name="order_id" value="<?= $task["order_id"] . "-" . $task["item_id"] ?>" />
+                <input type="text" readonly class="form-control" aria-describedby="emailHelp" placeholder="Order id"
+                    id="order_id" name="order_id" value="<?= $task["order_id"] . "-" . $task["item_id"] ?>" />
                 <br />
-                <!-- <p style="color:red" class="error" id="Order_unique_id_error" type="hidden"></p> -->
-
                 <h4 class="title">Order details:</h4>
                 <div class="para-input">
                     <p class="para"><span>Texture:</span><?= $order["texture"] ?></p>
@@ -49,7 +48,17 @@ use App\Libraries\EnumsAndConstants\Task;
                             <p class="para"><span>Length:</span>
                                 <?= $input["in_length"] ?>
                             </p>
-
+                            <p class="para"><span>Employee:</span>
+                                <?php
+                                $selectedEmployeeId = $currentTask[Task::EmployeeId] ?? null; 
+                                foreach ($employeeList as $employee) {
+                                    if ($employee['id'] == $selectedEmployeeId) {
+                                        echo htmlspecialchars($employee['name'], ENT_QUOTES, 'UTF-8');
+                                        break;
+                                    }
+                                }
+                                ?>
+                            </p>
                         </div>
                     <?php } ?>
                 </div>
@@ -90,7 +99,8 @@ use App\Libraries\EnumsAndConstants\Task;
                             <div id="split_inputs">
                                 <?php for ($i = 1; $i <= count($inputDetails); $i++) { ?>
                                     <label for="in_qty">Qty:</label>
-                                    <input type="hidden" id="in_qty_id_<?= $i ?> " name="in_qty_id[]" value="<?= $inputDetails[$i - 1]['input_id'] ?>">
+                                    <input type="hidden" id="in_qty_id_<?= $i ?> " name="in_qty_id[]"
+                                        value="<?= $inputDetails[$i - 1]['input_id'] ?>">
                                     <input type="text" id="in_qty_<?= $i ?> " name="in_qty[]">
                                 <?php } ?>
                                 <br />
@@ -122,8 +132,8 @@ use App\Libraries\EnumsAndConstants\Task;
                         <label for="employee_id">Select Employee to work:</label>
                         <select id="employee_id_split" name="employee">
                             <?php foreach ($employeeList as $employee) { ?>
-                                <option value="<?= $employee["id"] ?>"
-                                    <?= ($employee["id"] == $currentTask[Task::EmployeeId]) ? 'selected' : '' ?>>
+                                <option value="<?= $employee["id"] ?>" 
+                                <?= ($employee["id"] == $currentTask[Task::EmployeeId]) ? 'selected' : '' ?>>
                                     <?= $employee["name"] ?>
                                 </option>
                             <?php } ?>
@@ -193,8 +203,8 @@ use App\Libraries\EnumsAndConstants\Task;
     completed_flag = false;
     console.log(completed_flag);
     completed_flag = <?php if (isset($completed_flag)) {
-                            echo json_encode($completed_flag);
-                        } ?>;
+        echo json_encode($completed_flag);
+    } ?>;
     console.log(completed_flag);
 
     if (completed_flag) {
@@ -208,15 +218,15 @@ use App\Libraries\EnumsAndConstants\Task;
     <?php $flag = ($task["status"] == "In progress") ? true : false ?>
     flag = false;
     flag = <?php if (isset($flag)) {
-                echo json_encode($flag);
-            } ?>;
+        echo json_encode($flag);
+    } ?>;
 
     if (flag) {
         $("#map_employee_div").hide();
         $("#in_progress_div").show();
 
     }
-    $("#create_output_group").on("click", function() {
+    $("#create_output_group").on("click", function () {
         var count = $("#output_count").val();
 
         $("#form_inputs").html("");
@@ -224,20 +234,20 @@ use App\Libraries\EnumsAndConstants\Task;
             var opening_div = '<div class="output_group">'
 
             var colour = '<label for="colour">Colour:</label><br/><select id="dropdown" class="colour_select" name="colour"><?php if (isset($drpdwnData)) {
-                                                                                                                                foreach ($drpdwnData->Colours as $colour) { ?><option value="<?php echo $colour ?>"><?php echo $colour ?></option><?php }
-                                                                                                                                                                                                                                            } ?></select><br/>';
+                foreach ($drpdwnData->Colours as $colour) { ?><option value="<?php echo $colour ?>"><?php echo $colour ?></option><?php }
+            } ?></select><br/>';
             var length = '<label for="Length">Length:</label><br/><input type="number" step="0.25" min="0" placeholder="0.00" class="length" placeholder="length"><p style="color:red;display:none" class="error length_error"></p> <br/>';
             var texture = '<label for="texture">Texture:</label><br/><select id="texture_dropdown" class="texture_select" name="texture"><?php if (isset($drpdwnData)) {
-                                                                                                                                                foreach ($drpdwnData->Textures as $texture) { ?><option value="<?php echo $texture ?>"><?php echo $texture ?></option><?php }
-                                                                                                                                                                                                                                                                } ?></select><br/>';
+                foreach ($drpdwnData->Textures as $texture) { ?><option value="<?php echo $texture ?>"><?php echo $texture ?></option><?php }
+            } ?></select><br/>';
             var weight = '<label for="weight">Weight (gm):</label><br/><input type="number" class="weight" placeholder="weight"><p style="color:red;display:none" class="error weight_error"></p> <br/>';
 
             var type = '<label for="Type">Type:</label><br/><select id="type_dropdown' + index + '" class="type_select" name="type"><?php if (isset($drpdwnData)) {
-                                                                                                                                        foreach ($drpdwnData->Types as $type) { ?><option value="<?php echo $type ?>"><?php echo $type ?></option><?php }
-                                                                                                                                                                                                                                } ?></select>';
+                foreach ($drpdwnData->Types as $type) { ?><option value="<?php echo $type ?>"><?php echo $type ?></option><?php }
+            } ?></select>';
             var extSize = '<div id="ext_size_div' + index + '" style="display:none"><label for="ext_size">Ext size:</label><br/><select id="ext_size_dropdown" class="ext_size_select" name="ext_size"><?php if (isset($drpdwnData)) {
-                                                                                                                                                                                                            foreach ($drpdwnData->Ext_sizes as $ext_size) { ?><option value="<?php echo $ext_size ?>"><?php echo $ext_size ?></option><?php }
-                                                                                                                                                                                                                                                                                                                    } ?></select><br/> </div>';
+                foreach ($drpdwnData->Ext_sizes as $ext_size) { ?><option value="<?php echo $ext_size ?>"><?php echo $ext_size ?></option><?php }
+            } ?></select><br/> </div>';
             var closing_div = '</div>';
 
             var output_form = opening_div + colour + length + texture + weight + type + extSize + closing_div;
@@ -246,28 +256,28 @@ use App\Libraries\EnumsAndConstants\Task;
 
 
         }
-        $(".type_select").on("change", function() {
-        var idName = $(this).attr("id");
-        console.log($(this).attr("id"));
-        var index=idName.substring(idName.length-1);
-        var type = $(this).val();
-        if (type.includes("Bulk")) {
-            $("#ext_size_div"+index).hide();
-        } else {
-            $("#ext_size_div"+index).show();
-        }
-    })
+        $(".type_select").on("change", function () {
+            var idName = $(this).attr("id");
+            console.log($(this).attr("id"));
+            var index = idName.substring(idName.length - 1);
+            var type = $(this).val();
+            if (type.includes("Bulk")) {
+                $("#ext_size_div" + index).hide();
+            } else {
+                $("#ext_size_div" + index).show();
+            }
+        })
 
     })
-   
-    $("#emp_map_form").submit(function() {
+
+    $("#emp_map_form").submit(function () {
 
         $("#emp_map_form_btn").prop("disabled", true);
 
     })
 
     //In progress form submit
-    $("#in_progress_form").submit(function(event) {
+    $("#in_progress_form").submit(function (event) {
 
         event.preventDefault();
         inputDetails[0].in_type
@@ -276,7 +286,7 @@ use App\Libraries\EnumsAndConstants\Task;
         var count = 0;
 
 
-        $('.output_group').each(function(index) {
+        $('.output_group').each(function (index) {
 
             var typeSelect = $(this).find('.type_select');
 
@@ -318,7 +328,7 @@ use App\Libraries\EnumsAndConstants\Task;
         //  removeError();
         $(".error").hide();
         $(".error").text("");
-        $('.output_group').each(function(index) {
+        $('.output_group').each(function (index) {
             //var isError = false;
             var colourSelect = $(this).find('.colour_select');
             var colour = colourSelect[0].options[colourSelect[0].selectedIndex].value;
@@ -409,7 +419,7 @@ use App\Libraries\EnumsAndConstants\Task;
                     nextTaskDetailId: nextId
 
                 },
-                success: function(response) {
+                success: function (response) {
                     console.log(response);
                     if (response.success) {
                         console.log("successentry");
@@ -424,7 +434,7 @@ use App\Libraries\EnumsAndConstants\Task;
 
                     }
                 },
-                error: function(response) {
+                error: function (response) {
                     console.log(response);
                 }
 
@@ -445,7 +455,7 @@ use App\Libraries\EnumsAndConstants\Task;
         return (number % 0.25 === 0) && (number.toFixed(2) == value);
     }
 
-    $("#split").on("click", function() {
+    $("#split").on("click", function () {
         $("#preview").show();
         $("#split_div").show();
         $("#emp_map_form").hide();
@@ -456,7 +466,7 @@ use App\Libraries\EnumsAndConstants\Task;
 
     });
 
-    $("#no_split").on("click", function() {
+    $("#no_split").on("click", function () {
 
         $("#split_div").hide();
         $("#emp_map_form").show();
@@ -467,7 +477,7 @@ use App\Libraries\EnumsAndConstants\Task;
     var overAllAccQty = 0;
 
     //to split task to multiple employees.
-    $("#add_split_form").submit(function(event) {
+    $("#add_split_form").submit(function (event) {
         overAllReqQty = 0;
         console.log("overAllReqQty", overAllReqQty);
         event.preventDefault();
@@ -554,7 +564,7 @@ use App\Libraries\EnumsAndConstants\Task;
                     employee_div.appendChild(quantity_div);
                     var removeButton = document.createElement('button');
                     removeButton.innerText = 'X';
-                    removeButton.onclick = function() {
+                    removeButton.onclick = function () {
 
                         document.querySelectorAll("#employee_id_split option").forEach(opt => {
 
@@ -590,7 +600,7 @@ use App\Libraries\EnumsAndConstants\Task;
     });
 
     //Split task
-    $("#save_split").on("click", function() {
+    $("#save_split").on("click", function () {
         $("#quantity_error").text("");
         var a = qty_emp_input.length;
         console.log("len", a);
@@ -604,7 +614,7 @@ use App\Libraries\EnumsAndConstants\Task;
                     req: JSON.stringify(qty_emp_input),
                     taskDetailId: <?= $currentTaskDetail["task_detail_id"] ?>
                 },
-                success: function(response) {
+                success: function (response) {
                     console.log(response);
                     if (response.success) {
                         console.log("successentry");
@@ -618,7 +628,7 @@ use App\Libraries\EnumsAndConstants\Task;
                         console.log("failure");
                     }
                 },
-                error: function(response) {
+                error: function (response) {
                     console.log(response);
                 }
 
@@ -632,7 +642,7 @@ use App\Libraries\EnumsAndConstants\Task;
         }
     });
 
-    var removeByAttr = function(arr, attr, value) {
+    var removeByAttr = function (arr, attr, value) {
         var i = arr.length;
         while (i--) {
             if (arr[i] &&

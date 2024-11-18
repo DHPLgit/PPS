@@ -57,6 +57,7 @@ class Task
   public const SplitFrom="split_from";
   public const IsSplit = "is_split";
   public const ParentTaskId = "parent_task_id";
+  public const SiblingIdList = "sibling_id_list";
   public const OrderListId = "order_list_id";
   public const OrderItemId = "order_item_id";
   public const OrderId = "order_id";
@@ -67,6 +68,7 @@ class Task
   public const EndTime = "end_time";
   public const TimeTaken = "time_taken";
   public const TaskDetailId = "task_detail_id";
+  public const NextTaskDetailId = "next_task_detail_id";
   public const Sizing = "sizing";
   public const OutLength = "out_length";
   public const OutColour = "out_colour";
@@ -76,7 +78,7 @@ class Task
   public const OutType = "out_type";
   public const Unit = "unit";
   public const Status = "status";
-
+  public const MergeStatus="merge_status";
   public const CreatedBy = "created_by";
   public const CreatedAt = "created_at";
   public const UpdatedBy = "updated_by";
