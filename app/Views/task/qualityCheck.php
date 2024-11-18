@@ -184,7 +184,7 @@
             parent_task: <?= $task["task_id"] ?>,
             qa_task: <?= $qaTask["task_id"] ?>,
             current_task_detail_id: current_task_detail_id,
-            separate_task: separate_task,
+           // separate_task: separate_task,
             is_last_task: <?= $qaTask["isLastTask"] ?>
 
         };
