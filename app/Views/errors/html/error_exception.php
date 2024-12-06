@@ -1,392 +1,113 @@
-<?php
-use Config\Services;
-use CodeIgniter\CodeIgniter;
+<!DOCTYPE html>
+<html lang="en">
 
-$errorId = uniqid('error', true);
-?>
-<!doctype html>
-<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="robots" content="noindex">
-
-    <title><?= esc($title) ?></title>
-    <style>
-        <?= preg_replace('#[\r\n\t ]+#', ' ', file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'debug.css')) ?>
-    </style>
-
-    <script>
-        <?= file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'debug.js') ?>
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CX Analytix</title>
+    <link rel="canonical" href="https://cxanalytix.com/">
+    <link rel="stylesheet" href="<?= base_url('css/front/cx.css') ?>">
+    <link rel="shortcut icon" href="<?php echo base_url(); ?>images/Favicon-1.png" type="image/png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <?php echo script_tag('js/jquery.min.js'); ?>
 </head>
-<body onload="init()">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
-    <!-- Header -->
-    <div class="header">
-        <div class="container">
-            <h1><?= esc($title), esc($exception->getCode() ? ' #' . $exception->getCode() : '') ?></h1>
-            <p>
-                <?= nl2br(esc($exception->getMessage())) ?>
-                <a href="https://www.duckduckgo.com/?q=<?= urlencode($title . ' ' . preg_replace('#\'.*\'|".*"#Us', '', $exception->getMessage())) ?>"
-                   rel="noreferrer" target="_blank">search &rarr;</a>
-            </p>
+    .error-mess .logo {
+        text-align: center;
+    }
+
+    .error-num {
+        text-align: center;
+    }
+
+    .error-mess {
+        margin: 60px 0px;
+    }
+
+    .error-num .err-num-body h1 {
+        font-size: 180px;
+        color: #B7DFFF;
+        font-family: "Roboto", sans-serif;
+        font-weight: 900;
+        font-style: normal;
+        margin: 0px;
+    }
+
+    .error-num .err-num-body {
+        position: relative;
+    }
+
+    .error-num .err-num-body svg {
+        position: absolute;
+        top: 17px;
+        right: 36%;
+        left: 36%;
+        margin: auto;
+        width: 75px;
+    }
+
+    .error-num .container .content h2 {
+        color: #000;
+        font-family: "Inter", sans-serif;
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+    }
+
+    .error-num .container .content-2 a {
+        color: #130A72;
+        font-family: "Inter", sans-serif;
+        font-size: 22px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        text-decoration-line: underline;
+        text-transform: capitalize;
+    }
+
+    .error-num .container .content-2 {
+        margin: 70px 0px 0px;
+    }
+</style>
+
+<body class="error-mess">
+
+    <header>
+        <div class="logo">
+            <img src="https://differenthair.com/wp-content/uploads/2024/01/round-2-102x92.png"
+                alt="CX Analytix logo featuring bold black and blue text, representing the brand's focus on customer experience insights."
+                class="img-fluid" />
         </div>
-    </div>
-
-    <!-- Source -->
-    <div class="container">
-        <p><b><?= esc(clean_path($file)) ?></b> at line <b><?= esc($line) ?></b></p>
-
-        <?php if (is_file($file)) : ?>
-            <div class="source">
-                <?= static::highlightFile($file, $line, 15); ?>
-            </div>
-        <?php endif; ?>
-    </div>
-
-    <div class="container">
-
-        <ul class="tabs" id="tabs">
-            <li><a href="#backtrace">Backtrace</a></li>
-            <li><a href="#server">Server</a></li>
-            <li><a href="#request">Request</a></li>
-            <li><a href="#response">Response</a></li>
-            <li><a href="#files">Files</a></li>
-            <li><a href="#memory">Memory</a></li>
-        </ul>
-
-        <div class="tab-content">
-
-            <!-- Backtrace -->
-            <div class="content" id="backtrace">
-
-                <ol class="trace">
-                <?php foreach ($trace as $index => $row) : ?>
-
-                    <li>
-                        <p>
-                            <!-- Trace info -->
-                            <?php if (isset($row['file']) && is_file($row['file'])) :?>
-                                <?php
-                                if (isset($row['function']) && in_array($row['function'], ['include', 'include_once', 'require', 'require_once'], true)) {
-                                    echo esc($row['function'] . ' ' . clean_path($row['file']));
-                                } else {
-                                    echo esc(clean_path($row['file']) . ' : ' . $row['line']);
-                                }
-                                ?>
-                            <?php else: ?>
-                                {PHP internal code}
-                            <?php endif; ?>
-
-                            <!-- Class/Method -->
-                            <?php if (isset($row['class'])) : ?>
-                                &nbsp;&nbsp;&mdash;&nbsp;&nbsp;<?= esc($row['class'] . $row['type'] . $row['function']) ?>
-                                <?php if (! empty($row['args'])) : ?>
-                                    <?php $argsId = $errorId . 'args' . $index ?>
-                                    ( <a href="#" onclick="return toggle('<?= esc($argsId, 'attr') ?>');">arguments</a> )
-                                    <div class="args" id="<?= esc($argsId, 'attr') ?>">
-                                        <table cellspacing="0">
-
-                                        <?php
-                                        $params = null;
-                                        // Reflection by name is not available for closure function
-                                        if (substr($row['function'], -1) !== '}') {
-                                            $mirror = isset($row['class']) ? new ReflectionMethod($row['class'], $row['function']) : new ReflectionFunction($row['function']);
-                                            $params = $mirror->getParameters();
-                                        }
-
-                                        foreach ($row['args'] as $key => $value) : ?>
-                                            <tr>
-                                                <td><code><?= esc(isset($params[$key]) ? '$' . $params[$key]->name : "#{$key}") ?></code></td>
-                                                <td><pre><?= esc(print_r($value, true)) ?></pre></td>
-                                            </tr>
-                                        <?php endforeach ?>
-
-                                        </table>
-                                    </div>
-                                <?php else : ?>
-                                    ()
-                                <?php endif; ?>
-                            <?php endif; ?>
-
-                            <?php if (! isset($row['class']) && isset($row['function'])) : ?>
-                                &nbsp;&nbsp;&mdash;&nbsp;&nbsp;    <?= esc($row['function']) ?>()
-                            <?php endif; ?>
-                        </p>
-
-                        <!-- Source? -->
-                        <?php if (isset($row['file']) && is_file($row['file']) && isset($row['class'])) : ?>
-                            <div class="source">
-                                <?= static::highlightFile($row['file'], $row['line']) ?>
-                            </div>
-                        <?php endif; ?>
-                    </li>
-
-                <?php endforeach; ?>
-                </ol>
-
-            </div>
-
-            <!-- Server -->
-            <div class="content" id="server">
-                <?php foreach (['_SERVER', '_SESSION'] as $var) : ?>
-                    <?php
-                    if (empty($GLOBALS[$var]) || ! is_array($GLOBALS[$var])) {
-                        continue;
-                    } ?>
-
-                    <h3>$<?= esc($var) ?></h3>
-
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Key</th>
-                                <th>Value</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <?php foreach ($GLOBALS[$var] as $key => $value) : ?>
-                            <tr>
-                                <td><?= esc($key) ?></td>
-                                <td>
-                                    <?php if (is_string($value)) : ?>
-                                        <?= esc($value) ?>
-                                    <?php else: ?>
-                                        <pre><?= esc(print_r($value, true)) ?></pre>
-                                    <?php endif; ?>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                        </tbody>
-                    </table>
-
-                <?php endforeach ?>
-
-                <!-- Constants -->
-                <?php $constants = get_defined_constants(true); ?>
-                <?php if (! empty($constants['user'])) : ?>
-                    <h3>Constants</h3>
-
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Key</th>
-                                <th>Value</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <?php foreach ($constants['user'] as $key => $value) : ?>
-                            <tr>
-                                <td><?= esc($key) ?></td>
-                                <td>
-                                    <?php if (is_string($value)) : ?>
-                                        <?= esc($value) ?>
-                                    <?php else: ?>
-                                        <pre><?= esc(print_r($value, true)) ?></pre>
-                                    <?php endif; ?>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                <?php endif; ?>
-            </div>
-
-            <!-- Request -->
-            <div class="content" id="request">
-                <?php $request = Services::request(); ?>
-
-                <table>
-                    <tbody>
-                        <tr>
-                            <td style="width: 10em">Path</td>
-                            <td><?= esc($request->getUri()) ?></td>
-                        </tr>
-                        <tr>
-                            <td>HTTP Method</td>
-                            <td><?= esc(strtoupper($request->getMethod())) ?></td>
-                        </tr>
-                        <tr>
-                            <td>IP Address</td>
-                            <td><?= esc($request->getIPAddress()) ?></td>
-                        </tr>
-                        <tr>
-                            <td style="width: 10em">Is AJAX Request?</td>
-                            <td><?= $request->isAJAX() ? 'yes' : 'no' ?></td>
-                        </tr>
-                        <tr>
-                            <td>Is CLI Request?</td>
-                            <td><?= $request->isCLI() ? 'yes' : 'no' ?></td>
-                        </tr>
-                        <tr>
-                            <td>Is Secure Request?</td>
-                            <td><?= $request->isSecure() ? 'yes' : 'no' ?></td>
-                        </tr>
-                        <tr>
-                            <td>User Agent</td>
-                            <td><?= esc($request->getUserAgent()->getAgentString()) ?></td>
-                        </tr>
-
-                    </tbody>
-                </table>
-
-
-                <?php $empty = true; ?>
-                <?php foreach (['_GET', '_POST', '_COOKIE'] as $var) : ?>
-                    <?php
-                    if (empty($GLOBALS[$var]) || ! is_array($GLOBALS[$var])) {
-                        continue;
-                    } ?>
-
-                    <?php $empty = false; ?>
-
-                    <h3>$<?= esc($var) ?></h3>
-
-                    <table style="width: 100%">
-                        <thead>
-                            <tr>
-                                <th>Key</th>
-                                <th>Value</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <?php foreach ($GLOBALS[$var] as $key => $value) : ?>
-                            <tr>
-                                <td><?= esc($key) ?></td>
-                                <td>
-                                    <?php if (is_string($value)) : ?>
-                                        <?= esc($value) ?>
-                                    <?php else: ?>
-                                        <pre><?= esc(print_r($value, true)) ?></pre>
-                                    <?php endif; ?>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                        </tbody>
-                    </table>
-
-                <?php endforeach ?>
-
-                <?php if ($empty) : ?>
-
-                    <div class="alert">
-                        No $_GET, $_POST, or $_COOKIE Information to show.
-                    </div>
-
-                <?php endif; ?>
-
-                <?php $headers = $request->headers(); ?>
-                <?php if (! empty($headers)) : ?>
-
-                    <h3>Headers</h3>
-
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Header</th>
-                                <th>Value</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <?php foreach ($headers as $header) : ?>
-                            <tr>
-                                <td><?= esc($header->getName(), 'html') ?></td>
-                                <td><?= esc($header->getValueLine(), 'html') ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                        </tbody>
-                    </table>
-
-                <?php endif; ?>
-            </div>
-
-            <!-- Response -->
-            <?php
-                $response = Services::response();
-                $response->setStatusCode(http_response_code());
-            ?>
-            <div class="content" id="response">
-                <table>
-                    <tr>
-                        <td style="width: 15em">Response Status</td>
-                        <td><?= esc($response->getStatusCode() . ' - ' . $response->getReasonPhrase()) ?></td>
-                    </tr>
-                </table>
-
-                <?php $headers = $response->headers(); ?>
-                <?php if (! empty($headers)) : ?>
-                    <?php natsort($headers) ?>
-
-                    <h3>Headers</h3>
-
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Header</th>
-                                <th>Value</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <?php foreach (array_keys($headers) as $name) : ?>
-                            <tr>
-                                <td><?= esc($name, 'html') ?></td>
-                                <td><?= esc($response->getHeaderLine($name), 'html') ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                        </tbody>
-                    </table>
-
-                <?php endif; ?>
-            </div>
-
-            <!-- Files -->
-            <div class="content" id="files">
-                <?php $files = get_included_files(); ?>
-
-                <ol>
-                <?php foreach ($files as $file) :?>
-                    <li><?= esc(clean_path($file)) ?></li>
-                <?php endforeach ?>
-                </ol>
-            </div>
-
-            <!-- Memory -->
-            <div class="content" id="memory">
-
-                <table>
-                    <tbody>
-                        <tr>
-                            <td>Memory Usage</td>
-                            <td><?= esc(static::describeMemory(memory_get_usage(true))) ?></td>
-                        </tr>
-                        <tr>
-                            <td style="width: 12em">Peak Memory Usage:</td>
-                            <td><?= esc(static::describeMemory(memory_get_peak_usage(true))) ?></td>
-                        </tr>
-                        <tr>
-                            <td>Memory Limit:</td>
-                            <td><?= esc(ini_get('memory_limit')) ?></td>
-                        </tr>
-                    </tbody>
-                </table>
-
-            </div>
-
-        </div>  <!-- /tab-content -->
-
-    </div> <!-- /container -->
-
-    <div class="footer">
+    </header>
+    <section class="error-num">
         <div class="container">
-
-            <p>
-                Displayed at <?= esc(date('H:i:sa')) ?> &mdash;
-                PHP: <?= esc(PHP_VERSION) ?>  &mdash;
-                CodeIgniter: <?= esc(CodeIgniter::CI_VERSION) ?>
-            </p>
-
+            <div class="err-num-body">
+                <h1>500</h1>
+                <svg class="" xmlns="http://www.w3.org/2000/svg" width="102" height="179" viewBox="0 0 102 179" fill="none">
+                    <path d="M29.9465 152.615H44.9704V173.273L43.0924 177.029H26.1905C25.0637 177.029 24.3125 176.278 24.3125 175.151V169.517C24.3125 166.888 26.1905 164.447 28.8197 164.071L29.9465 163.883V152.615Z" stroke="black" stroke-width="3" stroke-miterlimit="10"/>
+                    <path d="M28.0625 163.883H40.2694C42.8986 163.883 44.9644 165.01 44.9644 167.639V169.517" stroke="black" stroke-width="3" stroke-miterlimit="10"/>
+                    <path d="M67.313 152.615H52.2891V175.151C52.2891 176.278 53.0403 177.029 54.1671 177.029H74.8249C75.9517 177.029 76.7029 176.278 76.7029 175.151V169.517C76.7029 166.888 74.8249 164.447 72.1958 164.071L67.313 163.883V152.615Z" stroke="black" stroke-width="3" stroke-miterlimit="10"/>
+                    <path d="M56.6087 20.78C56.6087 22.0945 55.4819 23.0335 54.3552 23.0335C53.0406 23.0335 52.1016 21.9067 52.1016 20.78C52.1016 19.4654 53.2284 18.5264 54.3552 18.5264C55.6697 18.5264 56.6087 19.6532 56.6087 20.78Z" fill="black"/>
+                    <path d="M66.3744 20.78C66.3744 22.0945 65.2476 23.0335 64.1208 23.0335C62.8062 23.0335 61.8672 21.9067 61.8672 20.78C61.8672 19.4654 62.994 18.5264 64.1208 18.5264C65.2476 18.5264 66.3744 19.6532 66.3744 20.78Z" fill="black"/>
+                    <path d="M28.0647 47.0718V24.5359C28.0647 12.1411 38.2059 2 50.6006 2C62.9953 2 73.1365 12.1411 73.1365 24.5359V47.0718C81.963 77.1196 90.6018 107.355 99.4283 137.403C97.9259 138.342 93.4188 141.159 87.0336 140.596C82.5264 140.22 79.5216 138.342 78.0192 137.403C76.8924 138.154 73.5121 140.596 68.4415 140.596C63.1831 140.596 59.6149 138.154 58.6759 137.403C57.5492 138.342 53.981 140.783 48.7226 140.596C44.0276 140.596 40.6472 138.53 39.5204 137.591C38.3936 138.342 35.0133 140.596 30.1305 140.596C25.4355 140.596 22.0551 138.53 20.9283 137.591C19.8015 138.342 16.4212 140.596 11.7262 140.596C6.65561 140.596 3.27523 138.154 2.14844 137.403C10.4116 107.355 19.2381 77.1196 28.0647 47.0718Z" stroke="black" stroke-width="3" stroke-miterlimit="10"/>
+                  </svg>
+            </div>
+            <div class="content">
+                <h2>Internal server error</h2>
+            </div>
+            <div class="content-2">
+                <a href="<?= base_url() ?>">Home</a>
+            </div>
         </div>
-    </div>
-
+    </section>
 </body>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+
 </html>

@@ -716,26 +716,22 @@ class TaskController extends BaseController
                 // 'is_complete' => 'required|CheckCompleteStatus[is_complete]',
                 //'next_task_detail_id' => 'required',
                 'qa_task' => 'required',
-                'current_task_detail_id' => 'required'
+                'current_task_detail_id' => 'required',
+                'order_list_id'=>'required'
             ];
 
             if (!$this->validate($rules)) {
-                //  log_message('debug', 'Validation errors: ' . print_r($this->validator->getErrors(), true));
                 $output = $this->validator->getErrors();
-                $errorMsg = implode(";", $output);
-                //$response = Response::SetResponse(400, null, new Error($errorMsg));
-
-
                 return json_encode(['success' => false, 'csrf' => csrf_hash(), 'error' => $output]);
             } else {
                 $taskModel = ModelFactory::createModel(ModelNames::Task);
-
                 //update the task
                 $data = [
                     Task::EndTime => date("Y-m-d H:i:s"),
                     Task::Status => WorkStatus::C,
-                    Task::NextTaskDetailId => $request["next_task_detail_id"]
+                    Task::NextTaskDetailId => isset($request["next_task_detail_id"])? $request["next_task_detail_id"]:null
                 ];
+               
                 if (isset($request["separate_task"]) && $request["separate_task"] == 0) {
                     $data[Task::Status] = WorkStatus::TM;
                 }
@@ -749,18 +745,21 @@ class TaskController extends BaseController
                     $qaParent = $result["qaParentTaskId"];
                     $qaTaskId = $result["qaTaskId"];
                 }
+              
                 if ($request["current_task_detail_id"] != 101 && !$waitForMerge) {
                     $condition = [Task::TaskId => $qaParent];
                     $parentTask = $this->modelHelper->GetSingleData($taskModel, $condition);
                     $previousTaskId = $qaTaskId;
 
-
                     //insert next task
                     $insertedtaskId = $this->InsertNextTask($parentTask, $request["next_task_detail_id"], $previousTaskId);
                     $parentTask[Task::TaskId] = $insertedtaskId;
                     $this->InsertInputs($parentTask);
+                } else if($request["current_task_detail_id"] == 101 && !$waitForMerge) {
+                    $data = [Order::Status => WorkStatus::C];
+                    $orderModel = ModelFactory::createModel(ModelNames::Order);
+                    $result = $this->modelHelper->UpdateData($orderModel, $request["order_list_id"], $data);
                 }
-
                 return json_encode(["success" => true, "csrf" => csrf_hash(), "url" => base_url("task/orderList/" . $request["current_task_detail_id"])]);
             }
         }
@@ -1203,7 +1202,7 @@ class TaskController extends BaseController
         }
         $startTime = null;
         $endTime = null;
-        if ($qaCount == count($childTasks) || ($count == count($childTasks) && $incompleteTaskCount == 0) ){
+        if ($qaCount == count($childTasks) || ($count == count($childTasks) && $incompleteTaskCount == 0)) {
 
 
             $result = $this->GetStartAndEndTime($mergeTasks);

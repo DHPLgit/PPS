@@ -1,7 +1,5 @@
 <?= $this->extend("layouts/app") ?>
-
 <?= $this->section("body") ?>
-
 <section>
   <div class="container">
     <div id="taskinitialize" action="<?= base_url('') ?>" method="post">
@@ -9,14 +7,13 @@
         <label for="countryInput" class="form-label">Order ID:</label></br>
         <input type="hidden" id="orderListId">
         <input type="hidden" id="ordItemId">
-        <input type="text" id="orderidsearch" autocomplete="off" class="form-control" placeholder="Search Order ID" class="taskini-input">
+        <input type="text" id="orderidsearch" autocomplete="off" class="form-control" placeholder="Search Order ID"
+          class="taskini-input">
         <button id="clear" type="button" onclick="clearInput()" class="d-none">x</button>
         <p style="color:red" class="error" id="order_list_id_error" type="hidden"></p>
         <div>
           <ul id="autocompleteList" class="d-none">
-
           </ul>
-
         </div>
         <div class="row mt-5" id="output-data">
           <h4>Output</h4>
@@ -35,16 +32,13 @@
               <label>Length:</label></br>
               <input type="search" class="taskini-input form-control" id="length" readonly />
             </div>
-
             <div class="orderid">
               <label>Quantity(gms):</label></br>
               <input type="search" class="taskini-input form-control" id="quantity" readonly />
             </div>
           </div>
-
         </div>
         <form id="stock-search" action="<?= base_url('stock/search') ?>" class="mt-5">
-
           <div class="row">
             <h4>Input</h4>
             <div class="col-md-6">
@@ -89,7 +83,6 @@
                   </div>
                 </div>
               </div>
-
             </div>
             <p style="color:red" class="error" id="stock_error" type="hidden"></p>
           </div>
@@ -104,11 +97,9 @@
                     <h4>Select Stock</h4>
                     <select id="dropdown-stock" class="taskini-input" name="stock_id">
                       <option value="">Select an option...</option>
-
                     </select>
                     <p style="color:red" class="error" id="stock_id_error" type="hidden"></p>
                   </div>
-
                 </div>
               </div>
               <div class="col-md-6">
@@ -127,8 +118,6 @@
           </form>
         </div>
         <div id="preview"></div>
-
-
         <form action="<?= base_url("task/createTask") ?>" id="create-task-form" method="post">
           <input type="hidden" id="stock" name="stock">
           <div class="row mt-5">
@@ -137,17 +126,14 @@
               <select id="dropdown-task" class="taskini-input">
                 <?php foreach ($taskDetailList as $taskDetail) { ?>
                   <option value="<?= $taskDetail["task_detail_id"] ?>"><?= $taskDetail["task_name"] ?></option><?php } ?>
-
               </select>
             </div>
-
           </div>
           <div class="button-row">
             <button class="btn taskini-btn" id="submit-create-task" type="button">Submit</button>
           </div>
         </form>
       </div>
-
     </div>
   </div>
 </section>
@@ -159,12 +145,19 @@
     event.preventDefault();
     searchStocks($(this))
   });
+
   $("#orderidsearch").keyup(function () {
-    $("#order_list_id_error").text("")
-    var query = $(this).val();
-    var url = "<?= base_url('order/search') ?>"
-    searchOrder(url, query);
+    $("#order_list_id_error").text("");
+    var query = $(this).val().trim(); 
+    var url = "<?= base_url('order/search') ?>";
+
+    if (query.length >= 1) {
+      searchOrder(url, query);
+    } else {
+      $("#order_list_id_error").text();
+    }
   });
+
   $("#AddStock-form").submit(function (event) {
     event.preventDefault();
     console.log($('#AddStock-form').serializeArray());

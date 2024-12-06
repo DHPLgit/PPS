@@ -53,12 +53,7 @@
                         <?php } ?>
                     </ul>
                 </div>
-                <!-- <div id="radio_check_div" style="display: none;">
-                    <div class="completed"><input type="radio" id="complete" name="is_complete" value="1">Complete</div>
-                    <div class="nxt-task-move"><input type="radio" id="move_to_next_task" name="is_complete" value="0"> Move to next
-                        task</div>
-                    <br />
-                </div> -->
+              
                 <div id="next_task_div" style="display: none;">
 
                     <form id="next_task_form" action="<?= base_url("task/qualityCheck/" . $task['task_id']) ?>" method="post">
@@ -81,12 +76,7 @@
                 </div>
                 <button class="button" id="not_ok" style="display: none;"> Not ok</button>
 
-                <!-- <form action="<?= base_url("/task/merge") ?>" method="post">
-<input type="hidden" name="taskId" value="<?= $qaTask['task_id'] ?>">
-<input type="hidden" name="taskDetailId" value="<?= $taskDetail["task_detail_id"] ?>">
-<button class="button" id="merge"> Merge</button>
-</form> -->
-                <?php if ($task["split_from"] != 0) { ?>
+                <?php if ($task["split_from"] != 0 && $qaTask["task_detail_id"]!=101) { ?>
                     <span> Separate task<input type="checkbox" id="separateTask" name="separateTask"></span>
                 <?php } ?>
         </div>
@@ -185,7 +175,8 @@
             qa_task: <?= $qaTask["task_id"] ?>,
             current_task_detail_id: current_task_detail_id,
            // separate_task: separate_task,
-            is_last_task: <?= $qaTask["isLastTask"] ?>
+            is_last_task: <?= $qaTask["isLastTask"] ?>,
+            order_list_id:<?= $task["order_list_id"] ?>
 
         };
         var splitFrom = <?= $task["split_from"] ?>;

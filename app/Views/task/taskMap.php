@@ -50,7 +50,7 @@ use App\Libraries\EnumsAndConstants\Task;
                             </p>
                             <p class="para"><span>Employee:</span>
                                 <?php
-                                $selectedEmployeeId = $currentTask[Task::EmployeeId] ?? null; 
+                                $selectedEmployeeId = $currentTask[Task::EmployeeId] ?? null;
                                 foreach ($employeeList as $employee) {
                                     if ($employee['id'] == $selectedEmployeeId) {
                                         echo htmlspecialchars($employee['name'], ENT_QUOTES, 'UTF-8');
@@ -83,7 +83,7 @@ use App\Libraries\EnumsAndConstants\Task;
                     </div>
                 </div>
                 <div id="map_employee_div" style="display: block;">
-                    <div>
+                    <div <?php if ($currentTask["split_from"] != 0) { ?> style="display:none" <?php } ?>>
                         <label for="split">Split Job</label>
                         <input type="radio" id="split" name="split"> Yes
                         <input checked type="radio" id="no_split" name="split"> No
@@ -126,14 +126,15 @@ use App\Libraries\EnumsAndConstants\Task;
                     </div>
                     <div id="preview" style="display: none;"></div>
 
-                    <form id="emp_map_form" style="display: block;" action="<?= base_url('task/mapEmployee/' . $task['task_id']) ?>" method="post">
+                    <form id="emp_map_form" style="display: block;"
+                        action="<?= base_url('task/mapEmployee/' . $task['task_id']) ?>" method="post">
 
-                        <input type="hidden" id="task_detail_id" name="taskDetailId" value="<?= $currentTaskDetail["task_detail_id"] ?>">
+                        <input type="hidden" id="task_detail_id" name="taskDetailId"
+                            value="<?= $currentTaskDetail["task_detail_id"] ?>">
                         <label for="employee_id">Select Employee to work:</label>
                         <select id="employee_id_split" name="employee">
                             <?php foreach ($employeeList as $employee) { ?>
-                                <option value="<?= $employee["id"] ?>" 
-                                <?= ($employee["id"] == $currentTask[Task::EmployeeId]) ? 'selected' : '' ?>>
+                                <option value="<?= $employee["id"] ?>" <?= ($employee["id"] == $currentTask[Task::EmployeeId]) ? 'selected' : '' ?>>
                                     <?= $employee["name"] ?>
                                 </option>
                             <?php } ?>
@@ -175,9 +176,11 @@ use App\Libraries\EnumsAndConstants\Task;
                     <div class="modal-body ctr-segment-body" style="padding:20px;">
                         <p> Are you sure you want to change the product type?</p>
                         <div class="d-grid">
-                            <button type="button" onclick="inProgressFormSubmit()" class="btn btn-danger confirm pull-right"><span class="fa fa-trash"></span>
+                            <button type="button" onclick="inProgressFormSubmit()"
+                                class="btn btn-danger confirm pull-right"><span class="fa fa-trash"></span>
                                 Confirm</button>
-                            <button type="button" class="btn btn-outline-secondary Cancel pull-left close" data-bs-dismiss="modal"><span class="fa fa-remove"></span> Cancel</button>
+                            <button type="button" class="btn btn-outline-secondary Cancel pull-left close"
+                                data-bs-dismiss="modal"><span class="fa fa-remove"></span> Cancel</button>
                         </div>
                     </div>
                 </div>
@@ -520,12 +523,6 @@ use App\Libraries\EnumsAndConstants\Task;
 
             var selectedOptionText = selectedOption.innerText;
             console.log(selectedOptionText);
-
-
-            //Adding the preview of a entered quantity if condition satisfies.
-            // console.log("overAllReqQty", overAllReqQty);
-            // console.log("overAllAccQty", overAllAccQty);
-            // console.log("overAllQty", overAllQty);
             if ((overAllReqQty + overAllAccQty) <= overAllQty) {
 
                 if (employee) {
@@ -565,20 +562,26 @@ use App\Libraries\EnumsAndConstants\Task;
                     var removeButton = document.createElement('button');
                     removeButton.innerText = 'X';
                     removeButton.onclick = function () {
-
                         document.querySelectorAll("#employee_id_split option").forEach(opt => {
-
                             if (opt.value == employee) {
                                 opt.disabled = false;
-                                console.log("removed", qty_emp_input[employee][0].in_qty);
-                                overAllAccQty -= parseFloat(qty_emp_input[employee][0].in_qty);
-                                console.log("overAllAccQty", overAllAccQty);
+
+                                if (qty_emp_input[employee]) {
+                                    qty_emp_input[employee].forEach(item => {
+                                        overAllAccQty -= parseFloat(item.in_qty);
+                                    });
+                                }
+                                console.log("overAllAccQty after removal", overAllAccQty);
+
                                 delete qty_emp_input[employee];
                             }
                         });
 
                         previewContainer.removeChild(employee_div);
-                    }
+
+                        console.log("Updated qty_emp_input after removal", qty_emp_input);
+                    };
+
                     employee_div.appendChild(removeButton);
                     previewContainer.appendChild(employee_div);
                     console.log("employee", employee);
