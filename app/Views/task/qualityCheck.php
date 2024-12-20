@@ -53,7 +53,7 @@
                         <?php } ?>
                     </ul>
                 </div>
-              
+
                 <div id="next_task_div" style="display: none;">
 
                     <form id="next_task_form" action="<?= base_url("task/qualityCheck/" . $task['task_id']) ?>" method="post">
@@ -76,7 +76,7 @@
                 </div>
                 <button class="button" id="not_ok" style="display: none;"> Not ok</button>
 
-                <?php if ($task["split_from"] != 0 && $qaTask["task_detail_id"]!=101) { ?>
+                <?php if ($task["split_from"] != 0 && $qaTask["task_detail_id"] != 101) { ?>
                     <span> Separate task<input type="checkbox" id="separateTask" name="separateTask"></span>
                 <?php } ?>
         </div>
@@ -174,10 +174,10 @@
             parent_task: <?= $task["task_id"] ?>,
             qa_task: <?= $qaTask["task_id"] ?>,
             current_task_detail_id: current_task_detail_id,
-           // separate_task: separate_task,
+            // separate_task: separate_task,
             is_last_task: <?= $qaTask["isLastTask"] ?>,
-            order_list_id:<?= $task["order_list_id"] ?>
-
+            order_list_id: <?= $task["order_list_id"] ?>,
+            supervisor_id: $("#supervisor_id").val()
         };
         var splitFrom = <?= $task["split_from"] ?>;
         if (splitFrom != 0) {

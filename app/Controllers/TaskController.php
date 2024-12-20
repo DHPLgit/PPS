@@ -727,6 +727,7 @@ class TaskController extends BaseController
                 $taskModel = ModelFactory::createModel(ModelNames::Task);
                 //update the task
                 $data = [
+                    Task::SupervisorId=>$request["supervisor_id"],
                     Task::EndTime => date("Y-m-d H:i:s"),
                     Task::Status => WorkStatus::C,
                     Task::NextTaskDetailId => isset($request["next_task_detail_id"])? $request["next_task_detail_id"]:null
