@@ -48,18 +48,21 @@ $routes->match(['get', 'post'], 'updateprofile', 'UserController::updateprofile'
 
 // Order routes
 $routes->group("order", ["filter" => "auth"], function ($routes) {
+    $routes->post('createItem', 'OrderController::CreateItem');
     $routes->get('orderList', 'OrderController::GetOrderList');
     $routes->match(['get', 'post'], 'createOrder', 'OrderController::CreateOrder');
     $routes->match(['get', 'post'], 'editOrder/(:any)', 'OrderController::EditOrder/$1');
     $routes->post('deleteOrder', 'OrderController::DeleteOrder');
+    $routes->post('deleteItem', 'OrderController::DeleteItem');
     $routes->get('checkAndGenerateId', 'OrderController::CheckOrderAndGenerateItemId');
+    $routes->get('generateOrderId', 'OrderController::GenerateOrderId');
+    $routes->get('getOrderItems/(:any)', 'OrderController::GetOrderItems/$1');
     $routes->get('generateItemId/(:any)', 'OrderController::GenerateItemId/$1');
     $routes->post('search', 'OrderController::SearchOrder', ["filter" => "noauth"]);
     $routes->get('getWeight', 'OrderController::CalculateWeight', ["filter" => "auth"]);
     $routes->get('filter', 'OrderController::GetOrderList', ["filter" => "auth"]);
     $routes->get('getItems', 'OrderController::GetItems', ["filter" => "auth"]);
 
-    
 });
 
 $routes->group("task", function ($routes) {
@@ -107,6 +110,12 @@ $routes->group("employee", function ($routes) {
     $routes->match(['get', 'post'], 'upload', 'EmployeeController::EmployeeUploads', ["filter" => "auth"]);
     $routes->post('details', 'EmployeeController::GetUniqueEmployeeData', ["filter" => "auth"]);
     $routes->post('delete', 'EmployeeController::DeleteEmployeeDetail', ["filter" => "auth"]);
+});
+
+// Customer routes
+$routes->group("customer", function ($routes) {
+    $routes->match(['get', 'post'], 'upload', 'CustomerController::UploadCustomer', ["filter" => "auth"]);
+    $routes->post('delete', 'CustomerController::DeleteCustomer', ["filter" => "auth"]);
 });
 
 $routes->group("stock", function ($routes) {

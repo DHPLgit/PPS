@@ -835,7 +835,7 @@ a {
   width: 100%;
 }
 
-.taskselect {
+#item_id_drpdwn .taskselect {
   width: 100%;
 }
 
@@ -1627,4 +1627,11 @@ text-decoration: none;
   .table>:not(caption)>*>* {
     font-size: 12px;
   }
+}
+
+
+
+
+.itm-list .row{
+display: flex;
 }

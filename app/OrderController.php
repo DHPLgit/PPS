@@ -12,7 +12,7 @@ use Exception;
 use CodeIgniter\Database\Exceptions\DatabaseException;
 use App\Libraries\Response\Response;
 use App\Libraries\Response\Error;
-use App\Libraries\EnumsAndConstants\Order;
+use App\Libraries\EnumsAndConstants\OrderItems;
 use App\Libraries\TokenManagement\TokenManagement;
 use Config\Services;
 
@@ -37,9 +37,9 @@ class OrderController extends BaseController
         try {
 
             //$order_id = $this->request->getGet('Order_list_id');
-            $model = ModelFactory::createModel(ModelNames::Order);
-            $selectArray = [Order::OrderListId, Order::OrderId, Order::ItemId, Order::ReferenceId, Order::CustomerId, Order::OrderDate, Order::Type, Order::Colour, Order::Length, Order::Texture, Order::ExtSize, Order::Unit, Order::BundleCount, Order::Quantity, Order::Status, Order::DueDate];
-            $orderList = $model->select($selectArray)->orderBy(Order::UpdatedAt,"desc")->findAll();
+            $model = ModelFactory::createModel(ModelNames::OrderItems);
+            $selectArray = [OrderItems::OrderListId, OrderItems::OrderId, OrderItems::ItemId, OrderItems::ReferenceId, OrderItems::CustomerId, OrderItems::OrderDate, OrderItems::Type, OrderItems::Colour, OrderItems::Length, OrderItems::Texture, OrderItems::ExtSize, OrderItems::Unit, OrderItems::BundleCount, OrderItems::Quantity, OrderItems::Status, OrderItems::DueDate];
+            $orderList = $model->select($selectArray)->orderBy(OrderItems::UpdatedAt,"desc")->findAll();
 
             $response = Response::SetResponse(200, $orderList, new Error());
             return view('order/orderList', ["orderList" => $orderList]);
@@ -58,9 +58,9 @@ class OrderController extends BaseController
         try {
 
             $query = $this->request->getPost('like');
-            $model = ModelFactory::createModel(ModelNames::Order);
-            $selectArr = [Order::OrderId, Order::OrderListId, Order::ItemId, Order::Colour, Order::Length, Order::Texture, Order::Quantity];
-            $result = $model->select($selectArr)->like(Order::OrderId, $query, 'after')->findAll();
+            $model = ModelFactory::createModel(ModelNames::OrderItems);
+            $selectArr = [OrderItems::OrderId, OrderItems::OrderListId, OrderItems::ItemId, OrderItems::Colour, OrderItems::Length, OrderItems::Texture, OrderItems::Quantity];
+            $result = $model->select($selectArr)->like(OrderItems::OrderId, $query, 'after')->findAll();
 
             //$response = Response::SetResponse(200, $result, new Error());
 
@@ -135,31 +135,31 @@ class OrderController extends BaseController
                     $request = $this->request->getPost();
 
                     $data = [
-                        Order::OrderId        => $request['order_id'],
-                        Order::ItemId         => $request['item_id'],
+                        OrderItems::OrderId        => $request['order_id'],
+                        OrderItems::ItemId         => $request['item_id'],
                       //  Order::CustomerId     => $request['customer_id'],
-                        Order::ReferenceId    => $request['reference_id'],
-                        Order::OrderDate      => $request['order_date'],
-                        Order::Type           => $request['type'],
-                        Order::Colour         => $request['colour'],
-                        Order::Length         => $request['length'],
-                        Order::Texture        => $request['texture'],
-                        Order::ExtSize        => $request['ext_size'],
-                        Order::Unit           => $request['unit'],
-                        Order::BundleCount    => $request['bundle_count'],
-                        Order::Quantity       => $request['quantity'],
-                        Order::Status         => WorkStatus::NS,
-                        Order::DueDate        => $request['due_date'],
+                        OrderItems::ReferenceId    => $request['reference_id'],
+                        OrderItems::OrderDate      => $request['order_date'],
+                        OrderItems::Type           => $request['type'],
+                        OrderItems::Colour         => $request['colour'],
+                        OrderItems::Length         => $request['length'],
+                        OrderItems::Texture        => $request['texture'],
+                        OrderItems::ExtSize        => $request['ext_size'],
+                        OrderItems::Unit           => $request['unit'],
+                        OrderItems::BundleCount    => $request['bundle_count'],
+                        OrderItems::Quantity       => $request['quantity'],
+                        OrderItems::Status         => WorkStatus::NS,
+                        OrderItems::DueDate        => $request['due_date'],
                         // 'Overdue'            =>$request['Colour'],
-                        Order::CreatedBy      => session()->get('id'),
-                        Order::UpdatedBy      => session()->get('id')
+                        OrderItems::CreatedBy      => session()->get('id'),
+                        OrderItems::UpdatedBy      => session()->get('id')
                     ];
-                    $model = ModelFactory::createModel(ModelNames::Order);
+                    $model = ModelFactory::createModel(ModelNames::OrderItems);
 
                     $result = $model->insert($data);
 
                     if ($result) {
-                        $createdOrderId = $data[Order::OrderId] . " - " . $data[Order::ItemId];
+                        $createdOrderId = $data[OrderItems::OrderId] . " - " . $data[OrderItems::ItemId];
                         $status = "$createdOrderId order created successfully!";
                     } else $status = "Something went wrong!";
                     session()->setFlashdata('response', $status);
@@ -186,12 +186,12 @@ class OrderController extends BaseController
         if ($this->request->getMethod() == 'get') {
             $jsonFile = file_get_contents('../public/uploads/dropdown.json');
             $data = json_decode($jsonFile);
-            $model = ModelFactory::createModel(ModelNames::Order);
+            $model = ModelFactory::createModel(ModelNames::OrderItems);
 
-            $order = $model->where(Order::OrderListId, $orderListId)->first();
+            $order = $model->where(OrderItems::OrderListId, $orderListId)->first();
 
-            $order[Order::OrderDate] = date("Y-m-d", strtotime($order[Order::OrderDate]));
-            $order[Order::DueDate] = date("Y-m-d", strtotime($order[Order::DueDate]));
+            $order[OrderItems::OrderDate] = date("Y-m-d", strtotime($order[OrderItems::OrderDate]));
+            $order[OrderItems::DueDate] = date("Y-m-d", strtotime($order[OrderItems::DueDate]));
             return view("order/createOrder", ["json" => $data, "editOrderData" => $order]);
         } else
         if ($this->request->getMethod() == 'post') {
@@ -245,32 +245,32 @@ class OrderController extends BaseController
 
                     //$key='Order_unique_id'=>$request['Order_unique_id'];
                     $data = [
-                        Order::OrderId        => $request['order_id'],
-                        Order::ItemId         => $request['item_id'],
+                        OrderItems::OrderId        => $request['order_id'],
+                        OrderItems::ItemId         => $request['item_id'],
                       //  Order::CustomerId     => $request['customer_id'],
-                        Order::OrderDate      => $request['order_date'],
-                        Order::ReferenceId     => $request['reference_id'],
-                        Order::Type           => $request['type'],
-                        Order::Colour         => $request['colour'],
-                        Order::Length         => $request['length'],
-                        Order::Texture        => $request['texture'],
-                        Order::ExtSize        => $request['ext_size'],
-                        Order::Unit          => $request['unit'],
-                        Order::BundleCount      => $request['bundle_count'],
-                        Order::Quantity       => $request['quantity'],
-                        Order::Status         => WorkStatus::NS,
-                        Order::DueDate        => $request['due_date'],
+                        OrderItems::OrderDate      => $request['order_date'],
+                        OrderItems::ReferenceId     => $request['reference_id'],
+                        OrderItems::Type           => $request['type'],
+                        OrderItems::Colour         => $request['colour'],
+                        OrderItems::Length         => $request['length'],
+                        OrderItems::Texture        => $request['texture'],
+                        OrderItems::ExtSize        => $request['ext_size'],
+                        OrderItems::Unit          => $request['unit'],
+                        OrderItems::BundleCount      => $request['bundle_count'],
+                        OrderItems::Quantity       => $request['quantity'],
+                        OrderItems::Status         => WorkStatus::NS,
+                        OrderItems::DueDate        => $request['due_date'],
                         // 'Overdue'            =>$request['Colour'],
-                        Order::CreatedBy      => session()->get('id'),
-                        Order::UpdatedBy      => session()->get('id')
+                        OrderItems::CreatedBy      => session()->get('id'),
+                        OrderItems::UpdatedBy      => session()->get('id')
 
                     ];
-                    $model = ModelFactory::createModel(ModelNames::Order);
+                    $model = ModelFactory::createModel(ModelNames::OrderItems);
 
                     $update_status = $model->update($orderListId, $data);
 
                     if ($update_status) {
-                        $updatedOrderId = $data[Order::OrderId] . " - " . $data[Order::ItemId];
+                        $updatedOrderId = $data[OrderItems::OrderId] . " - " . $data[OrderItems::ItemId];
                         $status = "$updatedOrderId order updated successfully!";
                     } else $status = "Something went wrong!";
                     session()->setFlashdata('response', $status);
@@ -296,9 +296,9 @@ class OrderController extends BaseController
 
                 $request = $this->request->getPost();
 
-                $model = ModelFactory::createModel(ModelNames::Order);
+                $model = ModelFactory::createModel(ModelNames::OrderItems);
 
-                $delete_status = $model->where(Order::OrderListId, $request['orderListId'])->delete();
+                $delete_status = $model->where(OrderItems::OrderListId, $request['orderListId'])->delete();
 
                 if ($delete_status) {
                     $status = "order deleted successfully!";
@@ -326,12 +326,12 @@ class OrderController extends BaseController
         if ($this->request->getMethod() == 'get') {
             try {
 
-                $model = ModelFactory::createModel(ModelNames::Order);
-                $selectArr = [Order::OrderId, Order::ItemId];
-                $result = $model->select($selectArr)->orderBy(Order::OrderId, "desc")->first();
+                $model = ModelFactory::createModel(ModelNames::OrderItems);
+                $selectArr = [OrderItems::OrderId, OrderItems::ItemId];
+                $result = $model->select($selectArr)->orderBy(OrderItems::OrderId, "desc")->first();
 
                 if ($result) {
-                    $orderId = $result[Order::OrderId] + 1;
+                    $orderId = $result[OrderItems::OrderId] + 1;
                     $itemId = 1;
                     $nextId = [$orderId, $itemId];
                 } else $nextId = [1, 1];
@@ -354,14 +354,14 @@ class OrderController extends BaseController
         try {
             $data = $this->GetJson();
             // $orderListId = $this->request->getGet('orderListId');
-            $result = $this->GetOrderByOrderId($orderId);
+            $result = $this->GetitemByOrderId($orderId);
             if($result){
-            $itemId = $result[Order::ItemId] + 1;
-            $result[Order::ItemId] = $itemId;
+            $itemId = $result[OrderItems::ItemId] + 1;
+            $result[OrderItems::ItemId] = $itemId;
             }
             else{
-                $result[Order::OrderId] = 0;
-                $result[Order::ItemId] = 1;
+                $result[OrderItems::OrderId] = 0;
+                $result[OrderItems::ItemId] = 1;
             }
             $request=$this->request->getGet();
             if(isset($request["isAddItem"]) && $request["isAddItem"]==0){
@@ -388,17 +388,17 @@ class OrderController extends BaseController
 
     public function GetOrder($orderListId)
     {
-        $model = ModelFactory::createModel(ModelNames::Order);
+        $model = ModelFactory::createModel(ModelNames::OrderItems);
 
-        $order = $model->where(Order::OrderListId, $orderListId)->first();
+        $order = $model->where(OrderItems::OrderListId, $orderListId)->first();
 
         return $order;
     }
-    public function GetOrderByOrderId($orderId)
+    public function GetitemByOrderId($orderId)
     {
-        $model = ModelFactory::createModel(ModelNames::Order);
+        $model = ModelFactory::createModel(ModelNames::OrderItems);
 
-        $order = $model->where(Order::OrderId, $orderId)->orderBy(order::ItemId, "desc")->first();
+        $order = $model->where(OrderItems::OrderId, $orderId)->orderBy(order::ItemId, "desc")->first();
 
         return $order;
     }
@@ -446,9 +446,9 @@ class OrderController extends BaseController
         // $condition["value"] = $request['query'];
         // $condition["side"] = "after";
         // $req[0]=$condition;
-        $model = ModelFactory::createModel(ModelNames::Order);
+        $model = ModelFactory::createModel(ModelNames::OrderItems);
 
-        $selectArray = [Order::OrderListId, Order::OrderId, Order::ItemId, Order::ReferenceId, Order::CustomerId, Order::OrderDate, Order::Type, Order::Colour, Order::Length, Order::Texture, Order::ExtSize, Order::BundleCount, Order::Quantity, Order::Status, Order::DueDate];
+        $selectArray = [OrderItems::OrderListId, OrderItems::OrderId, OrderItems::ItemId, OrderItems::ReferenceId, OrderItems::CustomerId, OrderItems::OrderDate, OrderItems::Type, OrderItems::Colour, OrderItems::Length, OrderItems::Texture, OrderItems::ExtSize, OrderItems::BundleCount, OrderItems::Quantity, OrderItems::Status, OrderItems::DueDate];
 
         $orderList = $model->FilterOrder($selectArray, $request['query']);
 
@@ -456,17 +456,17 @@ class OrderController extends BaseController
         foreach ($orderList as $key => $order) {
 
             $data = [
-                "order_list_id" => $order[Order::OrderListId],
-                "order_id" => $order[Order::OrderId],
-                "item_id" => $order[Order::ItemId],
-                "reference_id" => $order[Order::ReferenceId],
-                "customer_id" => $order[Order::CustomerId],
-                "order_date" => $order[Order::OrderDate],
-                "item_description" => $order[Order::Type] . " " . $order[Order::Colour] . " " . $order[Order::Length] . " " . $order[Order::Texture] . " " . $order[Order::Texture] . " " . $order[Order::ExtSize],
-                "bundle_count" => $order[Order::BundleCount],
-                "quantity" => $order[Order::Quantity],
-                "status" => $order[Order::Status],
-                "due_data" => $order[Order::DueDate]
+                "order_list_id" => $order[OrderItems::OrderListId],
+                "order_id" => $order[OrderItems::OrderId],
+                "item_id" => $order[OrderItems::ItemId],
+                "reference_id" => $order[OrderItems::ReferenceId],
+                "customer_id" => $order[OrderItems::CustomerId],
+                "order_date" => $order[OrderItems::OrderDate],
+                "item_description" => $order[OrderItems::Type] . " " . $order[OrderItems::Colour] . " " . $order[OrderItems::Length] . " " . $order[OrderItems::Texture] . " " . $order[OrderItems::Texture] . " " . $order[OrderItems::ExtSize],
+                "bundle_count" => $order[OrderItems::BundleCount],
+                "quantity" => $order[OrderItems::Quantity],
+                "status" => $order[OrderItems::Status],
+                "due_data" => $order[OrderItems::DueDate]
             ];
             array_push($res, $data);
         }

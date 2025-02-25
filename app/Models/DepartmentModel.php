@@ -15,6 +15,7 @@ class DepartmentModel extends Model
     protected $protectFields    = true;
     protected $allowedFields    = [
         "dept_name",
+        "completion_percentage",
         //"description",
 
     ];

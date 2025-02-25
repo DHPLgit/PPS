@@ -177,6 +177,7 @@
             // separate_task: separate_task,
             is_last_task: <?= $qaTask["isLastTask"] ?>,
             order_list_id: <?= $task["order_list_id"] ?>,
+            order_id: <?= $task["order_id"] ?>,
             supervisor_id: $("#supervisor_id").val()
         };
         var splitFrom = <?= $task["split_from"] ?>;

@@ -3,7 +3,7 @@
 function login() {
 
     $("#log_in").submit(function (event) {
-      $("#flashData").hide();
+        $("#flashData").hide();
         event.preventDefault();
         $('#loader').show();
         var form = $(this);
@@ -181,12 +181,7 @@ function errorDisplay(errorArray, idArray, messageArray) {
 }
 
 function orderUpdate(form) {
-    console.log("submit2");
     $('#loader').show();
-    console.log("entry");
-    console.log(form.attr("id"));
-    console.log(form.serialize());
-    //document.getElementById('submitBtn').disabled = true
     $("#submitBtn").prop("disabled", true);
 
     $.ajax({
@@ -197,17 +192,20 @@ function orderUpdate(form) {
         success: function (response) {
             console.log(response);
             $('#loader').hide();
+            $("#submitBtn").prop("disabled", false);
 
             if (response.success) {
                 console.log("successentry");
-
+                
                 window.location.href = response.url;
+                
             } else {
                 $("#submitBtn").prop("disabled", false);
+
                 console.log(response.error);
                 console.log("failure");
-                const idArray = ['order_id', 'reference_id', 'customer_id', 'order_date', 'type', 'colour', 'length', 'texture', 'ext_size', 'unit', 'bundle_count', 'quantity', 'due_date'];
-                const errorArray = ["order_id_error", "reference_id_error", "customer_id_error", "order_date_error", "type_error", "colour_error", "length_error", "texture_error", "ext_size_error", "unit_error", "bundle_count_error", "quantity_error", "due_date_error"];
+                const idArray = ['order_id', 'customer_id', 'order_date','due_date'];
+                const errorArray = ["order_id_error", "customer_id_error", "order_date_error", "due_date_error"];
 
                 errorDisplay(errorArray, idArray, response.error);
 
@@ -370,7 +368,7 @@ function checkAndGenerateId(url, order_id) {
 
 
 function mapItemId(item_ord_Id) {
-    console.log("entry");
+    console.log("entry", item_ord_Id);
     if (item_ord_Id && Object.keys(item_ord_Id).length > 0) {
         console.log("map");
         // if(item_ord_Id['order_id']==0){
@@ -378,9 +376,9 @@ function mapItemId(item_ord_Id) {
         // }
         console.log("order_date", item_ord_Id["order_date"])
         $("#order_id").prop("readonly", true);
-        $("#order_id").val(item_ord_Id['order_id']);
-        $("#item_id").val(item_ord_Id['item_id']);
-        $("#order_date").val(item_ord_Id["order_date"])
+        $("#order_id").val(item_ord_Id);
+        // $("#item_id").val(item_ord_Id['item_id']);
+        //$("#order_date").val(item_ord_Id["order_date"])
         $("#ord-item-button").hide();
         $("#item-form").show();
     }
@@ -582,90 +580,8 @@ function searchStocks(form) {
     //  });
 }
 
-function searchOrder(url, query) {
-    console.log(query)
-    var ul = document.getElementById("autocompleteList");
-    if (query != '') {
-        $.ajax({
-            url: url,
-            method: 'post',
-            dataType: 'json',
-            data: {
-                like: query
-            },
-            success: function (response) {
-                if (response.success) {
-                    let orders = response.output;
-                    console.log(orders);
-                    $('#autocompleteList').html('');
-                    var input = document.getElementById("orderidsearch");
 
-                    ul.classList.remove("d-none");
-                    console.log(ul);
-                    var clear = document.getElementById("clear");
-                    $.each(orders, function (index, value) {
-                        //var name = value.name;
-                        console.log(value);
-                        var li = document.createElement("li");
-                        var ord_item_id = value.order_id + "-" + value.item_id;
-                        li.textContent = ord_item_id
-                        li.addEventListener("click", function () {
-                            $("#orderListId").val(value.order_list_id);
-                            $("#ordItemId").val(ord_item_id);
 
-                            input.value = ord_item_id;
-                            input.readOnly = true; // Set input field to read-only
-                            ul.classList.add("d-none");
-                            clear.classList.remove("d-none");
-                            var outputDiv = document.getElementById("output-data");
-
-                            var inputs = outputDiv.querySelectorAll("input");
-                            console.log("inputs", inputs);
-                            inputs.forEach(input => {
-                                console.log("input", input);
-                                var fieldName = input.id;
-                                input.value = value[fieldName];
-                            })
-                        });
-                        ul.appendChild(li);
-
-                    });
-
-                } else {
-                    $('#autocompleteList').html('');
-                }
-            }
-        });
-    } else {
-        ul.classList.add("d-none");
-    }
-    //  });
-}
-
-function clearInput() {
-    var input = document.getElementById("orderidsearch");
-    var ul = document.getElementById("autocompleteList");
-    var clear = document.getElementById("clear");
-    $("#orderListId").val("");
-    $("#ordItemId").val("");
-    ul.innerHTML = "";
-    if (input.value.length > 0) {
-        input.value = "";
-        if (input.value == "") {
-            clear.classList.add("d-none");
-            input.readOnly = false;
-        }
-    }
-    var outputDiv = document.getElementById("output-data");
-
-    var inputs = outputDiv.querySelectorAll("input");
-    console.log(inputs)
-    console.log("inputs", inputs);
-    inputs.forEach(input => {
-        var fieldName = input.id;
-        input.value = "";
-    })
-}
 
 //shows preview of the selected stock
 const inputArr = new Object()
@@ -691,7 +607,7 @@ function saveStockInput(form) {
 
 
     //Adding the preview of a selected stock if condition satisfies.
-    if (parseFloat(qty) > 0 && parseFloat(qty) <= parseFloat(stockArr[3]) ) {
+    if (parseFloat(qty) > 0 && parseFloat(qty) <= parseFloat(stockArr[3])) {
         // var flag = selectedList.includes(stockId)
         // console.log("flag",flag);
         if (stockId) {

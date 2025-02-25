@@ -23,7 +23,7 @@ class Access
   public const AccessName = "access_name";
   public const PageList = "page_list";
 }
-class Order
+class OrderItems
 {
 
   public const OrderListId = "order_list_id";
@@ -41,6 +41,7 @@ class Order
   public const BundleCount = "bundle_count";
   public const Quantity = "quantity";
   public const Status = "status";
+  public const CompletionPercentage = "completion_percentage";
   public const DueDate = "due_date";
   public const Overdue = "overdue";
   public const CreatedBy = "created_by";
@@ -48,7 +49,20 @@ class Order
   public const UpdatedBy = "updated_by";
   public const UpdatedAt = "updated_at";
 }
-
+class Order
+{
+  public const OrderId = "order_id";
+  public const CustomerId = "customer_id";
+  public const OrderDate = "order_date";
+  public const Status = "status";
+  public const CompletionPercentage = "completion_percentage";
+  public const DueDate = "due_date";
+  public const Overdue = "overdue";
+  public const CreatedBy = "created_by";
+  public const CreatedAt = "created_at";
+  public const UpdatedBy = "updated_by";
+  public const UpdatedAt = "updated_at";
+}
 class Task
 {
   public const TaskId = "task_id";
@@ -196,4 +210,14 @@ class Department
 
   public const DepartmentId = "dept_id";
   public const DepartmentName = "dept_name";
+  public const CompletionPercentage = "completion_percentage";
+}
+class Customer
+{
+
+  public const CustomerId = "customer_id";
+  public const CustomerName = "customer_name";
+  public const Status = "status";
+  public const UpdatedBy = "updated_by";
+  public const CreatedBy = "created_by";
 }

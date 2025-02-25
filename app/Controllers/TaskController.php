@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\ModelHelper;
-use App\Libraries\EnumsAndConstants\Order;
+use App\Libraries\EnumsAndConstants\OrderItems;
 use App\Libraries\EnumsAndConstants\TaskInput;
 use App\Libraries\EnumsAndConstants\DeptEmpMap;
 use App\Libraries\EnumsAndConstants\Department;
@@ -30,13 +30,11 @@ require_once APPPATH . 'Libraries/EnumsAndConstants/Constants.php';
 class TaskController extends BaseController
 {
     public $modelHelper;
-
     public function __construct()
     {
 
         $this->modelHelper = new ModelHelper();
     }
-
     public function CreateTask()
     {
         if ($this->request->getMethod() == 'get') {
@@ -128,7 +126,6 @@ class TaskController extends BaseController
             return json_encode($response);
         }
     }
-
     private function SaveInput(array $stockArr, int $taskId, int $orderId): bool|int
     {
         try {
@@ -198,8 +195,6 @@ class TaskController extends BaseController
         }
         return $result;
     }
-
-
     public function GetTask()
     {
         try {
@@ -217,7 +212,6 @@ class TaskController extends BaseController
         }
         return json_encode($response);
     }
-
     public function UpdateTask()
     {
         try {
@@ -235,7 +229,6 @@ class TaskController extends BaseController
         }
         return json_encode($response);
     }
-
     public function getDropdownList()
     {
 
@@ -254,7 +247,6 @@ class TaskController extends BaseController
 
         return json_encode($response);
     }
-
     public function GetSupervisors()
     {
         $model = ModelFactory::createModel(ModelNames::Employee);
@@ -263,7 +255,6 @@ class TaskController extends BaseController
 
         return $result;
     }
-
     private function FindElement($searchArr, $searchKey, $searchValue)
     {
 
@@ -274,7 +265,6 @@ class TaskController extends BaseController
             }
         }
     }
-
     //Get the search condition based on the search value.
     public function GetCondition($request)
     {
@@ -358,7 +348,6 @@ class TaskController extends BaseController
 
         return view('task/task_order', ["taskList" => $taskList, "taskDetail" => $taskDetail]);
     }
-
     public function GetAllTask()
     {
         $request = $this->request->getGet();
@@ -419,7 +408,6 @@ class TaskController extends BaseController
             "orderItemId" => $order_item_id,
         ]);
     }
-
     //Get all the taskdetails along with QA in correct sequence.
     public function GetTasksInOrder()
     {
@@ -448,7 +436,6 @@ class TaskController extends BaseController
         }
         return $result;
     }
-
     public function MapEmployee($taskId)
     {
         try {
@@ -498,8 +485,9 @@ class TaskController extends BaseController
                     $taskDetail = $modelHelper->GetSingleData($taskDetailModel, $condition);
 
                     //update status in order table
-                    $data = [Order::Status => WorkStatus::IP . " - " . $taskDetail[TaskDetail::TaskName]];
-                    $orderModel = ModelFactory::createModel(ModelNames::Order);
+                    $data = [OrderItems::Status => WorkStatus::IP . " - " . $taskDetail[TaskDetail::TaskName]];
+
+                    $orderModel = ModelFactory::createModel(ModelNames::OrderItems);
                     $result = $modelHelper->UpdateData($orderModel, $task[Task::OrderListId], $data);
                     return redirect()->to(base_url("task/orderList/" . $request["taskDetailId"]));
                 }
@@ -513,7 +501,6 @@ class TaskController extends BaseController
         }
         return json_encode($response);
     }
-
     public function SplitTaskAndMapEmployees($taskId)
     {
         try {
@@ -591,7 +578,6 @@ class TaskController extends BaseController
         }
         return json_encode($response);
     }
-
     public function StartQC()
     {
 
@@ -717,7 +703,7 @@ class TaskController extends BaseController
                 //'next_task_detail_id' => 'required',
                 'qa_task' => 'required',
                 'current_task_detail_id' => 'required',
-                'order_list_id'=>'required'
+                'order_list_id' => 'required'
             ];
 
             if (!$this->validate($rules)) {
@@ -725,14 +711,15 @@ class TaskController extends BaseController
                 return json_encode(['success' => false, 'csrf' => csrf_hash(), 'error' => $output]);
             } else {
                 $taskModel = ModelFactory::createModel(ModelNames::Task);
+
                 //update the task
                 $data = [
-                    Task::SupervisorId=>$request["supervisor_id"],
+                    Task::SupervisorId => $request["supervisor_id"],
                     Task::EndTime => date("Y-m-d H:i:s"),
                     Task::Status => WorkStatus::C,
-                    Task::NextTaskDetailId => isset($request["next_task_detail_id"])? $request["next_task_detail_id"]:null
+                    Task::NextTaskDetailId => isset($request["next_task_detail_id"]) ? $request["next_task_detail_id"] : null
                 ];
-               
+
                 if (isset($request["separate_task"]) && $request["separate_task"] == 0) {
                     $data[Task::Status] = WorkStatus::TM;
                 }
@@ -746,7 +733,7 @@ class TaskController extends BaseController
                     $qaParent = $result["qaParentTaskId"];
                     $qaTaskId = $result["qaTaskId"];
                 }
-              
+                $orderUpdateData = [];
                 if ($request["current_task_detail_id"] != 101 && !$waitForMerge) {
                     $condition = [Task::TaskId => $qaParent];
                     $parentTask = $this->modelHelper->GetSingleData($taskModel, $condition);
@@ -756,10 +743,14 @@ class TaskController extends BaseController
                     $insertedtaskId = $this->InsertNextTask($parentTask, $request["next_task_detail_id"], $previousTaskId);
                     $parentTask[Task::TaskId] = $insertedtaskId;
                     $this->InsertInputs($parentTask);
-                } else if($request["current_task_detail_id"] == 101 && !$waitForMerge) {
-                    $data = [Order::Status => WorkStatus::C];
-                    $orderModel = ModelFactory::createModel(ModelNames::Order);
-                    $result = $this->modelHelper->UpdateData($orderModel, $request["order_list_id"], $data);
+                } else if ($request["current_task_detail_id"] == 101 && !$waitForMerge) {
+                    $orderUpdateData[OrderItems::Status] = WorkStatus::C;
+                }
+
+                //Update the status in items and order table.
+                if (!$waitForMerge) {
+                    $taskDetailIds = [$request["current_task_detail_id"], isset($request["next_task_detail_id"]) ? $request["next_task_detail_id"] : 0];
+                    $this->CalculateStatus($request["order_id"], $taskDetailIds, $request["order_list_id"], $orderUpdateData);
                 }
                 return json_encode(["success" => true, "csrf" => csrf_hash(), "url" => base_url("task/orderList/" . $request["current_task_detail_id"])]);
             }
@@ -773,7 +764,6 @@ class TaskController extends BaseController
 
         return $qcList;
     }
-
     public function GetTaskAndOrderDetails($taskId)
     {
 
@@ -847,8 +837,8 @@ class TaskController extends BaseController
             }
         }
         //get the order details
-        $ordModel = ModelFactory::createModel(ModelNames::Order);
-        $condition = [Order::OrderId => $task[Task::OrderId], Order::ItemId => $task[Task::ItemId]];
+        $ordModel = ModelFactory::createModel(ModelNames::OrderItems);
+        $condition = [OrderItems::OrderId => $task[Task::OrderId], OrderItems::ItemId => $task[Task::ItemId]];
         $order = $ordModel->GetOrder($condition);
 
 
@@ -969,7 +959,6 @@ class TaskController extends BaseController
             return json_encode(['success' => true, 'csrf' => csrf_hash(), "url" => base_url("task/orderList/" . $request["taskDetailId"])]);
         }
     }
-
     public function InsertNextTask($task, $nextTask, $previousTaskId)
     {
 
@@ -1005,7 +994,6 @@ class TaskController extends BaseController
 
         return $result;
     }
-
     public function InsertInputs($task)
     {
         $modelHelper = new ModelHelper();
@@ -1032,7 +1020,6 @@ class TaskController extends BaseController
 
         return $deptEmpData;
     }
-
     public function GetTaskDetailData($taskDetailId)
     {
         $modelHelper = new ModelHelper();
@@ -1042,7 +1029,6 @@ class TaskController extends BaseController
 
         return $taskDetailData;
     }
-
     //Get the previously completed tasks of an order
     public function GetPreviousTaskList($taskId)
     {
@@ -1159,7 +1145,6 @@ class TaskController extends BaseController
             return json_encode($response);
         }
     }
-
     public function MergeTasks($taskId)
     {
         $waitForMerge = false;
@@ -1265,7 +1250,6 @@ class TaskController extends BaseController
         $result = ["qaTaskId" => $qaTaskId, "qaParentTaskId" => $qaParentTaskId, "waitForMerge" => $waitForMerge];
         return $result;
     }
-
     public function GetStartAndEndTime($tasks)
     {
         $startTime = null;
@@ -1323,7 +1307,6 @@ class TaskController extends BaseController
 
         return redirect()->to(base_url("task/orderList/" . $request["taskDetailId"]));
     }
-
     public function MergeScript()
     {
 
@@ -1402,6 +1385,36 @@ class TaskController extends BaseController
                     $this->InsertInputs($parentTask);
                 }
             }
+        }
+    }
+
+    public function CalculateStatus($orderId, $taskDetailIds, $orderListId, $orderUpdateData)
+    {
+        $taskDetailModel = ModelFactory::createModel(ModelNames::TaskDetail);
+        // $condition=[$request["next_task_detail_id"]];
+        $taskDetails = $taskDetailModel->whereIn(TaskDetail::TaskDetailId, $taskDetailIds)->findAll();
+        if (count($taskDetails) == 1 || (count($taskDetails) > 1 && $taskDetails[0][TaskDetail::DepartmentId] != $taskDetails[1][TaskDetail::DepartmentId])) {
+            //if ($taskDetails[0][TaskDetail::DepartmentId] != $taskDetails[1][TaskDetail::DepartmentId]) {
+
+
+            $dept = ModelFactory::createModel(ModelNames::Department)->where(Department::DepartmentId, $taskDetails[0][TaskDetail::DepartmentId])->first();
+            $orderUpdateData[OrderItems::CompletionPercentage] = $dept[Department::CompletionPercentage];
+            $orderModel = ModelFactory::createModel(ModelNames::OrderItems);
+            $result = $this->modelHelper->UpdateData($orderModel, $orderListId, $orderUpdateData);
+
+            $orderItemsModel = ModelFactory::createModel(ModelNames::OrderItems);
+            $itemList = $orderItemsModel->where(OrderItems::OrderId, $orderId)->find();
+
+            $sum = 0;
+            $count = 0;
+            foreach ($itemList as $key => $item) {
+
+                $sum += $item[OrderItems::CompletionPercentage];
+                $count++;
+            }
+            $avg = $sum / $count;
+            $orderModel = ModelFactory::createModel(ModelNames::Order);
+            $orderModel->update($orderId, ["completion_percentage" => $avg]);
         }
     }
 }

@@ -16,6 +16,7 @@ namespace App\Libraries\EnumsAndConstants;
 abstract class ModelNames
 {
     const Order = 'Order';
+    const OrderItems = 'OrderItems';
     const User = 'User';
     const Task = 'Task';
     const Input = 'Input';
@@ -29,6 +30,7 @@ abstract class ModelNames
     const WtStd = "Wtstd";
     const Department = "Department";
     const DeptEmpMap = "DeptEmpMap";
+    const Customer = "Customer";
 }
 
 // enum ProductType: int

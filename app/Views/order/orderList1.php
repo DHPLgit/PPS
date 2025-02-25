@@ -32,10 +32,14 @@
 						<th scope="col">S.No</th>
 						<th scope="col" style="display:none;">Id</th>
 						<th scope="col">Order Id</th>
+						<th scope="col">Item number</th>
 						<th scope="col">Customer Id</th>
-						<th scope="col">Order Date</th>
+						<th scope="col">Order date</th>
+						<th scope="col">Item description</th>
+						<th scope="col">Bundle count</th>
+						<th scope="col">Quantity</th>
 						<th scope="col">Status</th>
-						<th scope="col">Completion Status</th>
+						<th scope="col">CompletionStatus</th>
 						<th scope="col">Due date</th>
 						<th scope="col">Action</th>
 					</tr>
@@ -46,28 +50,41 @@
 
 						<?php
 						$count = 0;
-						
+						$groupedOrders = [];
 						foreach ($orderList as $order) {
+							$groupedOrders[$order['order_id']][] = $order;
+						}
+						foreach ($groupedOrders as $orderId => $orders) {
+							$isFirst = true;
+							foreach ($orders as $order) {
 								$count++; ?>
-								<tr class="order-row" data-order-id="<?= $order['order_id'] ?>" >
+								<tr class="order-row" data-order-id="<?= $order['order_id'] ?>" <?= !$isFirst ? 'style="display:none;"' : '' ?>>
 									<td scope="row"><?= $count ?></td>
+									<td style="display:none;"><?= stripslashes($order['order_list_id']) ?></td>
 									<td>
-										<?= stripslashes(string: $order['order_id']) ?>
+										<?= stripslashes($order['order_id']) ?>
 										<br />
 										<div id="item-button">
-											<!-- <button type="button" class="addItem"
-												onclick="addItem('<?= $order['order_id'] ?>')">AddItem +</button> -->
+											<button type="button" class="addItem"
+												onclick="addItem('<?= $order['order_id'] ?>')">AddItem +</button>
 										</div>
-										
+										<?php if ($isFirst && count($orders) > 1): ?>
+											<div id="expand-button">
+												<button type="button" class="btn expand-more"
+													data-order-id="<?= $order['order_id'] ?>">+</button>
+											</div>
+										<?php endif; ?>
 									</td>
+									<td><?= stripslashes($order['item_id']) ?></td>
 									<td><?= stripslashes($order['customer_id']) ?></td>
 									<td>
 										<?= ($order['order_date'] === '0000-00-00 00:00:00' || $order['order_date'] === null) ? '0000-00-00' : date('Y-m-d', strtotime($order['order_date'])) ?>
 									</td>
-									
-									
+									<td><?= $order['type'] . " " . $order['colour'] . " " . $order['length'] . " " . $order['texture'] . " " . $order['ext_size'] ?>
+									</td>
+									<td><?= stripslashes($order['bundle_count']) ?></td>
+									<td><?= stripslashes($order['quantity']) ?></td>
 									<td><?= stripslashes($order['status']) ?></td>
-									<td><?= stripslashes($order['completion_percentage']) ?></td>
 									<td><?= stripslashes($order['due_date']) ?></td>
 									<td class="action">
 										<button type="button" onclick="editOrder(this)" <?= $order['status'] != "Not started" ? 'style="pointer-events:none"' : '' ?> class="btn editOrder">
@@ -79,6 +96,8 @@
 									</td>
 								</tr>
 						<?php
+								$isFirst = false;
+							}
 						}
 						?>
 					<?php } else { ?>
@@ -114,7 +133,7 @@
 							<div class="modal-body ctr-segment-body" style="padding:20px;">
 								<p>Are you sure you want to delete the order?</p>
 								<div class="form-group">
-									<input type="hidden" class="form-control" id="orderId" name="orderId">
+									<input type="hidden" class="form-control" id="orderListId" name="orderListId">
 								</div>
 								<br />
 								<div class="d-grid">
@@ -142,7 +161,7 @@
 		}).get();
 		console.log(data[1].trim());
 		var orderId = data[1].trim();
-		$('#orderId').val(orderId);
+		$('#orderListId').val(orderId);
 		$("#orderDeleteModal").modal('show');
 
 	}
@@ -156,13 +175,13 @@
 		}).get();
 		console.log(data[1].trim());
 		var orderId = data[1].trim();
-		var url = "<?= base_url('order/getOrderItems/') ?>" + orderId;
+		var url = "<?= base_url('order/editOrder/') ?>" + orderId;
 		window.location.href = url;
 
 	}
 
 	function addItem(orderId) {
-		var url = "<?= base_url('order/getOrderItems/') ?>" + orderId;
+		var url = "<?= base_url('order/generateItemId/') ?>" + orderId;
 		window.location.href = url;
 	}
 	$(document).ready(function() {
@@ -228,7 +247,7 @@
 
 								var row = '<tr class="order-row' + (isHeader ? ' order-header' : '') + '" data-order-id="' + orderId + '" style="' + (isHeader ? 'display: table-row;' : 'display: none;') + '">';
 								row += '<td>' + (index + 1) + '</td>';
-								row += '<td style="display:none;">' + item.order_id + '</td>';
+								row += '<td style="display:none;">' + item.order_list_id + '</td>';
 								row += '<td>' + item.order_id;
 								row += '<br /><div id="item-button"><button type="button" class="addItem" onclick="addItem(\'' + item.order_id + '\')">AddItem +</button></div>';
 

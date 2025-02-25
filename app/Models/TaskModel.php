@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Libraries\EnumsAndConstants\Order;
+use App\Libraries\EnumsAndConstants\OrderItems;
 use App\Libraries\EnumsAndConstants\Task;
 use CodeIgniter\Model;
 

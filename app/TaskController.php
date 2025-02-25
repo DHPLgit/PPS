@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\ModelHelper;
-use App\Libraries\EnumsAndConstants\Order;
+use App\Libraries\EnumsAndConstants\OrderItems;
 use App\Libraries\EnumsAndConstants\TaskInput;
 use App\Libraries\EnumsAndConstants\DeptEmpMap;
 use App\Libraries\EnumsAndConstants\Department;
@@ -495,8 +495,8 @@ class TaskController extends BaseController
                     $taskDetail = $modelHelper->GetSingleData($taskDetailModel, $condition);
 
                     //update status in order table
-                    $data = [Order::Status => WorkStatus::IP . " - " . $taskDetail[TaskDetail::TaskName]];
-                    $orderModel = ModelFactory::createModel(ModelNames::Order);
+                    $data = [OrderItems::Status => WorkStatus::IP . " - " . $taskDetail[TaskDetail::TaskName]];
+                    $orderModel = ModelFactory::createModel(ModelNames::OrderItems);
                     $result =  $modelHelper->UpdateData($orderModel, $task[Task::OrderListId], $data);
 
 
@@ -795,8 +795,8 @@ class TaskController extends BaseController
             }
         }
         //get the order details
-        $ordModel = ModelFactory::createModel(ModelNames::Order);
-        $condition = [Order::OrderId => $task[Task::OrderId], Order::ItemId => $task[Task::ItemId]];
+        $ordModel = ModelFactory::createModel(ModelNames::OrderItems);
+        $condition = [OrderItems::OrderId => $task[Task::OrderId], OrderItems::ItemId => $task[Task::ItemId]];
         $order = $ordModel->GetOrder($condition);
 
 

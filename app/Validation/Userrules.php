@@ -6,7 +6,7 @@ use App\Libraries\EnumsAndConstants\Department;
 use App\Models\UserModel;
 use App\Models\ModelFactory;
 use App\Libraries\EnumsAndConstants\ModelNames;
-use App\Libraries\EnumsAndConstants\Order;
+use App\Libraries\EnumsAndConstants\OrderItems;
 use App\Libraries\EnumsAndConstants\User;
 use DateTime;
 
@@ -80,8 +80,8 @@ class Userrules
     }
     public function GetOrder($orderId)
     {
-        $model = ModelFactory::createModel(ModelNames::Order);
-        $order = $model->where(Order::OrderId, $orderId)->first();
+        $model = ModelFactory::createModel(ModelNames::OrderItems);
+        $order = $model->where(OrderItems::OrderId, $orderId)->first();
         return $order;
     }
 
@@ -101,7 +101,7 @@ class Userrules
         if ($order) {
             if (array_key_exists("isEdit", $data)) {
                 $arrConv = (array)$order;
-                if ($arrConv[Order::OrderId] == $orderId) {
+                if ($arrConv[OrderItems::OrderId] == $orderId) {
                     $order = null;
                 }
             }

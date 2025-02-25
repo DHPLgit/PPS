@@ -19,7 +19,9 @@ class ModelFactory
             case 'Stock':
                 return new StockModel();
             case 'Order':
-                return new OrderModel();
+                    return new OrderModel();   
+            case 'OrderItems':
+                return new OrderItemsModel();
             case 'Task':
                 return new TaskModel();
             case 'Input':
@@ -38,7 +40,8 @@ class ModelFactory
                 return new DepartmentModel();
             case 'DeptEmpMap':
                 return new DeptEmpModel();
-
+            case 'Customer':
+                return new CustomerModel();
             default:
                 throw new Exception("Invalid model type: " . $model);
         }
