@@ -2,13 +2,13 @@ pipeline {
     agent any
     environment {
         SONAR_PROJECT_KEY = 'React.js'
-        GITHUB_REPO = 'https://github.com/DHPLgit/CSAT_Frontend.git'
+        GITHUB_REPO = 'https://github.com/DHPLgit/PPS.git'
         SONAR_HOST_URL = 'http://34.213.46.217:9000'
         SONAR_TOKEN = credentials('Sonar_Token') 
         TARGET_SERVER = 'ec2-user@ec2-35-91-75-215.us-west-2.compute.amazonaws.com'
         TARGET_PATH = '/var/www/html/deploy/'
         SSH_KEY_PATH = '/var/jenkins_home/.ssh/id_rsa'
-        ZIP_FILE_NAME = 'csat.zip'
+        ZIP_FILE_NAME = 'PPS'
         BACKUP_DIR = '/var/www/html/'
     }
 
@@ -28,7 +28,7 @@ pipeline {
                 ssh -i ${SSH_KEY_PATH} -o StrictHostKeyChecking=no ${TARGET_SERVER} \
                 'mkdir -p /var/www/html/backup && \
                 TIMESTAMP=\$(date +"%Y%m%d%H%M%S") && \
-                cp -r /var/www/html/csat /var/www/html/backup/csat_backup_\$TIMESTAMP'
+                cp -r /var/www/html/PPS /var/www/html/backup/PPS_backup_\$TIMESTAMP'
             """
         }
     }
@@ -40,11 +40,11 @@ pipeline {
                     script {
                         echo "Archiving source folder into ${ZIP_FILE_NAME}..."
                         sh """
-                            if [ ! -d csat ]; then
-                                echo "Error: Directory 'csat/' not found!" >&2
+                            if [ ! -d PPS ]; then
+                                echo "Error: Directory 'PPS/' not found!" >&2
                                 exit 1
                             fi
-                            zip -r ${ZIP_FILE_NAME} csat/
+                            zip -r ${ZIP_FILE_NAME} PPS/
                         """
 
                         echo "Transferring ${ZIP_FILE_NAME} to the target server..."
